@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק לימודי ללביא ואליה אבן</title>
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .game-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .player-names {
+            font-size: 1.5rem;
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .mode-btn.sorting { background: #4ade80; color: white; }
+        .mode-btn.popping { background: #f59e0b; color: white; }
+        .mode-btn.quiz { background: #ec4899; color: white; }
+        
+        #canvas-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .parent-guide {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            min-height: 100px;
+        }
+        
+        .parent-guide-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .parent-guide-text {
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .score-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div class="game-header">
+            <div class="game-title">🎮 משחק לימודי מיוחד 🎮</div>
+            <div class="player-names">ללביא ואליה אבן 💜</div>
+            <div class="mode-buttons">
+                <button class="mode-btn sorting" id="btn-sorting">🗂️ מצב מיון</button>
+                <button class="mode-btn popping" id="btn-popping">🎈 מצב פיצוץ</button>
+                <button class="mode-btn quiz" id="btn-quiz">❓ מצב חידון</button>
+            </div>
+        </div>
+        
+        <div id="canvas-container"></div>
+        
+        <div class="score-display" id="score-display" style="display: none;">
+            ניקוד: <span id="score-value">0</span>
+        </div>
+    </div>
+    
+    <div class="parent-guide" id="parent-guide">
+        <div class="parent-guide-title">💡 הדרכה להורים</div>
+        <div class="parent-guide-text" id="parent-guide-text">
+            בחרו מצב משחק כדי להתחיל! כל מצב מלמד נושאים שונים: דינוזאורים, חלל, מספרים ואנגלית.
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let stage, layer;
+        let currentMode = null;
+        let score = 0;
+        let audioContext;
+        
+        // Initialize audio context
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        
+        // Sound effects
+        function playPopSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+        
+        function playWinSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 523.25; // C5
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+        
+        function playErrorSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+        
+        // Text-to-Speech
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'he-IL';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Initialize Konva stage
+        function initStage() {
+            const container = document.getElementById('canvas-container');
+            container.innerHTML = '';
+            
+            const width = Math.min(1200, window.innerWidth - 40);
+            const height = 600;
+            
+            stage = new Konva.Stage({
+                container: 'canvas-container',
+                width: width,
+                height: height
+            });
+            
+            layer = new Konva.Layer();
+            stage.add(layer);
+        }
+        
+        // Update parent guide
+        function updateParentGuide(text) {
+            document.getElementById('parent-guide-text').textContent = text;
+        }
+        
+        // Update score display
+        function updateScore(newScore) {
+            score = newScore;
+            document.getElementById('score-value').textContent = score;
+        }
+        
+        function showScore() {
+            document.getElementById('score-display').style.display = 'block';
+        }
+        
+        function hideScore() {
+            document.getElementById('score-display').style.display = 'none';
+        }
+
+        // SORTING MODE
+        function startSortingMode() {
+            currentMode = 'sorting';
+            initStage();
+            hideScore();
+            updateParentGuide('עזרו לילדים לגרור את הפריטים לסל הנכון. כל פריט שייך לקטגוריה אחת: דינוזאורים, חלל, מספרים או אותיות אנגלית.');
+            
+            const categories = [
+                { name: 'דינוזאורים', emoji: '🦕', items: ['🦕', '🦖', '🦴'] },
+                { name: 'חלל', emoji: '🚀', items: ['🚀', '🌙', '⭐', '🪐'] },
+                { name: 'מספרים', emoji: '🔢', items: ['1️⃣', '2️⃣', '3️⃣'] },
+                { name: 'אנגלית', emoji: '🔤', items: ['🅰️', '🅱️', '🆎'] }
+            ];
+            
+            const basketWidth = stage.width() / 4;
+            const basketHeight = 120;
+            const basketY = stage.height() - basketHeight - 10;
+            
+            // Create baskets
+            categories.forEach((cat, index) => {
+                const x = index * basketWidth;
+                
+                // Basket background
+                const basket = new Konva.Rect({
+                    x: x + 10,
+                    y: basketY,
+                    width: basketWidth - 20,
+                    height: basketHeight,
+                    fill: '#f0f0f0',
+                    stroke: '#667eea',
+                    strokeWidth: 3,
+                    cornerRadius: 15,
+                    name: cat.name
+                });
+                layer.add(basket);
+                
+                // Basket label
+                const label = new Konva.Text({
+                    x: x + 10,
+                    y: basketY + 10,
+                    width: basketWidth - 20,
+                    text: cat.emoji + '\n' + cat.name,
+                    fontSize: 24,
+                    fontFamily: 'Arial',
+                    fill: '#333',
+                    align: 'center'
+                });
+                layer.add(label);
+            });
+            
+            // Create draggable items
+            const allItems = categories.flatMap(cat => 
+                cat.items.map(item => ({ emoji: item, category: cat.name }))
+            );
+            
+            // Shuffle items
+            allItems.sort(() => Math.random() - 0.5);
+            
+            allItems.forEach((item, index) => {
+                const x = 100 + (index % 4) * 150;
+                const y = 80 + Math.floor(index / 4) * 120;
+                
+                const itemGroup = new Konva.Group({
+                    x: x,
+                    y: y,
+                    draggable: true
+                });
+                
+                const bg = new Konva.Circle({
+                    radius: 40,
+                    fill: 'white',
+                    stroke: '#764ba2',
+                    strokeWidth: 3
+                });
+                itemGroup.add(bg);
+                
+                const text = new Konva.Text({
+                    text: item.emoji,
+                    fontSize: 50,
+                    fontFamily: 'Arial',
+                    fill: '#333',
+                    width: 80,
+                    height: 80,
+                    x: -40,
+                    y: -40,
+                    align: 'center',
+                    verticalAlign: 'middle'
+                });
+                itemGroup.add(text);
+                
+                itemGroup.on('dragend', function() {
+                    const pos = itemGroup.position();
+                    let placed = false;
+                    
+                    categories.forEach((cat, index) => {
+                        const basketX = index * basketWidth;
+                        if (pos.x > basketX && pos.x < basketX + basketWidth &&
+                            pos.y > basketY && pos.y < basketY + basketHeight) {
+                            
+                            if (cat.name === item.category) {
+                                // Correct placement
+                                playWinSound();
+                                speak('כל הכבוד');
+                                itemGroup.to({
+                                    x: basketX + basketWidth / 2,
+                                    y: basketY + basketHeight / 2,
+                                    scaleX: 0.5,
+                                    scaleY: 0.5,
+                                    duration: 0.3,
+                                    onFinish: () => {
+                                        itemGroup.destroy();
+                                        layer.draw();
+                                    }
+                                });
+                                placed = true;
+                            } else {
+                                // Wrong placement
+                                playErrorSound();
+                                speak('נסו שוב');
+                                itemGroup.to({
+                                    x: x,
+                                    y: y,
+                                    duration: 0.3
+                                });
+                                placed = true;
+                            }
+                        }
+                    });
+                    
+                    if (!placed) {
+                        itemGroup.to({
+                            x: x,
+                            y: y,
+                            duration: 0.3
+                        });
+                    }
+                });
+                
+                layer.add(itemGroup);
+            });
+            
+            layer.draw();
+        }
+        
+        // POPPING MODE
+        function startPoppingMode() {
+            currentMode = 'popping';
+            initStage();
+            showScore();
+            updateScore(0);
+            updateParentGuide('עודדו את הילדים ללחוץ מהר על הבלונים לפני שהם נעלמים! כל לחיצה מוסיפה נקודה.');
+            
+            const items = ['🎈', '🎪', '🎨', '🎭', '🎯', '🎁', '⭐', '🌟', '💫', '✨'];
+            let itemsPopped = 0;
+            const totalItems = 15;
+            let itemsCreated = 0;
+            
+            function createFloatingItem() {
+                if (itemsCreated >= totalItems) return;
+                itemsCreated++;
+                
+                const emoji = items[Math.floor(Math.random() * items.length)];
+                const x = Math.random() * (stage.width() - 100) + 50;
+                const startY = stage.height() + 50;
+                
+                const itemGroup = new Konva.Group({
+                    x: x,
+                    y: startY
+                });
+                
+                const circle = new Konva.Circle({
+                    radius: 35,
+                    fill: '#fff',
+                    stroke: '#f59e0b',
+                    strokeWidth: 3
+                });
+                itemGroup.add(circle);
+                
+                const text = new Konva.Text({
+                    text: emoji,
+                    fontSize: 45,
+                    fontFamily: 'Arial',
+                    x: -22,
+                    y: -22,
+                    width: 44,
+                    height: 44,
+                    align: 'center'
+                });
+                itemGroup.add(text);
+                
+                layer.add(itemGroup);
+                
+                const anim = new Konva.Animation((frame) => {
+                    const newY = startY - (frame.time / 1000) * 150;
+                    itemGroup.y(newY);
+                    
+                    if (newY < -50) {
+                        anim.stop();
+                        itemGroup.destroy();
+                        layer.draw();
+                    }
+                }, layer);
+                
+                itemGroup.on('click tap', function() {
+                    anim.stop();
+                    playPopSound();
+                    itemsPopped++;
+                    updateScore(itemsPopped);
+                    
+                    itemGroup.to({
+                        scaleX: 1.5,
+                        scaleY: 1.5,
+                        opacity: 0,
+                        duration: 0.2,
+                        onFinish: () => {
+                            itemGroup.destroy();
+                            layer.draw();
+                            
+                            if (itemsPopped === totalItems) {
+                                setTimeout(() => {
+                                    playWinSound();
+                                speak('כל הכבוד קיבלתם ' + itemsPopped + ' נקודות');
+                                }, 300);
+                            }
+                        }
+                    });
+                });
+                
+                anim.start();
+                layer.draw();
+            }
+            
+            // Create items at intervals
+            let interval = setInterval(() => {
+                createFloatingItem();
+                if (itemsCreated >= totalItems) {
+                    clearInterval(interval);
+                }
+            }, 800);
+        }
+
+        // QUIZ MODE
+        function startQuizMode() {
+            currentMode = 'quiz';
+            initStage();
+            hideScore();
+            updateParentGuide('קראו את השאלה בקול רם ועזרו לילדים לבחור את התשובה הנכונה. לחצו על האימוג׳י הנכון');
+            
+            const questions = [
+                {
+                    question: 'איפה הדינוזאור?',
+                    options: ['🦕', '🚀', '🐱', '🌳'],
+                    correct: 0
+                },
+                {
+                    question: 'כמה זה 1+1?',
+                    options: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'],
+                    correct: 1
+                },
+                {
+                    question: 'איפה הירח?',
+                    options: ['☀️', '🌙', '🌍', '⭐'],
+                    correct: 1
+                },
+                {
+                    question: 'איפה הרקטה?',
+                    options: ['🚗', '✈️', '🚀', '🚢'],
+                    correct: 2
+                },
+                {
+                    question: 'כמה זה 2+2?',
+                    options: ['2️⃣', '3️⃣', '4️⃣', '5️⃣'],
+                    correct: 2
+                },
+                {
+                    question: 'איפה הכוכב?',
+                    options: ['⭐', '🌙', '☀️', '🌍'],
+                    correct: 0
+                },
+                {
+                    question: 'איפה האות A?',
+                    options: ['🅰️', '🅱️', '🆎', '🔤'],
+                    correct: 0
+                },
+                {
+                    question: 'כמה זה 3+1?',
+                    options: ['2️⃣', '3️⃣', '4️⃣', '5️⃣'],
+                    correct: 2
+                }
+            ];
+            
+            let currentQuestion = 0;
+            
+            function showQuestion() {
+                layer.destroyChildren();
+                
+                if (currentQuestion >= questions.length) {
+                    // Quiz complete
+                    const finalText = new Konva.Text({
+                        x: 0,
+                        y: stage.height() / 2 - 50,
+                        width: stage.width(),
+                        text: 'כל הכבוד סיימתם את החידון',
+                        fontSize: 40,
+                        fontFamily: 'Arial',
+                        fill: '#667eea',
+                        align: 'center'
+                    });
+                    layer.add(finalText);
+                    layer.draw();
+                    playWinSound();
+                    speak('כל הכבוד סיימתם את החידון');
+                    return;
+                }
+                
+                const q = questions[currentQuestion];
+                
+                // Question text
+                const questionText = new Konva.Text({
+                    x: 50,
+                    y: 50,
+                    width: stage.width() - 100,
+                    text: q.question,
+                    fontSize: 36,
+                    fontFamily: 'Arial',
+                    fill: '#333',
+                    align: 'center',
+                    fontStyle: 'bold'
+                });
+                layer.add(questionText);
+                
+                // Progress indicator
+                const progressText = new Konva.Text({
+                    x: 50,
+                    y: 120,
+                    width: stage.width() - 100,
+                    text: `שאלה ${currentQuestion + 1} מתוך ${questions.length}`,
+                    fontSize: 20,
+                    fontFamily: 'Arial',
+                    fill: '#666',
+                    align: 'center'
+                });
+                layer.add(progressText);
+                
+                // Options grid (2x2)
+                const gridSize = 2;
+                const cellWidth = 200;
+                const cellHeight = 200;
+                const startX = (stage.width() - cellWidth * gridSize) / 2;
+                const startY = 200;
+                
+                q.options.forEach((option, index) => {
+                    const row = Math.floor(index / gridSize);
+                    const col = index % gridSize;
+                    const x = startX + col * cellWidth;
+                    const y = startY + row * cellHeight;
+                    
+                    const optionGroup = new Konva.Group({
+                        x: x,
+                        y: y
+                    });
+                    
+                    const bg = new Konva.Rect({
+                        width: cellWidth - 20,
+                        height: cellHeight - 20,
+                        fill: 'white',
+                        stroke: '#764ba2',
+                        strokeWidth: 4,
+                        cornerRadius: 20
+                    });
+                    optionGroup.add(bg);
+                    
+                    const emoji = new Konva.Text({
+                        text: option,
+                        fontSize: 80,
+                        fontFamily: 'Arial',
+                        width: cellWidth - 20,
+                        height: cellHeight - 20,
+                        align: 'center',
+                        verticalAlign: 'middle'
+                    });
+                    optionGroup.add(emoji);
+                    
+                    optionGroup.on('click tap', function() {
+                        if (index === q.correct) {
+                            // Correct answer
+                            bg.fill('#4ade80');
+                            layer.draw();
+                            playWinSound();
+                            speak('נכון כל הכבוד');
+                            
+                            setTimeout(() => {
+                                currentQuestion++;
+                                showQuestion();
+                            }, 1500);
+                        } else {
+                            // Wrong answer
+                            bg.fill('#ef4444');
+                            layer.draw();
+                            playErrorSound();
+                            speak('נסו שוב');
+                            
+                            setTimeout(() => {
+                                bg.fill('white');
+                                layer.draw();
+                            }, 800);
+                        }
+                    });
+                    
+                    optionGroup.on('mouseenter', function() {
+                        bg.strokeWidth(6);
+                        layer.draw();
+                    });
+                    
+                    optionGroup.on('mouseleave', function() {
+                        bg.strokeWidth(4);
+                        layer.draw();
+                    });
+                    
+                    layer.add(optionGroup);
+                });
+                
+                layer.draw();
+                
+                // Speak the question
+                setTimeout(() => speak(q.question), 500);
+            }
+            
+            showQuestion();
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            // Attach button event listeners
+            document.getElementById('btn-sorting').addEventListener('click', startSortingMode);
+            document.getElementById('btn-popping').addEventListener('click', startPoppingMode);
+            document.getElementById('btn-quiz').addEventListener('click', startQuizMode);
+            
+            updateParentGuide('ברוכים הבאים למשחק הלימודי! בחרו מצב משחק כדי להתחיל. המשחק מלמד על דינוזאורים, חלל, מספרים ואנגלית.');
+            speak('ברוכים הבאים למשחק הלימודי ללביא ואליה אבן');
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (currentMode) {
+                // Restart current mode on resize
+                if (currentMode === 'sorting') startSortingMode();
+                else if (currentMode === 'popping') startPoppingMode();
+                else if (currentMode === 'quiz') startQuizMode();
+            }
+        });
+    </script>
+</body>
+</html>
