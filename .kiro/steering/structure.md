@@ -18,6 +18,7 @@ Modular architecture with separated concerns:
 │       ├── sorting-mode.js      # Sorting game mode
 │       ├── popping-mode.js      # Popping game mode
 │       ├── quiz-mode.js         # Quiz game mode
+│       ├── math-mode.js         # Math game mode
 │       └── init.js              # Event listeners & initialization
 ├── README.md
 └── .gitignore
@@ -36,7 +37,7 @@ Modular architecture with separated concerns:
 - RTL-specific styling throughout
 - Gradient background with purple theme (`#667eea`, `#764ba2`)
 - Responsive design with max-width constraints
-- Mode-specific button colors (green/sorting, orange/popping, pink/quiz)
+- Mode-specific button colors (green/sorting, orange/popping, pink/quiz, purple/math)
 
 ### JavaScript Architecture
 
@@ -53,6 +54,7 @@ Modular architecture with separated concerns:
 - `sorting-mode.js`: `startSortingMode()` - Drag-and-drop categorization
 - `popping-mode.js`: `startPoppingMode()` - Timed balloon clicking
 - `quiz-mode.js`: `startQuizMode()` - Multiple-choice questions
+- `math-mode.js`: `startMathMode()` - Math problems (addition/subtraction)
 
 **init.js - Event Handlers:**
 - Window load: Button event listeners and welcome message

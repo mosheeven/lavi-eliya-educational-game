@@ -64,6 +64,7 @@ body {
 .mode-btn.sorting { background: #4ade80; color: white; }
 .mode-btn.popping { background: #f59e0b; color: white; }
 .mode-btn.quiz { background: #ec4899; color: white; }
+.mode-btn.math { background: #8b5cf6; color: white; }
 
 #canvas-container {
     background: white;
