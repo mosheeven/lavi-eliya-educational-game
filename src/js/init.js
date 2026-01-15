@@ -4,7 +4,11 @@ window.addEventListener('load', () => {
     const buttons = {
         'btn-sorting': startSortingMode,
         'btn-quiz': startQuizMode,
-        'btn-math': startMathMode
+        'btn-math': startMathMode,
+        'btn-letters': startLettersMode,
+        'btn-memory': startMemoryMode,
+        'btn-puzzle': startPuzzleMode,
+        'btn-coloring': startColoringMode
     };
     
     Object.keys(buttons).forEach(btnId => {
@@ -46,5 +50,9 @@ window.addEventListener('resize', () => {
         if (currentMode === 'sorting') startSortingMode();
         else if (currentMode === 'quiz') startQuizMode();
         else if (currentMode === 'math') startMathMode();
+        else if (currentMode === 'letters') startLettersMode();
+        else if (currentMode === 'memory') startMemoryMode();
+        else if (currentMode === 'puzzle') startPuzzleMode();
+        else if (currentMode === 'coloring') startColoringMode();
     }
 });
