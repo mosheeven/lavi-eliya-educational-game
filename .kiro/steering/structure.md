@@ -5,19 +5,34 @@ inclusion: always
 # Project Structure
 
 ## File Organization
-Single-file architecture: `single-file-game.html` contains all HTML, CSS, and JavaScript.
+Modular architecture with separated concerns:
 
-## Code Structure Within File
+```
+├── index.html                    # Main HTML entry point
+├── single-file-game.html         # Legacy single-file version (backup)
+├── src/
+│   ├── css/
+│   │   └── styles.css           # All game styles
+│   └── js/
+│       ├── game.js              # Core game functions & state
+│       ├── sorting-mode.js      # Sorting game mode
+│       ├── popping-mode.js      # Popping game mode
+│       ├── quiz-mode.js         # Quiz game mode
+│       └── init.js              # Event listeners & initialization
+├── README.md
+└── .gitignore
+```
 
-### HTML Structure
+## Code Structure
+
+### HTML Structure (index.html)
 - `#game-container`: Main wrapper with header and canvas
 - `.game-header`: Title, player names, and mode selection buttons
 - `#canvas-container`: Konva stage rendering area
 - `.score-display`: Fixed position score overlay (shown in Popping mode)
 - `.parent-guide`: Fixed bottom panel with instructions for parents
 
-### CSS Organization
-- Inline `<style>` block in `<head>`
+### CSS Organization (src/css/styles.css)
 - RTL-specific styling throughout
 - Gradient background with purple theme (`#667eea`, `#764ba2`)
 - Responsive design with max-width constraints
@@ -25,13 +40,8 @@ Single-file architecture: `single-file-game.html` contains all HTML, CSS, and Ja
 
 ### JavaScript Architecture
 
-**Global State:**
-- `stage`, `layer`: Konva canvas objects
-- `currentMode`: Active game mode tracker
-- `score`: Current score counter
-- `audioContext`: Web Audio API context
-
-**Core Functions:**
+**game.js - Core Functions:**
+- Global state: `stage`, `layer`, `currentMode`, `score`, `audioContext`
 - `initAudio()`: Initialize audio context
 - `playPopSound()`, `playWinSound()`, `playErrorSound()`: Sound generation
 - `speak(text)`: Hebrew TTS wrapper
@@ -39,13 +49,13 @@ Single-file architecture: `single-file-game.html` contains all HTML, CSS, and Ja
 - `updateParentGuide(text)`: Update instruction panel
 - `updateScore()`, `showScore()`, `hideScore()`: Score management
 
-**Game Modes:**
-- `startSortingMode()`: Drag-and-drop categorization
-- `startPoppingMode()`: Timed balloon clicking
-- `startQuizMode()`: Multiple-choice questions
+**Game Mode Files:**
+- `sorting-mode.js`: `startSortingMode()` - Drag-and-drop categorization
+- `popping-mode.js`: `startPoppingMode()` - Timed balloon clicking
+- `quiz-mode.js`: `startQuizMode()` - Multiple-choice questions
 
-**Event Handlers:**
-- Window load: Initial welcome message
+**init.js - Event Handlers:**
+- Window load: Button event listeners and welcome message
 - Window resize: Restart current mode with new dimensions
 
 ## Conventions

@@ -26,7 +26,9 @@ Single-file HTML application with embedded CSS and JavaScript - no build system 
 - Touch and mouse event handling
 
 ## Running the Application
-Simply open `single-file-game.html` in a modern web browser. No compilation, bundling, or server required.
+Open `index.html` in a modern web browser. No compilation, bundling, or server required.
+
+The legacy single-file version (`single-file-game.html`) is kept as a backup.
 
 ## Development Notes
 - All dependencies loaded from CDN (no npm/package manager)

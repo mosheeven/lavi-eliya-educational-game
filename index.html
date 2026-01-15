@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק לימודי ללביא ואליה אבן</title>
+    
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div class="game-header">
+            <div class="game-title">🎮 משחק לימודי מיוחד 🎮</div>
+            <div class="player-names">ללביא ואליה אבן 💜</div>
+            <div class="mode-buttons">
+                <button class="mode-btn sorting" id="btn-sorting">🗂️ מצב מיון</button>
+                <button class="mode-btn popping" id="btn-popping">🎈 מצב פיצוץ</button>
+                <button class="mode-btn quiz" id="btn-quiz">❓ מצב חידון</button>
+            </div>
+        </div>
+        
+        <div id="canvas-container"></div>
+        
+        <div class="score-display" id="score-display" style="display: none;">
+            ניקוד: <span id="score-value">0</span>
+        </div>
+    </div>
+    
+    <div class="parent-guide" id="parent-guide">
+        <div class="parent-guide-title">💡 הדרכה להורים</div>
+        <div class="parent-guide-text" id="parent-guide-text">
+            בחרו מצב משחק כדי להתחיל! כל מצב מלמד נושאים שונים: דינוזאורים, חלל, מספרים ואנגלית.
+        </div>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="src/js/game.js"></script>
+    <script src="src/js/sorting-mode.js"></script>
+    <script src="src/js/popping-mode.js"></script>
+    <script src="src/js/quiz-mode.js"></script>
+    <script src="src/js/init.js"></script>
+</body>
+</html>
