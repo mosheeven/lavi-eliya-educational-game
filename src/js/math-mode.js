@@ -3,7 +3,6 @@ function startMathMode() {
     currentMode = 'math';
     initStage();
     hideScore();
-    updateParentGuide('עזרו לילדים לפתור את התרגילים במתמטיקה. תרגילי חיבור וחיסור פשוטים למתחילים.');
     
     // Math problems for ages 5-6 (results 0-10)
     const mathProblems = [

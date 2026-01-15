@@ -3,7 +3,6 @@ function startQuizMode() {
     currentMode = 'quiz';
     initStage();
     hideScore();
-    updateParentGuide('קראו את השאלה בקול רם ועזרו לילדים לבחור את התשובה הנכונה. לחצו על האימוג׳י הנכון');
     
     const questions = [
         {

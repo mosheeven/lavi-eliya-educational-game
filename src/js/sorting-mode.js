@@ -3,7 +3,6 @@ function startSortingMode() {
     currentMode = 'sorting';
     initStage();
     hideScore();
-    updateParentGuide('עזרו לילדים לגרור את הפריטים לסל הנכון. כל פריט שייך לקטגוריה אחת: דינוזאורים, חלל, מספרים או אותיות אנגלית.');
     
     const categories = [
         { name: 'דינוזאורים', emoji: '🦕', items: ['🦕', '🦖', '🦴'] },

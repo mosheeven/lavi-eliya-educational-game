@@ -6,7 +6,6 @@ window.addEventListener('load', () => {
     document.getElementById('btn-quiz').addEventListener('click', startQuizMode);
     document.getElementById('btn-math').addEventListener('click', startMathMode);
     
-    updateParentGuide('ברוכים הבאים למשחק הלימודי! בחרו מצב משחק כדי להתחיל. המשחק מלמד על דינוזאורים, חלל, מספרים ואנגלית.');
     speak('ברוכים הבאים למשחק הלימודי ללביא ואליה אבן');
 });
 

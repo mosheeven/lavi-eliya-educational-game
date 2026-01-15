@@ -94,11 +94,6 @@ function initStage() {
     stage.add(layer);
 }
 
-// Update parent guide
-function updateParentGuide(text) {
-    document.getElementById('parent-guide-text').textContent = text;
-}
-
 // Update score display
 function updateScore(newScore) {
     score = newScore;

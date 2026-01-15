@@ -4,7 +4,6 @@ function startPoppingMode() {
     initStage();
     showScore();
     updateScore(0);
-    updateParentGuide('עודדו את הילדים ללחוץ מהר על הבלונים לפני שהם נעלמים! כל לחיצה מוסיפה נקודה.');
     
     const items = ['🎈', '🎪', '🎨', '🎭', '🎯', '🎁', '⭐', '🌟', '💫', '✨'];
     let itemsPopped = 0;
