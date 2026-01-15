@@ -1,98 +1,111 @@
-// QUIZ MODE
+// ENGLISH LEARNING MODE - אנגלית
 function startQuizMode() {
     currentMode = 'quiz';
     initStage();
     hideScore();
     
-    const questions = [
-        {
-            question: 'איפה הדינוזאור?',
-            options: ['🦕', '🚀', '🐱', '🌳'],
-            correct: 0
-        },
-        {
-            question: 'כמה זה 1+1?',
-            options: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'],
-            correct: 1
-        },
-        {
-            question: 'איפה הירח?',
-            options: ['☀️', '🌙', '🌍', '⭐'],
-            correct: 1
-        },
-        {
-            question: 'איפה הרקטה?',
-            options: ['🚗', '✈️', '🚀', '🚢'],
-            correct: 2
-        },
-        {
-            question: 'כמה זה 2+2?',
-            options: ['2️⃣', '3️⃣', '4️⃣', '5️⃣'],
-            correct: 2
-        },
-        {
-            question: 'איפה הכוכב?',
-            options: ['⭐', '🌙', '☀️', '🌍'],
-            correct: 0
-        },
-        {
-            question: 'איפה האות A?',
-            options: ['🅰️', '🅱️', '🆎', '🔤'],
-            correct: 0
-        },
-        {
-            question: 'כמה זה 3+1?',
-            options: ['2️⃣', '3️⃣', '4️⃣', '5️⃣'],
-            correct: 2
-        }
+    // English words with emoji representations
+    const words = [
+        { word: 'CAT', emoji: '🐱', options: ['🐱', '🐶', '🐭', '🐰'] },
+        { word: 'DOG', emoji: '🐶', options: ['🐱', '🐶', '🐭', '🐰'] },
+        { word: 'TREE', emoji: '🌳', options: ['🌳', '🌸', '🌵', '🌻'] },
+        { word: 'FLOWER', emoji: '🌸', options: ['🌳', '🌸', '🌵', '🌻'] },
+        { word: 'SUN', emoji: '☀️', options: ['☀️', '🌙', '⭐', '☁️'] },
+        { word: 'MOON', emoji: '🌙', options: ['☀️', '🌙', '⭐', '☁️'] },
+        { word: 'STAR', emoji: '⭐', options: ['☀️', '🌙', '⭐', '☁️'] },
+        { word: 'APPLE', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'BANANA', emoji: '🍌', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'ORANGE', emoji: '🍊', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'CAR', emoji: '🚗', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'BUS', emoji: '🚌', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'BIKE', emoji: '🚲', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'PLANE', emoji: '✈️', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'HOUSE', emoji: '🏠', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { word: 'SCHOOL', emoji: '🏫', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { word: 'BALL', emoji: '⚽', options: ['⚽', '🏀', '🎾', '⚾'] },
+        { word: 'HEART', emoji: '❤️', options: ['❤️', '💙', '💚', '💛'] },
+        { word: 'BOOK', emoji: '📚', options: ['📚', '✏️', '📝', '🖍️'] },
+        { word: 'PIZZA', emoji: '🍕', options: ['🍕', '🍔', '🌭', '🍰'] }
     ];
     
-    let currentQuestion = 0;
+    // Shuffle and select 10 words
+    const selectedWords = words.sort(() => Math.random() - 0.5).slice(0, 10);
+    let currentWord = 0;
+    let correctAnswers = 0;
     
-    function showQuestion() {
+    function showWord() {
         layer.destroyChildren();
         
-        if (currentQuestion >= questions.length) {
-            // Quiz complete
+        if (currentWord >= selectedWords.length) {
+            // Session complete
             const finalText = new Konva.Text({
                 x: 0,
-                y: stage.height() / 2 - 50,
+                y: stage.height() / 2 - 80,
                 width: stage.width(),
-                text: 'כל הכבוד סיימתם את החידון',
-                fontSize: 40,
+                text: 'כל הכבוד',
+                fontSize: 50,
                 fontFamily: 'Arial',
                 fill: '#667eea',
-                align: 'center'
+                align: 'center',
+                fontStyle: 'bold'
             });
             layer.add(finalText);
+            
+            const scoreText = new Konva.Text({
+                x: 0,
+                y: stage.height() / 2,
+                width: stage.width(),
+                text: `ענית נכון על ${correctAnswers} מתוך ${selectedWords.length} מילים`,
+                fontSize: 30,
+                fontFamily: 'Arial',
+                fill: '#764ba2',
+                align: 'center'
+            });
+            layer.add(scoreText);
+            
             layer.draw();
             playWinSound();
-            speak('כל הכבוד סיימתם את החידון');
+            speak(`כל הכבוד ענית נכון על ${correctAnswers} מתוך ${selectedWords.length} מילים`);
             return;
         }
         
-        const q = questions[currentQuestion];
+        const wordData = selectedWords[currentWord];
         
-        // Question text
-        const questionText = new Konva.Text({
+        // Instruction text
+        const instructionText = new Konva.Text({
             x: 50,
-            y: 50,
+            y: 60,
             width: stage.width() - 100,
-            text: q.question,
-            fontSize: 36,
+            text: 'מצא את האימוג׳י הנכון',
+            fontSize: 28,
             fontFamily: 'Arial',
             fill: '#333',
             align: 'center',
             fontStyle: 'bold'
         });
-        layer.add(questionText);
+        layer.add(instructionText);
+        
+        // English word - large and centered, LTR
+        const ltrMark = '\u200E';
+        const wordText = new Konva.Text({
+            x: 50,
+            y: 120,
+            width: stage.width() - 100,
+            text: ltrMark + wordData.word + ltrMark,
+            fontSize: 70,
+            fontFamily: 'Arial',
+            fill: '#ec4899',
+            align: 'center',
+            fontStyle: 'bold'
+        });
+        layer.add(wordText);
         
         // Progress indicator
         const progressText = new Konva.Text({
             x: 50,
-            y: 120,
+            y: 20,
             width: stage.width() - 100,
-            text: `שאלה ${currentQuestion + 1} מתוך ${questions.length}`,
+            text: `מילה ${currentWord + 1} מתוך ${selectedWords.length}`,
             fontSize: 20,
             fontFamily: 'Arial',
             fill: '#666',
@@ -100,14 +113,17 @@ function startQuizMode() {
         });
         layer.add(progressText);
         
+        // Find correct answer index
+        const correctIndex = wordData.options.indexOf(wordData.emoji);
+        
         // Options grid (2x2)
         const gridSize = 2;
-        const cellWidth = 200;
-        const cellHeight = 200;
+        const cellWidth = 180;
+        const cellHeight = 180;
         const startX = (stage.width() - cellWidth * gridSize) / 2;
-        const startY = 200;
+        const startY = 250;
         
-        q.options.forEach((option, index) => {
+        wordData.options.forEach((emoji, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
             const x = startX + col * cellWidth;
@@ -122,14 +138,14 @@ function startQuizMode() {
                 width: cellWidth - 20,
                 height: cellHeight - 20,
                 fill: 'white',
-                stroke: '#764ba2',
+                stroke: '#ec4899',
                 strokeWidth: 4,
                 cornerRadius: 20
             });
             optionGroup.add(bg);
             
-            const emoji = new Konva.Text({
-                text: option,
+            const emojiText = new Konva.Text({
+                text: emoji,
                 fontSize: 80,
                 fontFamily: 'Arial',
                 width: cellWidth - 20,
@@ -137,19 +153,20 @@ function startQuizMode() {
                 align: 'center',
                 verticalAlign: 'middle'
             });
-            optionGroup.add(emoji);
+            optionGroup.add(emojiText);
             
             optionGroup.on('click tap', function() {
-                if (index === q.correct) {
+                if (index === correctIndex) {
                     // Correct answer
                     bg.fill('#4ade80');
                     layer.draw();
                     playWinSound();
                     speak('נכון כל הכבוד');
+                    correctAnswers++;
                     
                     setTimeout(() => {
-                        currentQuestion++;
-                        showQuestion();
+                        currentWord++;
+                        showWord();
                     }, 1500);
                 } else {
                     // Wrong answer
@@ -180,9 +197,17 @@ function startQuizMode() {
         
         layer.draw();
         
-        // Speak the question
-        setTimeout(() => speak(q.question), 500);
+        // Speak the English word
+        setTimeout(() => {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(wordData.word.toLowerCase());
+                utterance.lang = 'en-US';
+                utterance.rate = 0.7;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }, 500);
     }
     
-    showQuestion();
+    showWord();
 }

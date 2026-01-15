@@ -37,8 +37,8 @@ function startMathMode() {
         { question: '10 - 5', answer: 5, options: [4, 5, 6, 7] }
     ];
     
-    // Shuffle and select 8 problems
-    const selectedProblems = mathProblems.sort(() => Math.random() - 0.5).slice(0, 8);
+    // Shuffle and select 10 problems
+    const selectedProblems = mathProblems.sort(() => Math.random() - 0.5).slice(0, 10);
     let currentProblem = 0;
     let correctAnswers = 0;
     
