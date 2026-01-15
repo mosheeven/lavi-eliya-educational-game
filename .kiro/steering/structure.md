@@ -16,8 +16,7 @@ Modular architecture with separated concerns:
 │   └── js/
 │       ├── game.js              # Core game functions & state
 │       ├── sorting-mode.js      # Sorting game mode
-│       ├── popping-mode.js      # Popping game mode
-│       ├── quiz-mode.js         # Quiz game mode
+│       ├── quiz-mode.js         # English learning mode
 │       ├── math-mode.js         # Math game mode
 │       └── init.js              # Event listeners & initialization
 ├── README.md
@@ -30,14 +29,13 @@ Modular architecture with separated concerns:
 - `#game-container`: Main wrapper with header and canvas
 - `.game-header`: Title, player names, and mode selection buttons
 - `#canvas-container`: Konva stage rendering area
-- `.score-display`: Fixed position score overlay (shown in Popping mode)
-- `.parent-guide`: Fixed bottom panel with instructions for parents
+- `.score-display`: Fixed position score overlay (hidden by default)
 
 ### CSS Organization (src/css/styles.css)
 - RTL-specific styling throughout
 - Gradient background with purple theme (`#667eea`, `#764ba2`)
 - Responsive design with max-width constraints
-- Mode-specific button colors (green/sorting, orange/popping, pink/quiz, purple/math)
+- Mode-specific button colors (green/sorting, pink/english, purple/math)
 
 ### JavaScript Architecture
 
@@ -47,13 +45,11 @@ Modular architecture with separated concerns:
 - `playPopSound()`, `playWinSound()`, `playErrorSound()`: Sound generation
 - `speak(text)`: Hebrew TTS wrapper
 - `initStage()`: Create/reset Konva canvas
-- `updateParentGuide(text)`: Update instruction panel
 - `updateScore()`, `showScore()`, `hideScore()`: Score management
 
 **Game Mode Files:**
 - `sorting-mode.js`: `startSortingMode()` - Drag-and-drop categorization
-- `popping-mode.js`: `startPoppingMode()` - Timed balloon clicking
-- `quiz-mode.js`: `startQuizMode()` - Multiple-choice questions
+- `quiz-mode.js`: `startQuizMode()` - English word learning with emoji matching
 - `math-mode.js`: `startMathMode()` - Math problems (addition/subtraction)
 
 **init.js - Event Handlers:**
@@ -65,4 +61,3 @@ Modular architecture with separated concerns:
 - Emoji used extensively for visual communication
 - Audio feedback on all interactions (success/error/pop sounds)
 - Konva animations for smooth transitions
-- Parent guidance updates with each mode change
