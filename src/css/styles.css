@@ -263,11 +263,6 @@ body::before {
     color: white;
 }
 
-.mode-btn.puzzle { 
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-    color: white;
-}
-
 .mode-btn.coloring { 
     background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
     color: white;

@@ -31,7 +31,6 @@ window.addEventListener('load', () => {
         'btn-math': { mode: 'math', func: startMathMode },
         'btn-letters': { mode: 'letters', func: startLettersMode },
         'btn-memory': { mode: 'memory', func: startMemoryMode },
-        'btn-puzzle': { mode: 'puzzle', func: startPuzzleMode },
         'btn-coloring': { mode: 'coloring', func: startColoringMode }
     };
     
@@ -88,7 +87,6 @@ window.addEventListener('resize', () => {
         else if (currentMode === 'math') startMathMode();
         else if (currentMode === 'letters') startLettersMode();
         else if (currentMode === 'memory') startMemoryMode();
-        else if (currentMode === 'puzzle') startPuzzleMode();
         else if (currentMode === 'coloring') startColoringMode();
     }
 });
