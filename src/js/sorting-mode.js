@@ -100,6 +100,7 @@ function startSortingMode() {
                         // Correct placement
                         playWinSound();
                         speak(getCorrectMessage());
+                        addPoints(10); // Award 10 points
                         itemGroup.to({
                             x: basketX + basketWidth / 2,
                             y: basketY + basketHeight / 2,

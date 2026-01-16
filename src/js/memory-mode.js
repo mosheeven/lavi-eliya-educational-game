@@ -161,6 +161,7 @@ function startMemoryMode() {
                         
                         layer.draw();
                         playWinSound();
+                        addPoints(10); // Award 10 points
                         matchedPairs++;
                         
                         // Check if game complete

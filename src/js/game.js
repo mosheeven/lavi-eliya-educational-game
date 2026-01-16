@@ -5,6 +5,12 @@ let score = 0;
 let audioContext;
 let currentPlayer = null; // Track current player: 'לביא' or 'אליה'
 
+// Player scores - persistent across game modes
+let playerScores = {
+    'לביא': 0,
+    'אליה': 0
+};
+
 // Initialize audio context
 function initAudio() {
     if (!audioContext) {
@@ -141,4 +147,61 @@ function showScore() {
 
 function hideScore() {
     document.getElementById('score-display').style.display = 'none';
+}
+
+// Add points to current player's score
+function addPoints(points = 10) {
+    if (!currentPlayer) return;
+    
+    playerScores[currentPlayer] += points;
+    updatePlayerScoreDisplay();
+    showScoreAnimation(points);
+    playScoreSound();
+}
+
+// Update player score display in header
+function updatePlayerScoreDisplay() {
+    const laviaScore = document.getElementById('score-lavia');
+    const eliaScore = document.getElementById('score-elia');
+    
+    if (laviaScore) laviaScore.textContent = playerScores['לביא'];
+    if (eliaScore) eliaScore.textContent = playerScores['אליה'];
+}
+
+// Show animated score popup
+function showScoreAnimation(points) {
+    const popup = document.createElement('div');
+    popup.className = 'score-popup';
+    popup.textContent = `+${points} 🌟`;
+    document.body.appendChild(popup);
+    
+    // Remove after animation
+    setTimeout(() => {
+        popup.remove();
+    }, 1500);
+}
+
+// Play score sound effect
+function playScoreSound() {
+    initAudio();
+    
+    // Play a pleasant ascending tone
+    const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
+    frequencies.forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = freq;
+        oscillator.type = 'sine';
+        
+        const startTime = audioContext.currentTime + (index * 0.1);
+        gainNode.gain.setValueAtTime(0.2, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.2);
+    });
 }

@@ -179,6 +179,7 @@ function startLettersMode() {
                     layer.draw();
                     playWinSound();
                     speak(getCorrectMessage());
+                    addPoints(10); // Award 10 points
                     correctAnswers++;
                     
                     setTimeout(() => {

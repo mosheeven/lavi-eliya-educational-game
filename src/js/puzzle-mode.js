@@ -161,6 +161,7 @@ function startPuzzleMode() {
                         pieceBg.strokeWidth(6);
                         
                         playWinSound();
+                        addPoints(10); // Award 10 points
                         completedPieces++;
                         
                         // Check if puzzle complete
