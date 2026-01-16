@@ -183,7 +183,7 @@ function startPuzzleMode() {
                                 layer.draw();
                                 
                                 playWinSound();
-                                speak('מעולה השלמת את הפאזל');
+                                speak(getCorrectMessage() + ' השלמת את הפאזל');
                             }, 500);
                         }
                         

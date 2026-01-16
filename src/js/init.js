@@ -1,6 +1,30 @@
 // Initialize on load
 window.addEventListener('load', () => {
-    // Attach button event listeners
+    // Player selection buttons
+    const playerButtons = {
+        'btn-player-lavia': 'לביא',
+        'btn-player-elia': 'אליה'
+    };
+    
+    Object.keys(playerButtons).forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        
+        btn.addEventListener('click', () => {
+            // Set current player
+            currentPlayer = playerButtons[btnId];
+            
+            // Remove active class from all player buttons
+            document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            btn.classList.add('active');
+            
+            // Play sound and speak welcome
+            playPopSound();
+            speak(getWelcomeMessage());
+        });
+    });
+    
+    // Attach game mode button event listeners
     const buttons = {
         'btn-sorting': startSortingMode,
         'btn-quiz': startQuizMode,
@@ -40,7 +64,7 @@ window.addEventListener('load', () => {
         });
     });
     
-    speak('ברוכים הבאים למשחק הלימודי ללביא ואליה אבן');
+    speak(getWelcomeMessage());
 });
 
 // Handle window resize

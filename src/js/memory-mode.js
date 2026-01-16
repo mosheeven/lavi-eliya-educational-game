@@ -183,7 +183,7 @@ function startMemoryMode() {
                                 layer.draw();
                                 
                                 playWinSound();
-                                speak('מעולה מצאת את כל הזוגות');
+                                speak(getCorrectMessage() + ' מצאת את כל הזוגות');
                             }, 1000);
                         }
                         

@@ -191,7 +191,7 @@ function startQuizMode() {
                     bg.fill('#4ade80');
                     layer.draw();
                     playWinSound();
-                    speak('נכון כל הכבוד');
+                    speak(getCorrectMessage());
                     correctAnswers++;
                     
                     setTimeout(() => {
@@ -203,7 +203,7 @@ function startQuizMode() {
                     bg.fill('#ef4444');
                     layer.draw();
                     playErrorSound();
-                    speak('נסו שוב');
+                    speak(getWrongMessage());
                     
                     setTimeout(() => {
                         bg.fill('white');

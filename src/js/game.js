@@ -3,6 +3,7 @@ let stage, layer;
 let currentMode = null;
 let score = 0;
 let audioContext;
+let currentPlayer = null; // Track current player: 'לביא' or 'אליה'
 
 // Initialize audio context
 function initAudio() {
@@ -74,6 +75,36 @@ function speak(text) {
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
     }
+}
+
+// Personalized feedback messages
+function getCorrectMessage() {
+    const messages = [
+        'נכון כל הכבוד',
+        'מעולה',
+        'נכון מצוין',
+        'יפה מאוד',
+        'כל הכבוד'
+    ];
+    const baseMessage = messages[Math.floor(Math.random() * messages.length)];
+    return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;
+}
+
+function getWrongMessage() {
+    const messages = [
+        'נסו שוב',
+        'כמעט',
+        'לא נורא נסה שוב'
+    ];
+    const baseMessage = messages[Math.floor(Math.random() * messages.length)];
+    return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;
+}
+
+function getWelcomeMessage() {
+    if (currentPlayer) {
+        return `שלום ${currentPlayer} בואו נתחיל לשחק`;
+    }
+    return 'ברוכים הבאים למשחק הלימודי ללביא ואליה אבן';
 }
 
 // Initialize Konva stage

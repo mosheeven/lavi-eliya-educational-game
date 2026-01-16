@@ -99,7 +99,7 @@ function startSortingMode() {
                     if (cat.name === item.category) {
                         // Correct placement
                         playWinSound();
-                        speak('כל הכבוד');
+                        speak(getCorrectMessage());
                         itemGroup.to({
                             x: basketX + basketWidth / 2,
                             y: basketY + basketHeight / 2,
@@ -115,7 +115,7 @@ function startSortingMode() {
                     } else {
                         // Wrong placement
                         playErrorSound();
-                        speak('נסו שוב');
+                        speak(getWrongMessage());
                         itemGroup.to({
                             x: x,
                             y: y,
