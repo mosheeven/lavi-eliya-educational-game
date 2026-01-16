@@ -70,9 +70,13 @@ function playErrorSound() {
 // Text-to-Speech
 function speak(text) {
     if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
+        // Fix pronunciation of "אליה" to sound like "Eli-ya"
+        // Add a slight pause between syllables using SSML-like spacing
+        let spokenText = text.replace(/אליה/g, 'אלי-יה');
+        
+        const utterance = new SpeechSynthesisUtterance(spokenText);
         utterance.lang = 'he-IL';
-        utterance.rate = 0.9;
+        utterance.rate = 0.85; // Slightly slower for better pronunciation
         window.speechSynthesis.speak(utterance);
     }
 }
