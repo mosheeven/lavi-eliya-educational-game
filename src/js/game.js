@@ -11,6 +11,51 @@ let playerScores = {
     'אליה': 0
 };
 
+// Game mode titles
+const gameModeTitles = {
+    'sorting': '🗂️ מצב מיון',
+    'quiz': '🇬🇧 אנגלית',
+    'math': '🔢 חשבון',
+    'letters': '🔤 אותיות',
+    'memory': '🎯 זיכרון',
+    'puzzle': '🧩 פאזל',
+    'coloring': '🎨 צביעה'
+};
+
+// Page navigation
+function showHomePage() {
+    document.getElementById('home-page').style.display = 'block';
+    document.getElementById('game-page').style.display = 'none';
+    currentMode = null;
+    
+    // Clear active state from mode buttons
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+}
+
+function showGamePage(mode) {
+    document.getElementById('home-page').style.display = 'none';
+    document.getElementById('game-page').style.display = 'block';
+    
+    // Update game mode title
+    document.getElementById('game-mode-title').textContent = gameModeTitles[mode] || '';
+    
+    // Update current player display
+    updateCurrentPlayerDisplay();
+}
+
+function updateCurrentPlayerDisplay() {
+    const playerNameEl = document.getElementById('current-player-name');
+    const playerScoreEl = document.getElementById('current-player-score');
+    
+    if (currentPlayer) {
+        playerNameEl.textContent = currentPlayer;
+        playerScoreEl.textContent = playerScores[currentPlayer];
+    } else {
+        playerNameEl.textContent = 'בחר שחקן';
+        playerScoreEl.textContent = '0';
+    }
+}
+
 // Initialize audio context
 function initAudio() {
     if (!audioContext) {
@@ -155,6 +200,7 @@ function addPoints(points = 10) {
     
     playerScores[currentPlayer] += points;
     updatePlayerScoreDisplay();
+    updateCurrentPlayerDisplay(); // Update game page display
     showScoreAnimation(points);
     playScoreSound();
 }

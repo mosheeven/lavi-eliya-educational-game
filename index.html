@@ -13,64 +13,86 @@
     <link rel="stylesheet" href="src/css/styles.css">
 </head>
 <body>
-    <div id="game-container">
-        <div class="game-header">
-            <div class="game-title">🎮 משחק לימודי מיוחד 🎮</div>
-            <div class="player-names">ללביא ואליה אבן 💜✨</div>
-            
-            <!-- Player Selection -->
-            <div class="player-selection">
-                <div class="player-selection-title">מי משחק עכשיו?</div>
-                <div class="player-buttons">
-                    <button class="player-btn" id="btn-player-lavia" data-player="לביא">
-                        <span class="emoji">🦁</span>
-                        <span>לביא</span>
-                        <span class="player-score" id="score-lavia">0</span>
+    <!-- Home Page -->
+    <div id="home-page">
+        <div id="game-container">
+            <div class="game-header">
+                <div class="game-title">🎮 משחק לימודי מיוחד 🎮</div>
+                <div class="player-names">ללביא ואליה אבן 💜✨</div>
+                
+                <!-- Player Selection -->
+                <div class="player-selection">
+                    <div class="player-selection-title">מי משחק עכשיו?</div>
+                    <div class="player-buttons">
+                        <button class="player-btn" id="btn-player-lavia" data-player="לביא">
+                            <span class="emoji">🦁</span>
+                            <span>לביא</span>
+                            <span class="player-score" id="score-lavia">0</span>
+                        </button>
+                        <button class="player-btn" id="btn-player-elia" data-player="אליה">
+                            <span class="emoji">🌟</span>
+                            <span>אליה</span>
+                            <span class="player-score" id="score-elia">0</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mode-buttons">
+                    <button class="mode-btn sorting" id="btn-sorting">
+                        <span class="emoji">🗂️</span>
+                        <span>מצב מיון</span>
                     </button>
-                    <button class="player-btn" id="btn-player-elia" data-player="אליה">
-                        <span class="emoji">🌟</span>
-                        <span>אליה</span>
-                        <span class="player-score" id="score-elia">0</span>
+                    <button class="mode-btn quiz" id="btn-quiz">
+                        <span class="emoji">🇬🇧</span>
+                        <span>אנגלית</span>
+                    </button>
+                    <button class="mode-btn math" id="btn-math">
+                        <span class="emoji">🔢</span>
+                        <span>חשבון</span>
+                    </button>
+                    <button class="mode-btn letters" id="btn-letters">
+                        <span class="emoji">🔤</span>
+                        <span>אותיות</span>
+                    </button>
+                    <button class="mode-btn memory" id="btn-memory">
+                        <span class="emoji">🎯</span>
+                        <span>זיכרון</span>
+                    </button>
+                    <button class="mode-btn puzzle" id="btn-puzzle">
+                        <span class="emoji">🧩</span>
+                        <span>פאזל</span>
+                    </button>
+                    <button class="mode-btn coloring" id="btn-coloring">
+                        <span class="emoji">🎨</span>
+                        <span>צביעה</span>
                     </button>
                 </div>
             </div>
-            
-            <div class="mode-buttons">
-                <button class="mode-btn sorting" id="btn-sorting">
-                    <span class="emoji">🗂️</span>
-                    <span>מצב מיון</span>
-                </button>
-                <button class="mode-btn quiz" id="btn-quiz">
-                    <span class="emoji">🇬🇧</span>
-                    <span>אנגלית</span>
-                </button>
-                <button class="mode-btn math" id="btn-math">
-                    <span class="emoji">🔢</span>
-                    <span>חשבון</span>
-                </button>
-                <button class="mode-btn letters" id="btn-letters">
-                    <span class="emoji">🔤</span>
-                    <span>אותיות</span>
-                </button>
-                <button class="mode-btn memory" id="btn-memory">
-                    <span class="emoji">🎯</span>
-                    <span>זיכרון</span>
-                </button>
-                <button class="mode-btn puzzle" id="btn-puzzle">
-                    <span class="emoji">🧩</span>
-                    <span>פאזל</span>
-                </button>
-                <button class="mode-btn coloring" id="btn-coloring">
-                    <span class="emoji">🎨</span>
-                    <span>צביעה</span>
-                </button>
-            </div>
         </div>
-        
-        <div id="canvas-container"></div>
-        
-        <div class="score-display" id="score-display" style="display: none;">
-            ניקוד: <span id="score-value">0</span>
+    </div>
+
+    <!-- Game Page -->
+    <div id="game-page" style="display: none;">
+        <div id="game-container-play">
+            <div class="game-header-play">
+                <button class="back-btn" id="btn-back">
+                    <span class="emoji">🏠</span>
+                    <span>חזרה לבית</span>
+                </button>
+                
+                <div class="current-player-display" id="current-player-display">
+                    <span id="current-player-name"></span>
+                    <span class="player-score-display" id="current-player-score">0</span>
+                </div>
+                
+                <div class="game-mode-title" id="game-mode-title"></div>
+            </div>
+            
+            <div id="canvas-container"></div>
+            
+            <div class="score-display" id="score-display" style="display: none;">
+                ניקוד: <span id="score-value">0</span>
+            </div>
         </div>
     </div>
 

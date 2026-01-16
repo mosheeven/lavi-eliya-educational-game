@@ -26,17 +26,18 @@ window.addEventListener('load', () => {
     
     // Attach game mode button event listeners
     const buttons = {
-        'btn-sorting': startSortingMode,
-        'btn-quiz': startQuizMode,
-        'btn-math': startMathMode,
-        'btn-letters': startLettersMode,
-        'btn-memory': startMemoryMode,
-        'btn-puzzle': startPuzzleMode,
-        'btn-coloring': startColoringMode
+        'btn-sorting': { mode: 'sorting', func: startSortingMode },
+        'btn-quiz': { mode: 'quiz', func: startQuizMode },
+        'btn-math': { mode: 'math', func: startMathMode },
+        'btn-letters': { mode: 'letters', func: startLettersMode },
+        'btn-memory': { mode: 'memory', func: startMemoryMode },
+        'btn-puzzle': { mode: 'puzzle', func: startPuzzleMode },
+        'btn-coloring': { mode: 'coloring', func: startColoringMode }
     };
     
     Object.keys(buttons).forEach(btnId => {
         const btn = document.getElementById(btnId);
+        const { mode, func } = buttons[btnId];
         
         // Click handler
         btn.addEventListener('click', () => {
@@ -44,8 +45,12 @@ window.addEventListener('load', () => {
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             // Add active class to clicked button
             btn.classList.add('active');
+            
+            // Navigate to game page
+            showGamePage(mode);
+            
             // Start the mode
-            buttons[btnId]();
+            func();
         });
         
         // Hover sound effect
@@ -62,6 +67,13 @@ window.addEventListener('load', () => {
                 oscillator.stop(audioContext.currentTime + 0.1);
             }
         });
+    });
+    
+    // Back button
+    const backBtn = document.getElementById('btn-back');
+    backBtn.addEventListener('click', () => {
+        showHomePage();
+        playPopSound();
     });
     
     speak(getWelcomeMessage());
