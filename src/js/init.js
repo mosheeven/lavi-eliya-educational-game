@@ -32,7 +32,9 @@ window.addEventListener('load', () => {
         'btn-letters': { mode: 'letters', func: startLettersMode },
         'btn-memory': { mode: 'memory', func: startMemoryMode },
         'btn-coloring': { mode: 'coloring', func: startColoringMode },
-        'btn-spider': { mode: 'spider', func: startSpiderMode }
+        'btn-spider': { mode: 'spider', func: startSpiderMode },
+        'btn-patterns': { mode: 'patterns', func: startPatternsMode },
+        'btn-plant': { mode: 'plant', func: startPlantMode }
     };
     
     Object.keys(buttons).forEach(btnId => {
@@ -90,5 +92,7 @@ window.addEventListener('resize', () => {
         else if (currentMode === 'memory') startMemoryMode();
         else if (currentMode === 'coloring') startColoringMode();
         else if (currentMode === 'spider') startSpiderMode();
+        else if (currentMode === 'patterns') startPatternsMode();
+        else if (currentMode === 'plant') startPlantMode();
     }
 });

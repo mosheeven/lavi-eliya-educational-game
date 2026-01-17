@@ -273,6 +273,16 @@ body::before {
     color: white;
 }
 
+.mode-btn.patterns { 
+    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+    color: white;
+}
+
+.mode-btn.plant { 
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
 #canvas-container {
     background: white;
     border-radius: 30px;
