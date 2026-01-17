@@ -4,6 +4,9 @@ function startMemoryMode() {
     initStage();
     hideScore();
     
+    // Stop any ongoing speech when starting
+    stopSpeech();
+    
     // Emoji pairs for memory game
     const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮'];
     

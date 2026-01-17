@@ -4,6 +4,12 @@ function startSortingMode() {
     initStage();
     hideScore();
     
+    // Stop any ongoing speech when starting
+    stopSpeech();
+    
+    let isProcessingDrop = false; // Prevent multiple simultaneous drops
+    let isInitializing = true; // Prevent sounds during setup
+    
     const categories = [
         { name: 'דינוזאורים', emoji: '🦕', items: ['🦕', '🦖', '🦴'], color: '#10b981' },
         { name: 'חלל', emoji: '🚀', items: ['🚀', '🌙', '⭐', '🪐'], color: '#3b82f6' },
@@ -193,7 +199,9 @@ function startSortingMode() {
         });
         
         itemGroup.on('dragstart', function() {
-            playPopSound();
+            if (!isInitializing) {
+                playPopSound();
+            }
             itemGroup.moveToTop();
             itemGroup.to({
                 scaleX: 1.15,
@@ -203,6 +211,16 @@ function startSortingMode() {
         });
         
         itemGroup.on('dragend', function() {
+            // Prevent processing during initialization or multiple drops simultaneously
+            if (isInitializing || isProcessingDrop) {
+                itemGroup.to({
+                    x: x,
+                    y: y,
+                    duration: 0.3
+                });
+                return;
+            }
+            
             itemGroup.to({
                 scaleX: 1,
                 scaleY: 1,
@@ -222,6 +240,7 @@ function startSortingMode() {
                     
                     if (cat.name === item.category) {
                         // Correct placement - celebrate!
+                        isProcessingDrop = true;
                         playWinSound();
                         speak(getCorrectMessage());
                         addPoints(10);
@@ -242,6 +261,7 @@ function startSortingMode() {
                                     onFinish: () => {
                                         itemGroup.destroy();
                                         layer.draw();
+                                        isProcessingDrop = false; // Reset after animation
                                         
                                         // Check if all items are sorted
                                         const remainingItems = layer.find('Group').filter(g => g.draggable());
@@ -257,6 +277,7 @@ function startSortingMode() {
                         placed = true;
                     } else {
                         // Wrong placement - shake and return
+                        isProcessingDrop = true;
                         playErrorSound();
                         speak(getWrongMessage());
                         
@@ -278,7 +299,10 @@ function startSortingMode() {
                                                 itemGroup.to({
                                                     x: x,
                                                     y: y,
-                                                    duration: 0.3
+                                                    duration: 0.3,
+                                                    onFinish: () => {
+                                                        isProcessingDrop = false; // Reset after animation
+                                                    }
                                                 });
                                             }
                                         });
@@ -305,5 +329,10 @@ function startSortingMode() {
     });
     
     layer.draw();
-    speak('גררו את הפריטים לסלים המתאימים');
+    
+    // Allow interactions after initialization
+    setTimeout(() => {
+        isInitializing = false;
+        speak('גררו את הפריטים לסלים המתאימים');
+    }, 100);
 }
