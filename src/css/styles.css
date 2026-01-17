@@ -268,6 +268,11 @@ body::before {
     color: white;
 }
 
+.mode-btn.spider { 
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    color: white;
+}
+
 #canvas-container {
     background: white;
     border-radius: 30px;

@@ -29,7 +29,8 @@ const gameModeTitles = {
     'math': '🔢 חשבון',
     'letters': '🔤 אותיות',
     'memory': '🎯 זיכרון',
-    'coloring': '🎨 צביעה'
+    'coloring': '🎨 צביעה',
+    'spider': '🕷️ עכביש'
 };
 
 // Page navigation
