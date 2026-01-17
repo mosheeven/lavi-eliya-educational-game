@@ -247,6 +247,19 @@ function startSpiderMode() {
         const numFlies = 15;
         const flies = [];
         
+        // Debug: Check if we have web lines
+        console.log('Web lines count:', webLines.length);
+        if (webLines.length === 0) {
+            speak('אין רשת! צייר רשת קודם');
+            gamePhase = 'drawing';
+            spider.draggable(true);
+            releaseBtn.fill('#22c55e');
+            releaseBtnText.text('🪰 שחרר זבובים! 🪰');
+            restartBtnGroup.visible(false);
+            layer.draw();
+            return;
+        }
+        
         // Create flies at random positions
         for (let i = 0; i < numFlies; i++) {
             setTimeout(() => {
@@ -284,7 +297,7 @@ function startSpiderMode() {
             frameCount++;
             
             flies.forEach(fly => {
-                if (fly.isDestroyed()) return;
+                if (!fly || fly.destroyed) return;
                 
                 // Move fly
                 fly.x(fly.x() + fly.vx);
@@ -298,11 +311,13 @@ function startSpiderMode() {
                     fly.vy *= -1;
                 }
                 
-                // Check collision with web lines (just for sticking, not counting yet)
+                // Check collision with web lines and count immediately
                 if (!fly.caught) {
                     webLines.forEach(line => {
                         if (checkFlyWebCollision(fly, line)) {
                             fly.caught = true;
+                            gameScore++;
+                            scoreText.text(`זבובים שנתפסו: ${gameScore}`);
                             
                             // Stick to web
                             fly.vx = 0;
@@ -313,6 +328,40 @@ function startSpiderMode() {
                                 rotation: Math.random() * 360,
                                 duration: 0.3
                             });
+                            
+                            // Visual feedback when caught
+                            playWinSound();
+                            
+                            const flash = new Konva.Circle({
+                                x: fly.x(),
+                                y: fly.y(),
+                                radius: 30,
+                                fill: '#22c55e',
+                                opacity: 0.8
+                            });
+                            layer.add(flash);
+                            flash.to({
+                                radius: 60,
+                                opacity: 0,
+                                duration: 0.5,
+                                onFinish: () => flash.destroy()
+                            });
+                            
+                            const successText = new Konva.Text({
+                                x: fly.x() - 20,
+                                y: fly.y() - 50,
+                                text: '✓',
+                                fontSize: 40,
+                                fill: '#22c55e',
+                                fontStyle: 'bold'
+                            });
+                            layer.add(successText);
+                            successText.to({
+                                y: fly.y() - 80,
+                                opacity: 0,
+                                duration: 0.8,
+                                onFinish: () => successText.destroy()
+                            });
                         }
                     });
                 }
@@ -321,7 +370,7 @@ function startSpiderMode() {
             // End animation after time limit
             if (frameCount >= maxFrames) {
                 anim.stop();
-                checkAndShowResults(flies);
+                showFinalResults(flies.length);
             }
             
             layer.batchDraw();
@@ -335,7 +384,7 @@ function startSpiderMode() {
         const points = line.points();
         const flyX = fly.x();
         const flyY = fly.y();
-        const threshold = 25;
+        const threshold = 35; // Increased from 25 for easier catching
         
         // Check distance to each line segment
         for (let i = 0; i < points.length - 2; i += 2) {
@@ -371,98 +420,8 @@ function startSpiderMode() {
         return Math.sqrt((px - closestX) * (px - closestX) + (py - closestY) * (py - closestY));
     }
     
-    // Check final positions and show feedback
-    function checkAndShowResults(flies) {
-        const totalFlies = flies.length;
-        gameScore = 0;
-        
-        // Check each fly's final position
-        flies.forEach((fly, index) => {
-            setTimeout(() => {
-                let isCaught = false;
-                
-                // Check if fly is on any web line
-                webLines.forEach(line => {
-                    if (checkFlyWebCollision(fly, line)) {
-                        isCaught = true;
-                    }
-                });
-                
-                if (isCaught) {
-                    // Success feedback
-                    gameScore++;
-                    scoreText.text(`זבובים שנתפסו: ${gameScore}`);
-                    
-                    playWinSound();
-                    
-                    // Visual feedback - green flash
-                    const flash = new Konva.Circle({
-                        x: fly.x(),
-                        y: fly.y(),
-                        radius: 30,
-                        fill: '#22c55e',
-                        opacity: 0.8
-                    });
-                    layer.add(flash);
-                    flash.to({
-                        radius: 60,
-                        opacity: 0,
-                        duration: 0.5,
-                        onFinish: () => flash.destroy()
-                    });
-                    
-                    // Success checkmark
-                    const successText = new Konva.Text({
-                        x: fly.x() - 20,
-                        y: fly.y() - 50,
-                        text: '✓',
-                        fontSize: 40,
-                        fill: '#22c55e',
-                        fontStyle: 'bold'
-                    });
-                    layer.add(successText);
-                    successText.to({
-                        y: fly.y() - 80,
-                        opacity: 0,
-                        duration: 0.8,
-                        onFinish: () => successText.destroy()
-                    });
-                } else {
-                    // Failure feedback
-                    playErrorSound();
-                    
-                    // Visual feedback - red X
-                    const failText = new Konva.Text({
-                        x: fly.x() - 20,
-                        y: fly.y() - 50,
-                        text: '✗',
-                        fontSize: 40,
-                        fill: '#ef4444',
-                        fontStyle: 'bold'
-                    });
-                    layer.add(failText);
-                    failText.to({
-                        y: fly.y() - 80,
-                        opacity: 0,
-                        duration: 0.8,
-                        onFinish: () => failText.destroy()
-                    });
-                }
-                
-                layer.draw();
-                
-                // Show final results after checking all flies
-                if (index === flies.length - 1) {
-                    setTimeout(() => {
-                        showResults(totalFlies);
-                    }, 1000);
-                }
-            }, index * 150);
-        });
-    }
-    
-    // Show results
-    function showResults(totalFlies) {
+    // Show final results
+    function showFinalResults(totalFlies) {
         const percentage = Math.round((gameScore / totalFlies) * 100);
         
         // Overlay
