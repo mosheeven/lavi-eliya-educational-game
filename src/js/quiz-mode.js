@@ -165,6 +165,10 @@ function startQuizMode() {
         
         const wordData = selectedWords[currentWord];
         
+        // Randomize options array to prevent answer always being in same position
+        const shuffledOptions = [...wordData.options].sort(() => Math.random() - 0.5);
+        const correctAnswer = wordData.emoji;
+        
         // Instruction text
         const instructionText = new Konva.Text({
             x: 50,
@@ -207,8 +211,8 @@ function startQuizMode() {
         });
         layer.add(progressText);
         
-        // Find correct answer index
-        const correctIndex = wordData.options.indexOf(wordData.emoji);
+        // Find correct answer index in shuffled options
+        const correctIndex = shuffledOptions.indexOf(correctAnswer);
         
         // Options grid (2x2)
         const gridSize = 2;
@@ -217,7 +221,7 @@ function startQuizMode() {
         const startX = (stage.width() - cellWidth * gridSize) / 2;
         const startY = 250;
         
-        wordData.options.forEach((emoji, index) => {
+        shuffledOptions.forEach((emoji, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
             const x = startX + col * cellWidth;

@@ -283,6 +283,11 @@ body::before {
     color: white;
 }
 
+.mode-btn.numbers { 
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
 #canvas-container {
     background: white;
     border-radius: 30px;

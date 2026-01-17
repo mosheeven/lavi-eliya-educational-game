@@ -107,6 +107,10 @@ function startMathMode() {
         
         const problem = selectedProblems[currentProblem];
         
+        // Randomize options array to prevent answer always being in same position
+        const shuffledOptions = [...problem.options].sort(() => Math.random() - 0.5);
+        const correctAnswer = problem.answer;
+        
         // Problem text with large numbers
         const problemText = new Konva.Text({
             x: 50,
@@ -149,8 +153,8 @@ function startMathMode() {
         });
         layer.add(progressText);
         
-        // Find correct answer index
-        const correctIndex = problem.options.indexOf(problem.answer);
+        // Find correct answer index in shuffled options
+        const correctIndex = shuffledOptions.indexOf(correctAnswer);
         
         // Options grid (2x2)
         const gridSize = 2;
@@ -159,7 +163,7 @@ function startMathMode() {
         const startX = (stage.width() - cellWidth * gridSize) / 2;
         const startY = 250;
         
-        problem.options.forEach((option, index) => {
+        shuffledOptions.forEach((option, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
             const x = startX + col * cellWidth;

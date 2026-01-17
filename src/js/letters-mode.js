@@ -10,29 +10,59 @@ function startLettersMode() {
     // Hebrew letters with matching words and emojis
     const letters = [
         { letter: 'א', word: 'אריה', emoji: '🦁', options: ['🦁', '🐘', '🐻', '🐯'] },
+        { letter: 'א', word: 'אוטובוס', emoji: '🚌', options: ['🚌', '🚗', '🚲', '✈️'] },
+        { letter: 'א', word: 'אופניים', emoji: '🚲', options: ['🚲', '🚗', '🚌', '✈️'] },
         { letter: 'ב', word: 'בננה', emoji: '🍌', options: ['🍌', '🍎', '🍊', '🍇'] },
+        { letter: 'ב', word: 'בית', emoji: '🏠', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { letter: 'ב', word: 'בלון', emoji: '🎈', options: ['🎈', '🎁', '🎉', '🎊'] },
         { letter: 'ג', word: 'גמל', emoji: '🐫', options: ['🐫', '🐴', '🦒', '🐄'] },
+        { letter: 'ג', word: 'גבינה', emoji: '🧀', options: ['🧀', '🥛', '🍦', '🥤'] },
         { letter: 'ד', word: 'דג', emoji: '🐟', options: ['🐟', '🐠', '🦈', '🐙'] },
+        { letter: 'ד', word: 'דוב', emoji: '🐻', options: ['🐻', '🦁', '🐯', '🐼'] },
+        { letter: 'ד', word: 'דלת', emoji: '🚪', options: ['🚪', '🪟', '🏠', '🏢'] },
         { letter: 'ה', word: 'הר', emoji: '⛰️', options: ['⛰️', '🏔️', '🌋', '🏖️'] },
+        { letter: 'ה', word: 'הליקופטר', emoji: '🚁', options: ['🚁', '✈️', '🚀', '🚂'] },
         { letter: 'ו', word: 'ורד', emoji: '🌹', options: ['🌹', '🌻', '🌷', '🌸'] },
         { letter: 'ז', word: 'זברה', emoji: '🦓', options: ['🦓', '🦒', '🐴', '🦌'] },
+        { letter: 'ז', word: 'זוג', emoji: '👫', options: ['👫', '👨', '👩', '👶'] },
         { letter: 'ח', word: 'חתול', emoji: '🐱', options: ['🐱', '🐶', '🐭', '🐰'] },
+        { letter: 'ח', word: 'חלב', emoji: '🥛', options: ['🥛', '🧀', '🍦', '🥤'] },
+        { letter: 'ח', word: 'חלון', emoji: '🪟', options: ['🪟', '🚪', '🏠', '🏢'] },
         { letter: 'ט', word: 'טלפון', emoji: '📱', options: ['📱', '💻', '⌚', '📷'] },
+        { letter: 'ט', word: 'טיל', emoji: '🚀', options: ['🚀', '✈️', '🚁', '🚂'] },
         { letter: 'י', word: 'ירח', emoji: '🌙', options: ['🌙', '⭐', '☀️', '☁️'] },
+        { letter: 'י', word: 'יונה', emoji: '🕊️', options: ['🕊️', '🐦', '🦅', '🦆'] },
         { letter: 'כ', word: 'כלב', emoji: '🐶', options: ['🐶', '🐱', '🐭', '🐰'] },
+        { letter: 'כ', word: 'כוכב', emoji: '⭐', options: ['⭐', '🌙', '☀️', '☁️'] },
+        { letter: 'כ', word: 'כדור', emoji: '⚽', options: ['⚽', '🏀', '🎾', '⚾'] },
         { letter: 'ל', word: 'לב', emoji: '❤️', options: ['❤️', '💙', '💚', '💛'] },
+        { letter: 'ל', word: 'לחם', emoji: '🍞', options: ['🍞', '🥐', '🥖', '🥯'] },
         { letter: 'מ', word: 'מטוס', emoji: '✈️', options: ['✈️', '🚗', '🚌', '🚲'] },
+        { letter: 'מ', word: 'מכונית', emoji: '🚗', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { letter: 'מ', word: 'מתנה', emoji: '🎁', options: ['🎁', '🎈', '🎉', '🎊'] },
         { letter: 'ן', word: 'חלון', emoji: '🪟', options: ['🪟', '🚪', '🏠', '🏢'] },
         { letter: 'נ', word: 'נר', emoji: '🕯️', options: ['🕯️', '💡', '🔦', '🔥'] },
+        { letter: 'נ', word: 'נחש', emoji: '🐍', options: ['🐍', '🐢', '🦎', '🐊'] },
         { letter: 'ס', word: 'סוס', emoji: '🐴', options: ['🐴', '🦓', '🦒', '🐄'] },
+        { letter: 'ס', word: 'ספר', emoji: '📚', options: ['📚', '✏️', '📝', '🖍️'] },
         { letter: 'ע', word: 'עץ', emoji: '🌳', options: ['🌳', '🌲', '🌴', '🌵'] },
+        { letter: 'ע', word: 'עוגה', emoji: '🍰', options: ['🍰', '🍪', '🍩', '🧁'] },
+        { letter: 'ע', word: 'ענן', emoji: '☁️', options: ['☁️', '☀️', '🌙', '⭐'] },
         { letter: 'פ', word: 'פיל', emoji: '🐘', options: ['🐘', '🦏', '🦛', '🐃'] },
+        { letter: 'פ', word: 'פרח', emoji: '🌸', options: ['🌸', '🌹', '🌻', '🌷'] },
         { letter: 'ץ', word: 'עץ', emoji: '🌳', options: ['🌳', '🌲', '🌴', '🌵'] },
         { letter: 'צ', word: 'צב', emoji: '🐢', options: ['🐢', '🐸', '🦎', '🐊'] },
+        { letter: 'צ', word: 'צבע', emoji: '🎨', options: ['🎨', '🖌️', '✏️', '🖍️'] },
+        { letter: 'צ', word: 'ציפור', emoji: '🐦', options: ['🐦', '🦅', '🦆', '🦉'] },
         { letter: 'ק', word: 'קוף', emoji: '🐵', options: ['🐵', '🦍', '🐒', '🦧'] },
+        { letter: 'ק', word: 'קשת', emoji: '🌈', options: ['🌈', '⚡', '🌪️', '🌤️'] },
         { letter: 'ר', word: 'רכבת', emoji: '🚂', options: ['🚂', '🚗', '🚌', '✈️'] },
+        { letter: 'ר', word: 'רקטה', emoji: '🚀', options: ['🚀', '✈️', '🚁', '🚂'] },
         { letter: 'ש', word: 'שמש', emoji: '☀️', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { letter: 'ת', word: 'תפוח', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] }
+        { letter: 'ש', word: 'שעון', emoji: '⏰', options: ['⏰', '⌚', '⏱️', '⏳'] },
+        { letter: 'ש', word: 'שוקולד', emoji: '🍫', options: ['🍫', '🍪', '🍩', '🧁'] },
+        { letter: 'ת', word: 'תפוח', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { letter: 'ת', word: 'תרנגול', emoji: '🐔', options: ['🐔', '🐓', '🦃', '🦆'] }
     ];
     
     // Shuffle and select 10 letters
@@ -98,6 +128,10 @@ function startLettersMode() {
         }
         
         const letterData = selectedLetters[currentLetter];
+        
+        // Randomize options array to prevent answer always being in same position
+        const shuffledOptions = [...letterData.options].sort(() => Math.random() - 0.5);
+        const correctAnswer = letterData.emoji;
         
         // Progress bar background
         const progressBg = new Konva.Rect({
@@ -205,8 +239,8 @@ function startLettersMode() {
         });
         layer.add(letterText);
         
-        // Find correct answer index
-        const correctIndex = letterData.options.indexOf(letterData.emoji);
+        // Find correct answer index in shuffled options
+        const correctIndex = shuffledOptions.indexOf(correctAnswer);
         
         // Options grid (2x2) with responsive design
         const gridSize = 2;
@@ -217,12 +251,11 @@ function startLettersMode() {
         const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize, (availableHeight - gap) / gridSize);
         const cellHeight = cellWidth; // Keep square
         const totalGridWidth = cellWidth * gridSize + gap;
-        const totalGridHeight = cellHeight * gridSize + gap;
         const startX = (stage.width() - totalGridWidth) / 2;
         // Position grid below the letter circle with proper spacing
         const startY = letterCircleY + letterCircleRadius + 30;
         
-        letterData.options.forEach((emoji, index) => {
+        shuffledOptions.forEach((emoji, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
             const x = startX + col * (cellWidth + gap);
