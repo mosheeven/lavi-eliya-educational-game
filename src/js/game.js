@@ -11,6 +11,17 @@ let playerScores = {
     'אליה': 0
 };
 
+// Sound rate limiting - prevent overlapping sounds
+let lastSoundTime = {
+    pop: 0,
+    win: 0,
+    error: 0,
+    score: 0,
+    speech: 0
+};
+const SOUND_COOLDOWN = 150; // milliseconds between same sound type
+const SPEECH_COOLDOWN = 300; // milliseconds between speech calls
+
 // Game mode titles
 const gameModeTitles = {
     'sorting': '🗂️ מצב מיון',
@@ -68,8 +79,14 @@ function initAudio() {
     }
 }
 
-// Sound effects with proper cleanup
+// Sound effects with proper cleanup and rate limiting
 function playPopSound() {
+    const now = Date.now();
+    if (now - lastSoundTime.pop < SOUND_COOLDOWN) {
+        return; // Skip if called too soon
+    }
+    lastSoundTime.pop = now;
+    
     initAudio();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -97,6 +114,12 @@ function playPopSound() {
 }
 
 function playWinSound() {
+    const now = Date.now();
+    if (now - lastSoundTime.win < SOUND_COOLDOWN) {
+        return; // Skip if called too soon
+    }
+    lastSoundTime.win = now;
+    
     initAudio();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -124,6 +147,12 @@ function playWinSound() {
 }
 
 function playErrorSound() {
+    const now = Date.now();
+    if (now - lastSoundTime.error < SOUND_COOLDOWN) {
+        return; // Skip if called too soon
+    }
+    lastSoundTime.error = now;
+    
     initAudio();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -150,9 +179,15 @@ function playErrorSound() {
     };
 }
 
-// Text-to-Speech with proper cleanup
+// Text-to-Speech with proper cleanup and rate limiting
 function speak(text) {
     if ('speechSynthesis' in window) {
+        const now = Date.now();
+        if (now - lastSoundTime.speech < SPEECH_COOLDOWN) {
+            return; // Skip if called too soon
+        }
+        lastSoundTime.speech = now;
+        
         // Cancel any ongoing speech to prevent overlapping
         window.speechSynthesis.cancel();
         
@@ -274,8 +309,14 @@ function showScoreAnimation(points) {
     }, 1500);
 }
 
-// Play score sound effect with proper cleanup
+// Play score sound effect with proper cleanup and rate limiting
 function playScoreSound() {
+    const now = Date.now();
+    if (now - lastSoundTime.score < SOUND_COOLDOWN) {
+        return; // Skip if called too soon
+    }
+    lastSoundTime.score = now;
+    
     initAudio();
     
     // Play a pleasant ascending tone
