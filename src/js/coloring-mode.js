@@ -39,7 +39,7 @@ function startColoringMode() {
     });
     layer.add(drawingArea);
     
-    // Color palette
+    // Color palette with responsive sizing
     const colors = [
         { color: '#000000', name: 'שחור' },
         { color: '#ef4444', name: 'אדום' },
@@ -54,10 +54,13 @@ function startColoringMode() {
     ];
     
     const paletteY = stage.height() - 90;
-    const colorSize = 50;
-    const colorGap = 10;
-    const paletteWidth = colors.length * (colorSize + colorGap);
-    const paletteStartX = (stage.width() - paletteWidth) / 2;
+    const colorGap = 5;
+    const maxColorSize = 50;
+    const totalButtons = colors.length + 2; // colors + eraser + clear
+    const availableWidth = stage.width() - 40; // 20px padding on each side
+    const colorSize = Math.min(maxColorSize, (availableWidth - (totalButtons - 1) * colorGap) / totalButtons);
+    const paletteWidth = colors.length * (colorSize + colorGap) - colorGap;
+    const paletteStartX = 20; // Start from left with padding
     
     colors.forEach((colorData, index) => {
         const x = paletteStartX + index * (colorSize + colorGap);
@@ -136,7 +139,7 @@ function startColoringMode() {
     });
     
     // Eraser button
-    const eraserX = paletteStartX + colors.length * (colorSize + colorGap) + 20;
+    const eraserX = paletteStartX + colors.length * (colorSize + colorGap);
     const eraserGroup = new Konva.Group({
         x: eraserX,
         y: paletteY
@@ -158,7 +161,7 @@ function startColoringMode() {
     
     const eraserText = new Konva.Text({
         text: '🧹',
-        fontSize: 30,
+        fontSize: Math.min(30, colorSize * 0.6),
         width: colorSize,
         height: colorSize,
         align: 'center',
@@ -184,7 +187,7 @@ function startColoringMode() {
     layer.add(eraserGroup);
     
     // Clear button
-    const clearX = eraserX + colorSize + 20;
+    const clearX = eraserX + colorSize + colorGap;
     const clearGroup = new Konva.Group({
         x: clearX,
         y: paletteY
@@ -206,7 +209,7 @@ function startColoringMode() {
     
     const clearText = new Konva.Text({
         text: '🗑️',
-        fontSize: 30,
+        fontSize: Math.min(30, colorSize * 0.6),
         width: colorSize,
         height: colorSize,
         align: 'center',
