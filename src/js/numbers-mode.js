@@ -204,22 +204,18 @@ function startNumbersMode() {
         // Find correct answer index in shuffled options
         const correctIndex = shuffledOptions.indexOf(correctAnswer);
         
-        // Options grid (2x2) with responsive design
+        // Options grid (2x2) - matching quiz/math game layout
         const gridSize = 2;
-        const gap = 15;
-        const maxCellSize = 160;
-        const availableWidth = stage.width() - 40;
-        const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize);
-        const cellHeight = cellWidth;
-        const totalGridWidth = cellWidth * gridSize + gap;
-        const startX = (stage.width() - totalGridWidth) / 2;
-        const startY = Math.max(emojiDisplayY + 150, stage.height() - cellHeight * 2 - gap - 40);
+        const cellWidth = 180;
+        const cellHeight = 180;
+        const startX = (stage.width() - cellWidth * gridSize) / 2;
+        const startY = 280; // Lower position to fit in 600px canvas
         
         shuffledOptions.forEach((num, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
-            const x = startX + col * (cellWidth + gap);
-            const y = startY + row * (cellHeight + gap);
+            const x = startX + col * cellWidth;
+            const y = startY + row * cellHeight;
             
             const optionGroup = new Konva.Group({
                 x: x,
@@ -230,8 +226,8 @@ function startNumbersMode() {
             const shadow = new Konva.Rect({
                 x: 5,
                 y: 5,
-                width: cellWidth,
-                height: cellHeight,
+                width: cellWidth - 20,
+                height: cellHeight - 20,
                 fill: 'rgba(0, 0, 0, 0.15)',
                 cornerRadius: 25,
                 blur: 10
@@ -240,10 +236,10 @@ function startNumbersMode() {
             
             // Background with gradient
             const bg = new Konva.Rect({
-                width: cellWidth,
-                height: cellHeight,
+                width: cellWidth - 20,
+                height: cellHeight - 20,
                 fillLinearGradientStartPoint: { x: 0, y: 0 },
-                fillLinearGradientEndPoint: { x: 0, y: cellHeight },
+                fillLinearGradientEndPoint: { x: 0, y: cellHeight - 20 },
                 fillLinearGradientColorStops: [0, 'white', 1, '#f9fafb'],
                 stroke: '#8b5cf6',
                 strokeWidth: 5,
@@ -257,11 +253,11 @@ function startNumbersMode() {
             // Number - large and bold
             const numberText = new Konva.Text({
                 text: num.toString(),
-                fontSize: Math.min(100, cellWidth * 0.6),
+                fontSize: 90,
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
-                width: cellWidth,
-                height: cellHeight,
+                width: cellWidth - 20,
+                height: cellHeight - 20,
                 align: 'center',
                 verticalAlign: 'middle',
                 fill: '#6366f1'
@@ -339,7 +335,7 @@ function startNumbersMode() {
                     setTimeout(() => {
                         bg.fill('white');
                         bg.fillLinearGradientStartPoint({ x: 0, y: 0 });
-                        bg.fillLinearGradientEndPoint({ x: 0, y: cellHeight });
+                        bg.fillLinearGradientEndPoint({ x: 0, y: cellHeight - 20 });
                         bg.fillLinearGradientColorStops([0, 'white', 1, '#f9fafb']);
                         bg.stroke('#8b5cf6');
                         layer.draw();
