@@ -4,39 +4,13 @@ function startQuizMode() {
     initStage();
     hideScore();
     
-    // English words with emoji representations
+    // Expanded English words with emoji representations (80+ words)
     const words = [
+        // Animals
         { word: 'CAT', emoji: '🐱', options: ['🐱', '🐶', '🐭', '🐰'] },
         { word: 'DOG', emoji: '🐶', options: ['🐱', '🐶', '🐭', '🐰'] },
         { word: 'MOUSE', emoji: '🐭', options: ['🐱', '🐶', '🐭', '🐰'] },
         { word: 'RABBIT', emoji: '🐰', options: ['🐱', '🐶', '🐭', '🐰'] },
-        { word: 'TREE', emoji: '🌳', options: ['🌳', '🌸', '🌵', '🌻'] },
-        { word: 'FLOWER', emoji: '🌸', options: ['🌳', '🌸', '🌵', '🌻'] },
-        { word: 'CACTUS', emoji: '🌵', options: ['🌳', '🌸', '🌵', '🌻'] },
-        { word: 'SUN', emoji: '☀️', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'MOON', emoji: '🌙', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'STAR', emoji: '⭐', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'CLOUD', emoji: '☁️', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'APPLE', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'BANANA', emoji: '🍌', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'ORANGE', emoji: '🍊', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'GRAPES', emoji: '🍇', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'CAR', emoji: '🚗', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'BUS', emoji: '🚌', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'BIKE', emoji: '🚲', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'PLANE', emoji: '✈️', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'HOUSE', emoji: '🏠', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'SCHOOL', emoji: '🏫', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'HOSPITAL', emoji: '🏥', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'STORE', emoji: '🏪', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'BALL', emoji: '⚽', options: ['⚽', '🏀', '🎾', '⚾'] },
-        { word: 'BASKETBALL', emoji: '🏀', options: ['⚽', '🏀', '🎾', '⚾'] },
-        { word: 'HEART', emoji: '❤️', options: ['❤️', '💙', '💚', '💛'] },
-        { word: 'BOOK', emoji: '📚', options: ['📚', '✏️', '📝', '🖍️'] },
-        { word: 'PENCIL', emoji: '✏️', options: ['📚', '✏️', '📝', '🖍️'] },
-        { word: 'PIZZA', emoji: '🍕', options: ['🍕', '🍔', '🌭', '🍰'] },
-        { word: 'BURGER', emoji: '🍔', options: ['🍕', '🍔', '🌭', '🍰'] },
-        { word: 'CAKE', emoji: '🍰', options: ['🍕', '🍔', '🌭', '🍰'] },
         { word: 'FISH', emoji: '🐟', options: ['🐟', '🐠', '🦈', '🐙'] },
         { word: 'SHARK', emoji: '🦈', options: ['🐟', '🐠', '🦈', '🐙'] },
         { word: 'BIRD', emoji: '🐦', options: ['🐦', '🦅', '🦆', '🦉'] },
@@ -44,25 +18,113 @@ function startQuizMode() {
         { word: 'OWL', emoji: '🦉', options: ['🐦', '🦅', '🦆', '🦉'] },
         { word: 'BEE', emoji: '🐝', options: ['🐝', '🦋', '🐞', '🐛'] },
         { word: 'BUTTERFLY', emoji: '🦋', options: ['🐝', '🦋', '🐞', '🐛'] },
+        { word: 'LION', emoji: '🦁', options: ['🦁', '🐯', '🐻', '🐼'] },
+        { word: 'TIGER', emoji: '🐯', options: ['🦁', '🐯', '🐻', '🐼'] },
+        { word: 'BEAR', emoji: '🐻', options: ['🦁', '🐯', '🐻', '🐼'] },
+        { word: 'PANDA', emoji: '🐼', options: ['🦁', '🐯', '🐻', '🐼'] },
+        { word: 'ELEPHANT', emoji: '🐘', options: ['🐘', '🦒', '🦏', '🦛'] },
+        { word: 'GIRAFFE', emoji: '🦒', options: ['🐘', '🦒', '🦏', '🦛'] },
+        { word: 'MONKEY', emoji: '🐵', options: ['🐵', '🦍', '🐨', '🦘'] },
+        { word: 'KOALA', emoji: '🐨', options: ['🐵', '🦍', '🐨', '🦘'] },
+        { word: 'FROG', emoji: '🐸', options: ['🐸', '🐢', '🦎', '🐍'] },
+        { word: 'TURTLE', emoji: '🐢', options: ['🐸', '🐢', '🦎', '🐍'] },
+        
+        // Nature
+        { word: 'TREE', emoji: '🌳', options: ['🌳', '🌸', '🌵', '🌻'] },
+        { word: 'FLOWER', emoji: '🌸', options: ['🌳', '🌸', '🌵', '🌻'] },
+        { word: 'CACTUS', emoji: '🌵', options: ['🌳', '🌸', '🌵', '🌻'] },
+        { word: 'SUN', emoji: '☀️', options: ['☀️', '🌙', '⭐', '☁️'] },
+        { word: 'MOON', emoji: '🌙', options: ['☀️', '🌙', '⭐', '☁️'] },
+        { word: 'STAR', emoji: '⭐', options: ['☀️', '🌙', '⭐', '☁️'] },
+        { word: 'CLOUD', emoji: '☁️', options: ['☀️', '🌙', '⭐', '☁️'] },
         { word: 'FIRE', emoji: '🔥', options: ['🔥', '💧', '🌊', '❄️'] },
         { word: 'WATER', emoji: '💧', options: ['🔥', '💧', '🌊', '❄️'] },
         { word: 'SNOW', emoji: '❄️', options: ['🔥', '💧', '🌊', '❄️'] },
         { word: 'RAINBOW', emoji: '🌈', options: ['🌈', '⚡', '🌪️', '🌤️'] },
         { word: 'LIGHTNING', emoji: '⚡', options: ['🌈', '⚡', '🌪️', '🌤️'] },
+        
+        // Food
+        { word: 'APPLE', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'BANANA', emoji: '🍌', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'ORANGE', emoji: '🍊', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'GRAPES', emoji: '🍇', options: ['🍎', '🍌', '🍊', '🍇'] },
+        { word: 'PIZZA', emoji: '🍕', options: ['🍕', '🍔', '🌭', '🍰'] },
+        { word: 'BURGER', emoji: '🍔', options: ['🍕', '🍔', '🌭', '🍰'] },
+        { word: 'CAKE', emoji: '🍰', options: ['🍕', '🍔', '🌭', '🍰'] },
+        { word: 'BREAD', emoji: '🍞', options: ['🍞', '🥐', '🥖', '🥯'] },
+        { word: 'CHEESE', emoji: '🧀', options: ['🧀', '🥛', '🍦', '🥤'] },
+        { word: 'MILK', emoji: '🥛', options: ['🧀', '🥛', '🍦', '🥤'] },
+        { word: 'ICE CREAM', emoji: '🍦', options: ['🧀', '🥛', '🍦', '🥤'] },
+        { word: 'COOKIE', emoji: '🍪', options: ['🍪', '🍩', '🧁', '🍫'] },
+        { word: 'DONUT', emoji: '🍩', options: ['🍪', '🍩', '🧁', '🍫'] },
+        { word: 'CHOCOLATE', emoji: '🍫', options: ['🍪', '🍩', '🧁', '🍫'] },
+        
+        // Transportation
+        { word: 'CAR', emoji: '🚗', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'BUS', emoji: '🚌', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'BIKE', emoji: '🚲', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'PLANE', emoji: '✈️', options: ['🚗', '🚌', '🚲', '✈️'] },
+        { word: 'TRAIN', emoji: '🚂', options: ['🚂', '🚁', '🚢', '🚀'] },
+        { word: 'HELICOPTER', emoji: '🚁', options: ['🚂', '🚁', '🚢', '🚀'] },
+        { word: 'SHIP', emoji: '🚢', options: ['🚂', '🚁', '🚢', '🚀'] },
+        { word: 'ROCKET', emoji: '🚀', options: ['🚂', '🚁', '🚢', '🚀'] },
+        
+        // Buildings
+        { word: 'HOUSE', emoji: '🏠', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { word: 'SCHOOL', emoji: '🏫', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { word: 'HOSPITAL', emoji: '🏥', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { word: 'STORE', emoji: '🏪', options: ['🏠', '🏫', '🏥', '🏪'] },
+        { word: 'CASTLE', emoji: '🏰', options: ['🏰', '🏛️', '🗼', '🌉'] },
+        
+        // Sports & Activities
+        { word: 'BALL', emoji: '⚽', options: ['⚽', '🏀', '🎾', '⚾'] },
+        { word: 'BASKETBALL', emoji: '🏀', options: ['⚽', '🏀', '🎾', '⚾'] },
+        { word: 'TENNIS', emoji: '🎾', options: ['⚽', '🏀', '🎾', '⚾'] },
+        { word: 'BASEBALL', emoji: '⚾', options: ['⚽', '🏀', '🎾', '⚾'] },
+        
+        // Objects
+        { word: 'HEART', emoji: '❤️', options: ['❤️', '💙', '💚', '💛'] },
+        { word: 'BOOK', emoji: '📚', options: ['📚', '✏️', '📝', '🖍️'] },
+        { word: 'PENCIL', emoji: '✏️', options: ['📚', '✏️', '📝', '🖍️'] },
         { word: 'GIFT', emoji: '🎁', options: ['🎁', '🎈', '🎉', '🎊'] },
         { word: 'BALLOON', emoji: '🎈', options: ['🎁', '🎈', '🎉', '🎊'] },
         { word: 'CROWN', emoji: '👑', options: ['👑', '💎', '🔑', '🎩'] },
         { word: 'KEY', emoji: '🔑', options: ['👑', '💎', '🔑', '🎩'] },
         { word: 'CLOCK', emoji: '⏰', options: ['⏰', '⌚', '⏱️', '⏳'] },
         { word: 'WATCH', emoji: '⌚', options: ['⏰', '⌚', '⏱️', '⏳'] },
-        { word: 'CAMERA', emoji: '📷', options: ['📷', '📱', '💻', '🖥️'] }
+        { word: 'CAMERA', emoji: '📷', options: ['📷', '📱', '💻', '🖥️'] },
+        { word: 'PHONE', emoji: '📱', options: ['📷', '📱', '💻', '🖥️'] },
+        { word: 'COMPUTER', emoji: '💻', options: ['📷', '📱', '💻', '🖥️'] },
+        { word: 'UMBRELLA', emoji: '☂️', options: ['☂️', '👓', '👒', '🎒'] },
+        { word: 'GLASSES', emoji: '👓', options: ['☂️', '👓', '👒', '🎒'] },
+        { word: 'HAT', emoji: '👒', options: ['☂️', '👓', '👒', '🎒'] },
+        { word: 'BACKPACK', emoji: '🎒', options: ['☂️', '👓', '👒', '🎒'] }
     ];
     
-    // Shuffle and select 10 words
-    const selectedWords = words.sort(() => Math.random() - 0.5).slice(0, 10);
+    // Shuffle and select 15 words (increased from 10)
+    const selectedWords = words.sort(() => Math.random() - 0.5).slice(0, 15);
     let currentWord = 0;
     let correctAnswers = 0;
     let isProcessingAnswer = false; // Prevent multiple clicks
+    
+    // Encouraging messages
+    const encouragingMessages = [
+        'מעולה! 🌟',
+        'כל הכבוד! 🎉',
+        'יפה מאוד! ⭐',
+        'נהדר! 🎊',
+        'מצוין! 💫',
+        'אלוף! 🏆',
+        'פנטסטי! 🎈',
+        'מדהים! ✨'
+    ];
+    
+    const wrongMessages = [
+        'נסה שוב! 💪',
+        'כמעט! 🤔',
+        'לא נורא! 😊',
+        'תנסה עוד פעם! 🌈'
+    ];
     
     function showWord() {
         layer.destroyChildren();

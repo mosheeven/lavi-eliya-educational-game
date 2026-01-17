@@ -161,13 +161,17 @@ function startLettersMode() {
         });
         layer.add(instructionText);
         
+        // Calculate responsive sizes
+        const letterCircleY = 160;
+        const letterCircleRadius = Math.min(60, (stage.height() - 400) / 4);
+        
         // Large colorful letter circle
         const letterCircle = new Konva.Circle({
             x: stage.width() / 2,
-            y: 190,
-            radius: 80,
-            fillLinearGradientStartPoint: { x: -80, y: -80 },
-            fillLinearGradientEndPoint: { x: 80, y: 80 },
+            y: letterCircleY,
+            radius: letterCircleRadius,
+            fillLinearGradientStartPoint: { x: -letterCircleRadius, y: -letterCircleRadius },
+            fillLinearGradientEndPoint: { x: letterCircleRadius, y: letterCircleRadius },
             fillLinearGradientColorStops: [0, '#fbbf24', 1, '#f59e0b'],
             shadowColor: 'rgba(0, 0, 0, 0.3)',
             shadowBlur: 20,
@@ -178,20 +182,21 @@ function startLettersMode() {
         // White inner circle
         const innerCircle = new Konva.Circle({
             x: stage.width() / 2,
-            y: 190,
-            radius: 70,
+            y: letterCircleY,
+            radius: letterCircleRadius - 10,
             fill: 'white'
         });
         layer.add(innerCircle);
         
-        // Hebrew letter - extra large
+        // Hebrew letter - responsive size
+        const letterFontSize = Math.min(80, letterCircleRadius * 1.3);
         const letterText = new Konva.Text({
-            x: stage.width() / 2 - 60,
-            y: 130,
-            width: 120,
-            height: 120,
+            x: stage.width() / 2 - letterFontSize / 2,
+            y: letterCircleY - letterFontSize / 2,
+            width: letterFontSize,
+            height: letterFontSize,
             text: letterData.letter,
-            fontSize: 100,
+            fontSize: letterFontSize,
             fontFamily: 'Arial',
             fill: '#f59e0b',
             align: 'center',
@@ -205,19 +210,23 @@ function startLettersMode() {
         
         // Options grid (2x2) with responsive design
         const gridSize = 2;
-        const gap = 20;
-        const maxCellSize = 200;
+        const gap = 15;
+        const maxCellSize = 160;
         const availableWidth = stage.width() - 40; // 20px padding on each side
-        const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize);
+        const availableHeight = stage.height() - letterCircleY - letterCircleRadius - 40; // Space below letter
+        const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize, (availableHeight - gap) / gridSize);
         const cellHeight = cellWidth; // Keep square
-        const startX = (stage.width() - cellWidth * gridSize - gap) / 2;
-        const startY = 300;
+        const totalGridWidth = cellWidth * gridSize + gap;
+        const totalGridHeight = cellHeight * gridSize + gap;
+        const startX = (stage.width() - totalGridWidth) / 2;
+        // Position grid below the letter circle with proper spacing
+        const startY = letterCircleY + letterCircleRadius + 30;
         
         letterData.options.forEach((emoji, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
-            const x = startX + col * (cellWidth + 20);
-            const y = startY + row * (cellHeight + 20);
+            const x = startX + col * (cellWidth + gap);
+            const y = startY + row * (cellHeight + gap);
             
             const optionGroup = new Konva.Group({
                 x: x,
