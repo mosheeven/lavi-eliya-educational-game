@@ -62,9 +62,11 @@ function startQuizMode() {
     const selectedWords = words.sort(() => Math.random() - 0.5).slice(0, 10);
     let currentWord = 0;
     let correctAnswers = 0;
+    let isProcessingAnswer = false; // Prevent multiple clicks
     
     function showWord() {
         layer.destroyChildren();
+        isProcessingAnswer = false; // Reset for new question
         
         if (currentWord >= selectedWords.length) {
             // Session complete
@@ -186,6 +188,10 @@ function startQuizMode() {
             optionGroup.add(emojiText);
             
             optionGroup.on('click tap', function() {
+                // Prevent multiple clicks while processing
+                if (isProcessingAnswer) return;
+                isProcessingAnswer = true;
+                
                 if (index === correctIndex) {
                     // Correct answer
                     bg.fill('#4ade80');
@@ -209,6 +215,7 @@ function startQuizMode() {
                     setTimeout(() => {
                         bg.fill('white');
                         layer.draw();
+                        isProcessingAnswer = false; // Reset after wrong answer
                     }, 800);
                 }
             });

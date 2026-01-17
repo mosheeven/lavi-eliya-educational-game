@@ -4,6 +4,9 @@ function startLettersMode() {
     initStage();
     hideScore();
     
+    // Stop any ongoing speech
+    stopSpeech();
+    
     // Hebrew letters with matching words and emojis
     const letters = [
         { letter: 'א', word: 'אריה', emoji: '🦁', options: ['🦁', '🐘', '🐻', '🐯'] },
@@ -36,9 +39,11 @@ function startLettersMode() {
     const selectedLetters = letters.sort(() => Math.random() - 0.5).slice(0, 10);
     let currentLetter = 0;
     let correctAnswers = 0;
+    let isProcessingAnswer = false; // Prevent multiple clicks
     
     function showLetter() {
         layer.destroyChildren();
+        isProcessingAnswer = false; // Reset for new question
         
         if (currentLetter >= selectedLetters.length) {
             // Session complete
@@ -198,11 +203,14 @@ function startLettersMode() {
         // Find correct answer index
         const correctIndex = letterData.options.indexOf(letterData.emoji);
         
-        // Options grid (2x2) with improved design
+        // Options grid (2x2) with responsive design
         const gridSize = 2;
-        const cellWidth = 200;
-        const cellHeight = 200;
-        const startX = (stage.width() - cellWidth * gridSize - 20) / 2;
+        const gap = 20;
+        const maxCellSize = 200;
+        const availableWidth = stage.width() - 40; // 20px padding on each side
+        const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize);
+        const cellHeight = cellWidth; // Keep square
+        const startX = (stage.width() - cellWidth * gridSize - gap) / 2;
         const startY = 300;
         
         letterData.options.forEach((emoji, index) => {
@@ -247,7 +255,7 @@ function startLettersMode() {
             // Emoji
             const emojiText = new Konva.Text({
                 text: emoji,
-                fontSize: 100,
+                fontSize: Math.min(100, cellWidth * 0.5), // Responsive font size
                 fontFamily: 'Arial',
                 width: cellWidth,
                 height: cellHeight,
@@ -257,6 +265,10 @@ function startLettersMode() {
             optionGroup.add(emojiText);
             
             optionGroup.on('click tap', function() {
+                // Prevent multiple clicks while processing
+                if (isProcessingAnswer) return;
+                isProcessingAnswer = true;
+                
                 if (index === correctIndex) {
                     // Correct answer - celebrate!
                     bg.fill('#4ade80');
@@ -311,7 +323,11 @@ function startLettersMode() {
                                 onFinish: () => {
                                     optionGroup.to({
                                         x: originalX,
-                                        duration: 0.05
+                                        duration: 0.05,
+                                        onFinish: () => {
+                                            // Reset flag after wrong answer animation
+                                            isProcessingAnswer = false;
+                                        }
                                     });
                                 }
                             });

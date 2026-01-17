@@ -27,6 +27,9 @@ function showHomePage() {
     document.getElementById('game-page').style.display = 'none';
     currentMode = null;
     
+    // Stop all speech when returning home
+    stopSpeech();
+    
     // Clear active state from mode buttons
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
 }
@@ -34,6 +37,9 @@ function showHomePage() {
 function showGamePage(mode) {
     document.getElementById('home-page').style.display = 'none';
     document.getElementById('game-page').style.display = 'block';
+    
+    // Stop any ongoing speech when starting new game
+    stopSpeech();
     
     // Update game mode title
     document.getElementById('game-mode-title').textContent = gameModeTitles[mode] || '';
@@ -62,7 +68,7 @@ function initAudio() {
     }
 }
 
-// Sound effects
+// Sound effects with proper cleanup
 function playPopSound() {
     initAudio();
     const oscillator = audioContext.createOscillator();
@@ -77,8 +83,17 @@ function playPopSound() {
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
     
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
+    const startTime = audioContext.currentTime;
+    const stopTime = startTime + 0.1;
+    
+    oscillator.start(startTime);
+    oscillator.stop(stopTime);
+    
+    // Clean up after sound finishes
+    oscillator.onended = function() {
+        oscillator.disconnect();
+        gainNode.disconnect();
+    };
 }
 
 function playWinSound() {
@@ -95,8 +110,17 @@ function playWinSound() {
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
     
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+    const startTime = audioContext.currentTime;
+    const stopTime = startTime + 0.5;
+    
+    oscillator.start(startTime);
+    oscillator.stop(stopTime);
+    
+    // Clean up after sound finishes
+    oscillator.onended = function() {
+        oscillator.disconnect();
+        gainNode.disconnect();
+    };
 }
 
 function playErrorSound() {
@@ -113,21 +137,45 @@ function playErrorSound() {
     gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
     
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
+    const startTime = audioContext.currentTime;
+    const stopTime = startTime + 0.2;
+    
+    oscillator.start(startTime);
+    oscillator.stop(stopTime);
+    
+    // Clean up after sound finishes
+    oscillator.onended = function() {
+        oscillator.disconnect();
+        gainNode.disconnect();
+    };
 }
 
-// Text-to-Speech
+// Text-to-Speech with proper cleanup
 function speak(text) {
     if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech to prevent overlapping
+        window.speechSynthesis.cancel();
+        
         // Fix pronunciation of "אליה" to sound like "Eli-ya"
-        // Add a slight pause between syllables using SSML-like spacing
         let spokenText = text.replace(/אליה/g, 'אלי-יה');
         
         const utterance = new SpeechSynthesisUtterance(spokenText);
         utterance.lang = 'he-IL';
         utterance.rate = 0.85; // Slightly slower for better pronunciation
+        
+        // Add error handling
+        utterance.onerror = function(event) {
+            console.error('Speech synthesis error:', event);
+        };
+        
         window.speechSynthesis.speak(utterance);
+    }
+}
+
+// Stop all speech
+function stopSpeech() {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
     }
 }
 
@@ -226,7 +274,7 @@ function showScoreAnimation(points) {
     }, 1500);
 }
 
-// Play score sound effect
+// Play score sound effect with proper cleanup
 function playScoreSound() {
     initAudio();
     
@@ -243,10 +291,18 @@ function playScoreSound() {
         oscillator.type = 'sine';
         
         const startTime = audioContext.currentTime + (index * 0.1);
+        const stopTime = startTime + 0.2;
+        
         gainNode.gain.setValueAtTime(0.2, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, stopTime);
         
         oscillator.start(startTime);
-        oscillator.stop(startTime + 0.2);
+        oscillator.stop(stopTime);
+        
+        // Clean up after sound finishes
+        oscillator.onended = function() {
+            oscillator.disconnect();
+            gainNode.disconnect();
+        };
     });
 }

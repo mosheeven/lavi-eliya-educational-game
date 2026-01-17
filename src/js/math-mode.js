@@ -66,9 +66,11 @@ function startMathMode() {
     const selectedProblems = mathProblems.sort(() => Math.random() - 0.5).slice(0, 10);
     let currentProblem = 0;
     let correctAnswers = 0;
+    let isProcessingAnswer = false; // Prevent multiple clicks
     
     function showProblem() {
         layer.destroyChildren();
+        isProcessingAnswer = false; // Reset for new question
         
         if (currentProblem >= selectedProblems.length) {
             // Math session complete
@@ -192,6 +194,10 @@ function startMathMode() {
             optionGroup.add(numberText);
             
             optionGroup.on('click tap', function() {
+                // Prevent multiple clicks while processing
+                if (isProcessingAnswer) return;
+                isProcessingAnswer = true;
+                
                 if (index === correctIndex) {
                     // Correct answer
                     bg.fill('#4ade80');
@@ -215,6 +221,7 @@ function startMathMode() {
                     setTimeout(() => {
                         bg.fill('white');
                         layer.draw();
+                        isProcessingAnswer = false; // Reset after wrong answer
                     }, 800);
                 }
             });
