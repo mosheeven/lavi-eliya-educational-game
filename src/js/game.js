@@ -37,7 +37,8 @@ const gameModeTitles = {
     'spider': '🕷️ עכביש',
     'patterns': '🧩 דפוסים',
     'plant': '🌱 גידול צמח',
-    'numbers': '🔢 מספרים'
+    'numbers': '🔢 מספרים',
+    'dressup': '👗 הלבשה'
 };
 
 // Fisher-Yates shuffle algorithm for proper randomization

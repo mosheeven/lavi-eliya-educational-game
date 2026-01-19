@@ -35,7 +35,8 @@ window.addEventListener('load', () => {
         'btn-spider': { mode: 'spider', func: startSpiderMode },
         'btn-patterns': { mode: 'patterns', func: startPatternsMode },
         'btn-plant': { mode: 'plant', func: startPlantMode },
-        'btn-numbers': { mode: 'numbers', func: startNumbersMode }
+        'btn-numbers': { mode: 'numbers', func: startNumbersMode },
+        'btn-dressup': { mode: 'dressup', func: startDressUpMode }
     };
     
     Object.keys(buttons).forEach(btnId => {
@@ -96,5 +97,6 @@ window.addEventListener('resize', () => {
         else if (currentMode === 'patterns') startPatternsMode();
         else if (currentMode === 'plant') startPlantMode();
         else if (currentMode === 'numbers') startNumbersMode();
+        else if (currentMode === 'dressup') startDressUpMode();
     }
 });
