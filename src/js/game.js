@@ -30,7 +30,10 @@ const gameModeTitles = {
     'letters': '🔤 אותיות',
     'memory': '🎯 זיכרון',
     'coloring': '🎨 צביעה',
-    'spider': '🕷️ עכביש'
+    'spider': '🕷️ עכביש',
+    'patterns': '🧩 דפוסים',
+    'plant': '🌱 גידול צמח',
+    'numbers': '🔢 מספרים'
 };
 
 // Page navigation
@@ -183,35 +186,43 @@ function playErrorSound() {
 // Text-to-Speech with proper cleanup and rate limiting
 function speak(text) {
     if ('speechSynthesis' in window) {
-        const now = Date.now();
-        if (now - lastSoundTime.speech < SPEECH_COOLDOWN) {
-            return; // Skip if called too soon
+        try {
+            const now = Date.now();
+            if (now - lastSoundTime.speech < SPEECH_COOLDOWN) {
+                return; // Skip if called too soon
+            }
+            lastSoundTime.speech = now;
+            
+            // Cancel any ongoing speech to prevent overlapping
+            window.speechSynthesis.cancel();
+            
+            // Fix pronunciation of "אליה" to sound like "Eli-ya"
+            let spokenText = text.replace(/אליה/g, 'אלי-יה');
+            
+            const utterance = new SpeechSynthesisUtterance(spokenText);
+            utterance.lang = 'he-IL';
+            utterance.rate = 0.85; // Slightly slower for better pronunciation
+            
+            // Add error handling
+            utterance.onerror = function(event) {
+                console.error('Speech synthesis error:', event);
+            };
+            
+            window.speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error('Speech synthesis failed:', error);
         }
-        lastSoundTime.speech = now;
-        
-        // Cancel any ongoing speech to prevent overlapping
-        window.speechSynthesis.cancel();
-        
-        // Fix pronunciation of "אליה" to sound like "Eli-ya"
-        let spokenText = text.replace(/אליה/g, 'אלי-יה');
-        
-        const utterance = new SpeechSynthesisUtterance(spokenText);
-        utterance.lang = 'he-IL';
-        utterance.rate = 0.85; // Slightly slower for better pronunciation
-        
-        // Add error handling
-        utterance.onerror = function(event) {
-            console.error('Speech synthesis error:', event);
-        };
-        
-        window.speechSynthesis.speak(utterance);
     }
 }
 
 // Stop all speech
 function stopSpeech() {
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+        try {
+            window.speechSynthesis.cancel();
+        } catch (error) {
+            console.error('Failed to stop speech:', error);
+        }
     }
 }
 
