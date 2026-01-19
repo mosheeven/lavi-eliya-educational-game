@@ -1,6 +1,8 @@
 # משחק לימודי ללביא ואליה אבן
 
-Educational game for Lavia and Elia Even featuring seven interactive learning modes in Hebrew.
+🎮 **Play Now**: [https://mosheeven.github.io/lavi-eliya-educational-game/](https://mosheeven.github.io/lavi-eliya-educational-game/)
+
+Educational game for Lavia and Elia Even featuring ten interactive learning modes in Hebrew.
 
 ## Game Modes
 
@@ -9,8 +11,11 @@ Educational game for Lavia and Elia Even featuring seven interactive learning mo
 - **🔢 חשבון (Math Mode)**: Simple addition and subtraction problems for ages 5-6
 - **🔤 אותיות (Hebrew Letters)**: Learn Hebrew alphabet with matching words and emojis
 - **🎯 זיכרון (Memory Game)**: Classic card matching game with 6 pairs
-- **🧩 פאזל (Puzzle Mode)**: 4-piece drag-and-drop puzzles with themed images
 - **🎨 צביעה (Coloring Mode)**: Free drawing canvas with 10 colors and eraser
+- **🕷️ עכביש (Spider Mode)**: Interactive spider web drawing game
+- **🔷 דפוסים (Patterns Mode)**: Pattern recognition and completion challenges
+- **🌱 צמח (Plant Growing Mode)**: Virtual plant growing and care simulation
+- **🔢 מספרים (Numbers Mode)**: Number identification game (0-10) with visual counting aids
 
 ## Features
 
@@ -49,8 +54,11 @@ The legacy single-file version is available in `single-file-game.html` as a back
 │       ├── math-mode.js         # Math game mode
 │       ├── letters-mode.js      # Hebrew letters mode
 │       ├── memory-mode.js       # Memory card game
-│       ├── puzzle-mode.js       # Puzzle game mode
 │       ├── coloring-mode.js     # Drawing/coloring mode
+│       ├── spider-mode.js       # Spider web drawing game
+│       ├── patterns-mode.js     # Pattern recognition game
+│       ├── plant-mode.js        # Plant growing simulation
+│       ├── numbers-mode.js      # Numbers identification game
 │       └── init.js              # Event listeners & initialization
 ├── README.md
 └── .gitignore
