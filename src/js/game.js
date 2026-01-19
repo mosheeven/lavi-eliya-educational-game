@@ -5,6 +5,10 @@ let score = 0;
 let audioContext;
 let currentPlayer = null; // Track current player: 'לביא' or 'אליה'
 
+// Animation and timer cleanup tracking
+let activeAnimations = [];
+let activeTimers = [];
+
 // Player scores - persistent across game modes
 let playerScores = {
     'לביא': 0,
@@ -36,25 +40,262 @@ const gameModeTitles = {
     'numbers': '🔢 מספרים'
 };
 
+// Fisher-Yates shuffle algorithm for proper randomization
+function shuffleArray(array) {
+    const shuffled = [...array]; // Create a copy to avoid mutating original
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Cleanup functions for proper mode transitions
+function cleanupAnimations() {
+    // Stop all active Konva animations
+    activeAnimations.forEach(anim => {
+        if (anim && typeof anim.stop === 'function') {
+            anim.stop();
+        }
+    });
+    activeAnimations = [];
+}
+
+function cleanupTimers() {
+    // Clear all active timers
+    activeTimers.forEach(timerId => {
+        clearTimeout(timerId);
+    });
+    activeTimers = [];
+}
+
+function registerTimer(timerId) {
+    activeTimers.push(timerId);
+    return timerId;
+}
+
+function registerAnimation(animation) {
+    activeAnimations.push(animation);
+    return animation;
+}
+
+function cleanupMode() {
+    // Stop all speech
+    stopSpeech();
+    
+    // Clean up animations and timers
+    cleanupAnimations();
+    cleanupTimers();
+    
+    // Destroy stage and layer if they exist
+    if (layer) {
+        layer.destroyChildren();
+        layer.destroy();
+        layer = null;
+    }
+    if (stage) {
+        stage.destroy();
+        stage = null;
+    }
+}
+
+// Common UI Components
+
+// Create a styled button with consistent design
+function createStyledButton(config) {
+    const {
+        x, y, width, height,
+        text, fontSize = 24,
+        color = '#667eea',
+        textColor = 'white',
+        onClick,
+        cornerRadius = 20
+    } = config;
+    
+    const buttonGroup = new Konva.Group({
+        x: x,
+        y: y
+    });
+    
+    // Shadow
+    const shadow = new Konva.Rect({
+        x: 3,
+        y: 3,
+        width: width,
+        height: height,
+        fill: 'rgba(0, 0, 0, 0.2)',
+        cornerRadius: cornerRadius,
+        blur: 8
+    });
+    buttonGroup.add(shadow);
+    
+    // Button background with gradient
+    const bg = new Konva.Rect({
+        width: width,
+        height: height,
+        fillLinearGradientStartPoint: { x: 0, y: 0 },
+        fillLinearGradientEndPoint: { x: 0, y: height },
+        fillLinearGradientColorStops: [0, color, 1, adjustColorBrightness(color, -20)],
+        cornerRadius: cornerRadius,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowBlur: 10,
+        shadowOffset: { x: 0, y: 4 }
+    });
+    buttonGroup.add(bg);
+    
+    // Button text
+    const buttonText = new Konva.Text({
+        width: width,
+        height: height,
+        text: text,
+        fontSize: fontSize,
+        fontFamily: 'Varela Round, Arial',
+        fontStyle: 'bold',
+        fill: textColor,
+        align: 'center',
+        verticalAlign: 'middle'
+    });
+    buttonGroup.add(buttonText);
+    
+    // Interaction handlers
+    buttonGroup.on('click tap', function() {
+        playPopSound();
+        if (onClick) onClick();
+    });
+    
+    buttonGroup.on('mouseenter', function() {
+        document.body.style.cursor = 'pointer';
+        const anim = registerAnimation(buttonGroup.to({
+            scaleX: 1.05,
+            scaleY: 1.05,
+            duration: 0.1
+        }));
+    });
+    
+    buttonGroup.on('mouseleave', function() {
+        document.body.style.cursor = 'default';
+        const anim = registerAnimation(buttonGroup.to({
+            scaleX: 1,
+            scaleY: 1,
+            duration: 0.1
+        }));
+    });
+    
+    return buttonGroup;
+}
+
+// Create a color picker circle
+function createColorPicker(config) {
+    const {
+        x, y, radius = 30,
+        color,
+        isSelected = false,
+        onClick
+    } = config;
+    
+    const colorGroup = new Konva.Group({
+        x: x,
+        y: y
+    });
+    
+    // Shadow
+    const shadow = new Konva.Circle({
+        radius: radius + 2,
+        fill: 'rgba(0, 0, 0, 0.2)',
+        offsetY: -2,
+        blur: 6
+    });
+    colorGroup.add(shadow);
+    
+    // Outer ring (selection indicator)
+    const outerRing = new Konva.Circle({
+        radius: radius + 5,
+        stroke: '#667eea',
+        strokeWidth: isSelected ? 4 : 0,
+        shadowColor: 'rgba(102, 126, 234, 0.5)',
+        shadowBlur: isSelected ? 10 : 0
+    });
+    colorGroup.add(outerRing);
+    
+    // Color circle
+    const colorCircle = new Konva.Circle({
+        radius: radius,
+        fill: color,
+        stroke: 'white',
+        strokeWidth: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowBlur: 8,
+        shadowOffset: { x: 0, y: 2 }
+    });
+    colorGroup.add(colorCircle);
+    
+    // Interaction handlers
+    colorGroup.on('click tap', function() {
+        playPopSound();
+        if (onClick) onClick(color);
+    });
+    
+    colorGroup.on('mouseenter', function() {
+        document.body.style.cursor = 'pointer';
+        const anim = registerAnimation(colorGroup.to({
+            scaleX: 1.1,
+            scaleY: 1.1,
+            duration: 0.1
+        }));
+    });
+    
+    colorGroup.on('mouseleave', function() {
+        document.body.style.cursor = 'default';
+        const anim = registerAnimation(colorGroup.to({
+            scaleX: 1,
+            scaleY: 1,
+            duration: 0.1
+        }));
+    });
+    
+    // Method to update selection state
+    colorGroup.setSelected = function(selected) {
+        outerRing.strokeWidth(selected ? 4 : 0);
+        outerRing.shadowBlur(selected ? 10 : 0);
+        layer.draw();
+    };
+    
+    return colorGroup;
+}
+
+// Helper function to adjust color brightness
+function adjustColorBrightness(color, percent) {
+    // Simple hex color brightness adjustment
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255))
+        .toString(16).slice(1);
+}
+
 // Page navigation
 function showHomePage() {
+    // Clean up current mode before returning home
+    cleanupMode();
+    
     document.getElementById('home-page').style.display = 'block';
     document.getElementById('game-page').style.display = 'none';
     currentMode = null;
-    
-    // Stop all speech when returning home
-    stopSpeech();
     
     // Clear active state from mode buttons
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
 }
 
 function showGamePage(mode) {
+    // Clean up previous mode before starting new one
+    cleanupMode();
+    
     document.getElementById('home-page').style.display = 'none';
     document.getElementById('game-page').style.display = 'block';
-    
-    // Stop any ongoing speech when starting new game
-    stopSpeech();
     
     // Update game mode title
     document.getElementById('game-mode-title').textContent = gameModeTitles[mode] || '';

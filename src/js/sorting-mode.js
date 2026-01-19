@@ -114,14 +114,14 @@ function startSortingMode() {
         cat.items.map(item => ({ emoji: item, category: cat.name, color: cat.color }))
     );
     
-    // Shuffle items
-    allItems.sort(() => Math.random() - 0.5);
+    // Shuffle items using Fisher-Yates algorithm
+    const shuffledItems = shuffleArray(allItems);
     
     const itemsPerRow = 4;
     const itemSpacing = Math.min(140, stage.width() / (itemsPerRow + 1));
     const startX = (stage.width() - (itemsPerRow - 1) * itemSpacing) / 2;
     
-    allItems.forEach((item, index) => {
+    shuffledItems.forEach((item, index) => {
         const col = index % itemsPerRow;
         const row = Math.floor(index / itemsPerRow);
         const x = startX + col * itemSpacing;
@@ -266,9 +266,9 @@ function startSortingMode() {
                                         // Check if all items are sorted
                                         const remainingItems = layer.find('Group').filter(g => g.draggable());
                                         if (remainingItems.length === 0) {
-                                            setTimeout(() => {
+                                            registerTimer(setTimeout(() => {
                                                 speak('כל הכבוד סיימתם את המשחק');
-                                            }, 500);
+                                            }, 500));
                                         }
                                     }
                                 });
@@ -330,9 +330,9 @@ function startSortingMode() {
     
     layer.draw();
     
-    // Allow interactions after initialization
-    setTimeout(() => {
+    // Allow interactions after initialization with registered timer
+    registerTimer(setTimeout(() => {
         isInitializing = false;
         speak('גררו את הפריטים לסלים המתאימים');
-    }, 100);
+    }, 100));
 }

@@ -22,8 +22,8 @@ function startNumbersMode() {
         { number: 10, emoji: '🌈', count: 10, options: [9, 10, 11, 12] }
     ];
     
-    // Shuffle and select 10 numbers
-    const selectedNumbers = numbers.sort(() => Math.random() - 0.5).slice(0, 10);
+    // Shuffle and select 10 numbers using Fisher-Yates
+    const selectedNumbers = shuffleArray(numbers).slice(0, 10);
     let currentNumber = 0;
     let correctAnswers = 0;
     let isProcessingAnswer = false;
@@ -86,8 +86,8 @@ function startNumbersMode() {
         
         const numberData = selectedNumbers[currentNumber];
         
-        // Randomize options array
-        const shuffledOptions = [...numberData.options].sort(() => Math.random() - 0.5);
+        // Randomize options array using Fisher-Yates
+        const shuffledOptions = shuffleArray([...numberData.options]);
         const correctAnswer = numberData.number;
         
         // Progress bar background
@@ -298,10 +298,10 @@ function startNumbersMode() {
                         correctAnswers++;
                     }, 800);
                     
-                    setTimeout(() => {
+                    registerTimer(setTimeout(() => {
                         currentNumber++;
                         showNumber();
-                    }, 2500);
+                    }, 2500));
                 } else {
                     // Wrong answer - shake
                     bg.fill('#ef4444');
@@ -370,8 +370,8 @@ function startNumbersMode() {
         
         layer.draw();
         
-        // Speak instruction
-        setTimeout(() => speak(`כמה ${numberData.emoji} יש`), 500);
+        // Speak instruction with registered timer
+        registerTimer(setTimeout(() => speak(`כמה ${numberData.emoji} יש`), 500));
     }
     
     showNumber();
