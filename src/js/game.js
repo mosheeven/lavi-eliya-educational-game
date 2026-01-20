@@ -325,6 +325,329 @@ function initAudio() {
     }
 }
 
+// Enhanced Audio System with Real Sounds
+const audioFiles = {
+    pop: null,
+    win: null,
+    error: null,
+    applause: null,
+    whoosh: null,
+    bgMusic: null
+};
+
+// Preload audio files (will fallback to procedural sounds if files don't exist)
+function preloadAudio() {
+    const soundPaths = {
+        pop: 'src/sounds/pop.mp3',
+        win: 'src/sounds/success.mp3',
+        error: 'src/sounds/error.mp3',
+        applause: 'src/sounds/applause.mp3',
+        whoosh: 'src/sounds/whoosh.mp3',
+        bgMusic: 'src/sounds/background.mp3'
+    };
+    
+    Object.keys(soundPaths).forEach(key => {
+        const audio = new Audio();
+        audio.preload = 'auto';
+        audio.src = soundPaths[key];
+        
+        // Only store if file loads successfully
+        audio.addEventListener('canplaythrough', () => {
+            audioFiles[key] = audio;
+        }, { once: true });
+        
+        // Silently fail if file doesn't exist - will use procedural sounds
+        audio.addEventListener('error', () => {
+            console.log(`Audio file ${soundPaths[key]} not found, using procedural sound`);
+        });
+    });
+    
+    // Set background music properties
+    if (audioFiles.bgMusic) {
+        audioFiles.bgMusic.loop = true;
+        audioFiles.bgMusic.volume = 0.2;
+    }
+}
+
+// Play audio file with fallback to procedural sound
+function playAudioFile(type, fallbackFn) {
+    if (audioFiles[type]) {
+        try {
+            audioFiles[type].currentTime = 0;
+            audioFiles[type].play().catch(() => fallbackFn());
+        } catch (e) {
+            fallbackFn();
+        }
+    } else {
+        fallbackFn();
+    }
+}
+
+// Background music control
+function startBackgroundMusic() {
+    if (audioFiles.bgMusic) {
+        audioFiles.bgMusic.play().catch(() => {
+            console.log('Background music autoplay blocked');
+        });
+    }
+}
+
+function stopBackgroundMusic() {
+    if (audioFiles.bgMusic) {
+        audioFiles.bgMusic.pause();
+        audioFiles.bgMusic.currentTime = 0;
+    }
+}
+
+// Particle Effects System
+function createConfetti(x, y, count = 30) {
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ff1493'];
+    const shapes = ['circle', 'rect', 'star'];
+    
+    for (let i = 0; i < count; i++) {
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const size = 5 + Math.random() * 10;
+        
+        let particle;
+        if (shape === 'circle') {
+            particle = new Konva.Circle({
+                x: x,
+                y: y,
+                radius: size,
+                fill: color
+            });
+        } else if (shape === 'rect') {
+            particle = new Konva.Rect({
+                x: x,
+                y: y,
+                width: size * 2,
+                height: size * 2,
+                fill: color,
+                rotation: Math.random() * 360
+            });
+        } else {
+            particle = new Konva.Star({
+                x: x,
+                y: y,
+                numPoints: 5,
+                innerRadius: size / 2,
+                outerRadius: size,
+                fill: color
+            });
+        }
+        
+        layer.add(particle);
+        
+        const angle = (Math.random() * Math.PI * 2);
+        const velocity = 100 + Math.random() * 200;
+        const targetX = x + Math.cos(angle) * velocity;
+        const targetY = y + Math.sin(angle) * velocity + 100; // Add gravity effect
+        
+        const anim = registerAnimation(particle.to({
+            x: targetX,
+            y: targetY,
+            rotation: Math.random() * 720,
+            opacity: 0,
+            duration: 0.8 + Math.random() * 0.4,
+            easing: Konva.Easings.EaseOut,
+            onFinish: () => particle.destroy()
+        }));
+    }
+}
+
+function createStarBurst(x, y, count = 8) {
+    const colors = ['#ffd700', '#ffed4e', '#fff44f'];
+    
+    for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2;
+        const star = new Konva.Star({
+            x: x,
+            y: y,
+            numPoints: 5,
+            innerRadius: 10,
+            outerRadius: 20,
+            fill: colors[Math.floor(Math.random() * colors.length)],
+            opacity: 1
+        });
+        
+        layer.add(star);
+        
+        const distance = 150;
+        const targetX = x + Math.cos(angle) * distance;
+        const targetY = y + Math.sin(angle) * distance;
+        
+        const anim = registerAnimation(star.to({
+            x: targetX,
+            y: targetY,
+            scaleX: 0,
+            scaleY: 0,
+            rotation: 360,
+            opacity: 0,
+            duration: 0.6,
+            easing: Konva.Easings.EaseOut,
+            onFinish: () => star.destroy()
+        }));
+    }
+}
+
+function createSparkles(x, y, count = 15) {
+    for (let i = 0; i < count; i++) {
+        const sparkle = new Konva.Star({
+            x: x + (Math.random() - 0.5) * 100,
+            y: y + (Math.random() - 0.5) * 100,
+            numPoints: 4,
+            innerRadius: 2,
+            outerRadius: 8,
+            fill: '#ffffff',
+            opacity: 1
+        });
+        
+        layer.add(sparkle);
+        
+        const anim = registerAnimation(sparkle.to({
+            scaleX: 2,
+            scaleY: 2,
+            opacity: 0,
+            duration: 0.5 + Math.random() * 0.3,
+            onFinish: () => sparkle.destroy()
+        }));
+    }
+}
+
+// Enhanced button animations
+function bounceElement(element, scale = 1.2) {
+    const anim = registerAnimation(element.to({
+        scaleX: scale,
+        scaleY: scale,
+        duration: 0.1,
+        onFinish: () => {
+            registerAnimation(element.to({
+                scaleX: 1,
+                scaleY: 1,
+                duration: 0.1
+            }));
+        }
+    }));
+}
+
+function shakeElement(element) {
+    const originalX = element.x();
+    const shakeAmount = 10;
+    const shakeDuration = 0.05;
+    
+    const anim1 = registerAnimation(element.to({
+        x: originalX - shakeAmount,
+        duration: shakeDuration,
+        onFinish: () => {
+            const anim2 = registerAnimation(element.to({
+                x: originalX + shakeAmount,
+                duration: shakeDuration,
+                onFinish: () => {
+                    const anim3 = registerAnimation(element.to({
+                        x: originalX - shakeAmount / 2,
+                        duration: shakeDuration,
+                        onFinish: () => {
+                            const anim4 = registerAnimation(element.to({
+                                x: originalX,
+                                duration: shakeDuration
+                            }));
+                        }
+                    }));
+                }
+            }));
+        }
+    }));
+}
+
+function glowElement(element, color = '#ffd700') {
+    element.shadowColor(color);
+    element.shadowBlur(30);
+    element.shadowOpacity(1);
+    
+    const anim = registerAnimation(element.to({
+        shadowBlur: 0,
+        shadowOpacity: 0,
+        duration: 0.5
+    }));
+}
+
+// Floating background elements
+function createFloatingShapes(type = 'numbers') {
+    const shapes = [];
+    const count = 15;
+    
+    for (let i = 0; i < count; i++) {
+        let shape;
+        const x = Math.random() * stage.width();
+        const y = Math.random() * stage.height();
+        const size = 20 + Math.random() * 30;
+        
+        if (type === 'numbers') {
+            const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '×', '÷'];
+            shape = new Konva.Text({
+                x: x,
+                y: y,
+                text: numbers[Math.floor(Math.random() * numbers.length)],
+                fontSize: size,
+                fill: 'rgba(255, 255, 255, 0.1)',
+                fontFamily: 'Arial'
+            });
+        } else if (type === 'letters') {
+            const letters = 'אבגדהוזחטיכלמנסעפצקרשת'.split('');
+            shape = new Konva.Text({
+                x: x,
+                y: y,
+                text: letters[Math.floor(Math.random() * letters.length)],
+                fontSize: size,
+                fill: 'rgba(255, 255, 255, 0.1)',
+                fontFamily: 'Arial'
+            });
+        } else if (type === 'stars') {
+            shape = new Konva.Star({
+                x: x,
+                y: y,
+                numPoints: 5,
+                innerRadius: size / 2,
+                outerRadius: size,
+                fill: 'rgba(255, 255, 255, 0.1)'
+            });
+        }
+        
+        layer.add(shape);
+        shape.moveToBottom();
+        shapes.push(shape);
+        
+        // Animate floating
+        const duration = 10 + Math.random() * 10;
+        const targetY = y + (Math.random() - 0.5) * 200;
+        
+        const anim = registerAnimation(shape.to({
+            y: targetY,
+            rotation: (Math.random() - 0.5) * 180,
+            opacity: 0.05 + Math.random() * 0.1,
+            duration: duration,
+            easing: Konva.Easings.EaseInOut,
+            onFinish: () => {
+                // Loop animation
+                shape.y(Math.random() * stage.height());
+                createFloatingShapes(type);
+            }
+        }));
+    }
+    
+    return shapes;
+}
+
+// Initialize audio on first user interaction
+let audioInitialized = false;
+function ensureAudioInitialized() {
+    if (!audioInitialized) {
+        preloadAudio();
+        audioInitialized = true;
+    }
+}
+
 // Sound effects with proper cleanup and rate limiting
 function playPopSound() {
     const now = Date.now();
@@ -333,30 +656,34 @@ function playPopSound() {
     }
     lastSoundTime.pop = now;
     
-    initAudio();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    ensureAudioInitialized();
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-    
-    const startTime = audioContext.currentTime;
-    const stopTime = startTime + 0.1;
-    
-    oscillator.start(startTime);
-    oscillator.stop(stopTime);
-    
-    // Clean up after sound finishes
-    oscillator.onended = function() {
-        oscillator.disconnect();
-        gainNode.disconnect();
-    };
+    // Try to play audio file, fallback to procedural sound
+    playAudioFile('pop', () => {
+        initAudio();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        const startTime = audioContext.currentTime;
+        const stopTime = startTime + 0.1;
+        
+        oscillator.start(startTime);
+        oscillator.stop(stopTime);
+        
+        oscillator.onended = function() {
+            oscillator.disconnect();
+            gainNode.disconnect();
+        };
+    });
 }
 
 function playWinSound() {
@@ -366,30 +693,34 @@ function playWinSound() {
     }
     lastSoundTime.win = now;
     
-    initAudio();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    ensureAudioInitialized();
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 523.25; // C5
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-    
-    const startTime = audioContext.currentTime;
-    const stopTime = startTime + 0.5;
-    
-    oscillator.start(startTime);
-    oscillator.stop(stopTime);
-    
-    // Clean up after sound finishes
-    oscillator.onended = function() {
-        oscillator.disconnect();
-        gainNode.disconnect();
-    };
+    // Try to play audio file, fallback to procedural sound
+    playAudioFile('win', () => {
+        initAudio();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 523.25; // C5
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        const startTime = audioContext.currentTime;
+        const stopTime = startTime + 0.5;
+        
+        oscillator.start(startTime);
+        oscillator.stop(stopTime);
+        
+        oscillator.onended = function() {
+            oscillator.disconnect();
+            gainNode.disconnect();
+        };
+    });
 }
 
 function playErrorSound() {
@@ -399,30 +730,50 @@ function playErrorSound() {
     }
     lastSoundTime.error = now;
     
-    initAudio();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    ensureAudioInitialized();
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 200;
-    oscillator.type = 'sawtooth';
-    
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-    
-    const startTime = audioContext.currentTime;
-    const stopTime = startTime + 0.2;
-    
-    oscillator.start(startTime);
-    oscillator.stop(stopTime);
-    
-    // Clean up after sound finishes
-    oscillator.onended = function() {
-        oscillator.disconnect();
-        gainNode.disconnect();
-    };
+    // Try to play audio file, fallback to procedural sound
+    playAudioFile('error', () => {
+        initAudio();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 200;
+        oscillator.type = 'sawtooth';
+        
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        const startTime = audioContext.currentTime;
+        const stopTime = startTime + 0.2;
+        
+        oscillator.start(startTime);
+        oscillator.stop(stopTime);
+        
+        oscillator.onended = function() {
+            oscillator.disconnect();
+            gainNode.disconnect();
+        };
+    });
+}
+
+function playApplauseSound() {
+    ensureAudioInitialized();
+    playAudioFile('applause', () => {
+        // Fallback: play win sound
+        playWinSound();
+    });
+}
+
+function playWhooshSound() {
+    ensureAudioInitialized();
+    playAudioFile('whoosh', () => {
+        // Fallback: play pop sound
+        playPopSound();
+    });
 }
 
 // Text-to-Speech with proper cleanup and rate limiting
@@ -539,6 +890,11 @@ function addPoints(points = 10) {
     updateCurrentPlayerDisplay(); // Update game page display
     showScoreAnimation(points);
     playScoreSound();
+    
+    // Add confetti effect at center of stage
+    if (stage && layer) {
+        createConfetti(stage.width() / 2, stage.height() / 2, 20);
+    }
 }
 
 // Update player score display in header

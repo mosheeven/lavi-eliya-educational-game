@@ -4,6 +4,9 @@ function startMathMode() {
     initStage();
     hideScore();
     
+    // Add floating numbers background
+    createFloatingShapes('numbers');
+    
     // Math problems for ages 5-6 (results 0-10)
     const mathProblems = [
         // Addition - Simple
@@ -73,7 +76,7 @@ function startMathMode() {
         isProcessingAnswer = false; // Reset for new question
         
         if (currentProblem >= selectedProblems.length) {
-            // Math session complete
+            // Math session complete - ENHANCED CELEBRATION
             const finalText = new Konva.Text({
                 x: 0,
                 y: stage.height() / 2 - 80,
@@ -100,6 +103,13 @@ function startMathMode() {
             layer.add(scoreText);
             
             layer.draw();
+            
+            // Big celebration effects
+            createConfetti(stage.width() / 2, stage.height() / 2, 50);
+            createStarBurst(stage.width() / 2, stage.height() / 2, 12);
+            createSparkles(stage.width() / 2, stage.height() / 2, 30);
+            
+            playApplauseSound();
             playWinSound();
             speak(`כל הכבוד ענית נכון על ${correctAnswers} מתוך ${selectedProblems.length} שאלות`);
             return;
@@ -203,12 +213,21 @@ function startMathMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer
+                    // Correct answer - ENHANCED EFFECTS
                     bg.fill('#4ade80');
                     layer.draw();
+                    
+                    // Visual effects
+                    bounceElement(optionGroup, 1.3);
+                    glowElement(bg, '#4ade80');
+                    createConfetti(x + cellWidth / 2, y + cellHeight / 2, 25);
+                    createStarBurst(x + cellWidth / 2, y + cellHeight / 2, 10);
+                    
+                    // Audio
                     playWinSound();
+                    playWhooshSound();
                     speak(getCorrectMessage());
-                    addPoints(10); // Award 10 points
+                    addPoints(10); // Award 10 points (includes confetti)
                     correctAnswers++;
                     
                     setTimeout(() => {
@@ -216,9 +235,14 @@ function startMathMode() {
                         showProblem();
                     }, 1500);
                 } else {
-                    // Wrong answer
+                    // Wrong answer - ENHANCED EFFECTS
                     bg.fill('#ef4444');
                     layer.draw();
+                    
+                    // Visual effects
+                    shakeElement(optionGroup);
+                    
+                    // Audio
                     playErrorSound();
                     speak(getWrongMessage());
                     
