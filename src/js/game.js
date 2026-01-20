@@ -817,14 +817,21 @@ function stopSpeech() {
     }
 }
 
-// Personalized feedback messages
+// Personalized feedback messages with mixed Hebrew/English
 function getCorrectMessage() {
     const messages = [
         'נכון כל הכבוד',
         'מעולה',
         'נכון מצוין',
         'יפה מאוד',
-        'כל הכבוד'
+        'כל הכבוד',
+        'Perfect',
+        'Excellent',
+        'Amazing',
+        'Superb',
+        'Brilliant',
+        'נהדר',
+        'אלוף'
     ];
     const baseMessage = messages[Math.floor(Math.random() * messages.length)];
     return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;
@@ -834,7 +841,10 @@ function getWrongMessage() {
     const messages = [
         'נסו שוב',
         'כמעט',
-        'לא נורא נסה שוב'
+        'לא נורא נסה שוב',
+        'Try again',
+        'Almost',
+        'נסה עוד פעם'
     ];
     const baseMessage = messages[Math.floor(Math.random() * messages.length)];
     return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;

@@ -294,9 +294,7 @@ function startLetterHuntMode() {
             height: 130,
             fillLinearGradientStartPoint: { x: 0, y: 0 },
             fillLinearGradientEndPoint: { x: 130, y: 130 },
-            fillLinearGradientColorStops: isCorrect 
-                ? [0, '#10b981', 1, '#059669']
-                : [0, '#f59e0b', 1, '#d97706'],
+            fillLinearGradientColorStops: [0, '#f59e0b', 1, '#d97706'],
             cornerRadius: 25,
             shadowColor: 'black',
             shadowBlur: 12,
@@ -334,11 +332,13 @@ function startLetterHuntMode() {
             easing: Konva.Easings.BackEaseOut
         });
         
-        // Continuous floating animation
+        // Continuous floating animation with more movement
         const floatAnim = new Konva.Animation((frame) => {
             const time = frame.time / 1000;
-            const offset = index * 0.5; // Stagger the animation
-            optionGroup.y(y + Math.sin(time * 2 + offset) * 10);
+            const offset = index * 0.7; // Stagger the animation
+            optionGroup.y(y + Math.sin(time * 2 + offset) * 15);
+            optionGroup.x(x + Math.cos(time * 1.5 + offset) * 8);
+            optionGroup.rotation(Math.sin(time * 1.2 + offset) * 3);
         }, layer);
         floatAnim.start();
         
@@ -395,25 +395,27 @@ function startLetterHuntMode() {
                 
                 // Positive reinforcement messages
                 const messages = [
-                    'כל הכבוד! 🌟',
-                    'מעולה! ⭐',
-                    'יפה מאוד! 💫',
-                    'אלוף! 🏆',
-                    'נהדר! ✨',
-                    'Perfect! 🎉',
-                    'Excellent! 🌈',
-                    'Amazing! 🎊',
-                    'Superb! 💪',
-                    'Brilliant! 🌠'
+                    'כל הכבוד',
+                    'מעולה',
+                    'יפה מאוד',
+                    'אלוף',
+                    'נהדר',
+                    'Perfect',
+                    'Excellent',
+                    'Amazing',
+                    'Superb',
+                    'Brilliant'
                 ];
                 const message = messages[Math.floor(Math.random() * messages.length)];
                 speak(message);
                 
-                // Show success message
+                // Show success message with emoji
+                const successEmojis = ['🌟', '⭐', '💫', '🏆', '✨', '🎉', '🌈', '🎊', '💪', '🌠'];
+                const emoji = successEmojis[Math.floor(Math.random() * successEmojis.length)];
                 const successMsg = new Konva.Text({
                     x: stage.width() / 2,
                     y: stage.height() / 2 - 50,
-                    text: message,
+                    text: `${message} ${emoji}`,
                     fontSize: 70,
                     fontFamily: 'Arial',
                     fill: '#10b981',
@@ -459,7 +461,7 @@ function startLetterHuntMode() {
                 playErrorSound();
                 shakeElement(optionGroup);
                 
-                const errorMsg = currentLanguage === 'hebrew' ? 'נסה שוב! 🤔' : 'Try again! 🤔';
+                const errorMsg = currentLanguage === 'hebrew' ? 'נסה שוב' : 'Try again';
                 speak(errorMsg);
                 
                 // Flash red
