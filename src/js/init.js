@@ -1,5 +1,30 @@
 // Initialize on load
 window.addEventListener('load', () => {
+    // Prevent pull-to-refresh on mobile
+    let lastTouchY = 0;
+    let preventPullToRefresh = false;
+
+    document.body.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        lastTouchY = e.touches[0].clientY;
+        // Prevent pull-to-refresh if at the top of the page
+        preventPullToRefresh = window.pageYOffset === 0;
+    }, { passive: false });
+
+    document.body.addEventListener('touchmove', (e) => {
+        const touchY = e.touches[0].clientY;
+        const touchYDelta = touchY - lastTouchY;
+        lastTouchY = touchY;
+
+        if (preventPullToRefresh) {
+            // Prevent pull-to-refresh if scrolling up at the top
+            if (touchYDelta > 0) {
+                e.preventDefault();
+                return;
+            }
+        }
+    }, { passive: false });
+
     // Player selection buttons
     const playerButtons = {
         'btn-player-lavia': 'לביא',
