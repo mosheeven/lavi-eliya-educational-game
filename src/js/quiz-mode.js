@@ -7,98 +7,98 @@ function startQuizMode() {
     // Expanded English words with emoji representations (80+ words)
     const words = [
         // Animals
-        { word: 'CAT', emoji: '🐱', options: ['🐱', '🐶', '🐭', '🐰'] },
-        { word: 'DOG', emoji: '🐶', options: ['🐱', '🐶', '🐭', '🐰'] },
-        { word: 'MOUSE', emoji: '🐭', options: ['🐱', '🐶', '🐭', '🐰'] },
-        { word: 'RABBIT', emoji: '🐰', options: ['🐱', '🐶', '🐭', '🐰'] },
-        { word: 'FISH', emoji: '🐟', options: ['🐟', '🐠', '🦈', '🐙'] },
-        { word: 'SHARK', emoji: '🦈', options: ['🐟', '🐠', '🦈', '🐙'] },
-        { word: 'BIRD', emoji: '🐦', options: ['🐦', '🦅', '🦆', '🦉'] },
-        { word: 'DUCK', emoji: '🦆', options: ['🐦', '🦅', '🦆', '🦉'] },
-        { word: 'OWL', emoji: '🦉', options: ['🐦', '🦅', '🦆', '🦉'] },
-        { word: 'BEE', emoji: '🐝', options: ['🐝', '🦋', '🐞', '🐛'] },
-        { word: 'BUTTERFLY', emoji: '🦋', options: ['🐝', '🦋', '🐞', '🐛'] },
-        { word: 'LION', emoji: '🦁', options: ['🦁', '🐯', '🐻', '🐼'] },
-        { word: 'TIGER', emoji: '🐯', options: ['🦁', '🐯', '🐻', '🐼'] },
-        { word: 'BEAR', emoji: '🐻', options: ['🦁', '🐯', '🐻', '🐼'] },
-        { word: 'PANDA', emoji: '🐼', options: ['🦁', '🐯', '🐻', '🐼'] },
-        { word: 'ELEPHANT', emoji: '🐘', options: ['🐘', '🦒', '🦏', '🦛'] },
-        { word: 'GIRAFFE', emoji: '🦒', options: ['🐘', '🦒', '🦏', '🦛'] },
-        { word: 'MONKEY', emoji: '🐵', options: ['🐵', '🦍', '🐨', '🦘'] },
-        { word: 'KOALA', emoji: '🐨', options: ['🐵', '🦍', '🐨', '🦘'] },
-        { word: 'FROG', emoji: '🐸', options: ['🐸', '🐢', '🦎', '🐍'] },
-        { word: 'TURTLE', emoji: '🐢', options: ['🐸', '🐢', '🦎', '🐍'] },
+        { word: 'CAT', emoji: '🐱' },
+        { word: 'DOG', emoji: '🐶' },
+        { word: 'MOUSE', emoji: '🐭' },
+        { word: 'RABBIT', emoji: '🐰' },
+        { word: 'FISH', emoji: '🐟' },
+        { word: 'SHARK', emoji: '🦈' },
+        { word: 'BIRD', emoji: '🐦' },
+        { word: 'DUCK', emoji: '🦆' },
+        { word: 'OWL', emoji: '🦉' },
+        { word: 'BEE', emoji: '🐝' },
+        { word: 'BUTTERFLY', emoji: '🦋' },
+        { word: 'LION', emoji: '🦁' },
+        { word: 'TIGER', emoji: '🐯' },
+        { word: 'BEAR', emoji: '🐻' },
+        { word: 'PANDA', emoji: '🐼' },
+        { word: 'ELEPHANT', emoji: '🐘' },
+        { word: 'GIRAFFE', emoji: '🦒' },
+        { word: 'MONKEY', emoji: '🐵' },
+        { word: 'KOALA', emoji: '🐨' },
+        { word: 'FROG', emoji: '🐸' },
+        { word: 'TURTLE', emoji: '🐢' },
         
         // Nature
-        { word: 'TREE', emoji: '🌳', options: ['🌳', '🌸', '🌵', '🌻'] },
-        { word: 'FLOWER', emoji: '🌸', options: ['🌳', '🌸', '🌵', '🌻'] },
-        { word: 'CACTUS', emoji: '🌵', options: ['🌳', '🌸', '🌵', '🌻'] },
-        { word: 'SUN', emoji: '☀️', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'MOON', emoji: '🌙', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'STAR', emoji: '⭐', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'CLOUD', emoji: '☁️', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { word: 'FIRE', emoji: '🔥', options: ['🔥', '💧', '🌊', '❄️'] },
-        { word: 'WATER', emoji: '💧', options: ['🔥', '💧', '🌊', '❄️'] },
-        { word: 'SNOW', emoji: '❄️', options: ['🔥', '💧', '🌊', '❄️'] },
-        { word: 'RAINBOW', emoji: '🌈', options: ['🌈', '⚡', '🌪️', '🌤️'] },
-        { word: 'LIGHTNING', emoji: '⚡', options: ['🌈', '⚡', '🌪️', '🌤️'] },
+        { word: 'TREE', emoji: '🌳' },
+        { word: 'FLOWER', emoji: '🌸' },
+        { word: 'CACTUS', emoji: '🌵' },
+        { word: 'SUN', emoji: '☀️' },
+        { word: 'MOON', emoji: '🌙' },
+        { word: 'STAR', emoji: '⭐' },
+        { word: 'CLOUD', emoji: '☁️' },
+        { word: 'FIRE', emoji: '🔥' },
+        { word: 'WATER', emoji: '💧' },
+        { word: 'SNOW', emoji: '❄️' },
+        { word: 'RAINBOW', emoji: '🌈' },
+        { word: 'LIGHTNING', emoji: '⚡' },
         
         // Food
-        { word: 'APPLE', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'BANANA', emoji: '🍌', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'ORANGE', emoji: '🍊', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'GRAPES', emoji: '🍇', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { word: 'PIZZA', emoji: '🍕', options: ['🍕', '🍔', '🌭', '🍰'] },
-        { word: 'BURGER', emoji: '🍔', options: ['🍕', '🍔', '🌭', '🍰'] },
-        { word: 'CAKE', emoji: '🍰', options: ['🍕', '🍔', '🌭', '🍰'] },
-        { word: 'BREAD', emoji: '🍞', options: ['🍞', '🥐', '🥖', '🥯'] },
-        { word: 'CHEESE', emoji: '🧀', options: ['🧀', '🥛', '🍦', '🥤'] },
-        { word: 'MILK', emoji: '🥛', options: ['🧀', '🥛', '🍦', '🥤'] },
-        { word: 'ICE CREAM', emoji: '🍦', options: ['🧀', '🥛', '🍦', '🥤'] },
-        { word: 'COOKIE', emoji: '🍪', options: ['🍪', '🍩', '🧁', '🍫'] },
-        { word: 'DONUT', emoji: '🍩', options: ['🍪', '🍩', '🧁', '🍫'] },
-        { word: 'CHOCOLATE', emoji: '🍫', options: ['🍪', '🍩', '🧁', '🍫'] },
+        { word: 'APPLE', emoji: '🍎' },
+        { word: 'BANANA', emoji: '🍌' },
+        { word: 'ORANGE', emoji: '🍊' },
+        { word: 'GRAPES', emoji: '🍇' },
+        { word: 'PIZZA', emoji: '🍕' },
+        { word: 'BURGER', emoji: '🍔' },
+        { word: 'CAKE', emoji: '🍰' },
+        { word: 'BREAD', emoji: '🍞' },
+        { word: 'CHEESE', emoji: '🧀' },
+        { word: 'MILK', emoji: '🥛' },
+        { word: 'ICE CREAM', emoji: '🍦' },
+        { word: 'COOKIE', emoji: '🍪' },
+        { word: 'DONUT', emoji: '🍩' },
+        { word: 'CHOCOLATE', emoji: '🍫' },
         
         // Transportation
-        { word: 'CAR', emoji: '🚗', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'BUS', emoji: '🚌', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'BIKE', emoji: '🚲', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'PLANE', emoji: '✈️', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { word: 'TRAIN', emoji: '🚂', options: ['🚂', '🚁', '🚢', '🚀'] },
-        { word: 'HELICOPTER', emoji: '🚁', options: ['🚂', '🚁', '🚢', '🚀'] },
-        { word: 'SHIP', emoji: '🚢', options: ['🚂', '🚁', '🚢', '🚀'] },
-        { word: 'ROCKET', emoji: '🚀', options: ['🚂', '🚁', '🚢', '🚀'] },
+        { word: 'CAR', emoji: '🚗' },
+        { word: 'BUS', emoji: '🚌' },
+        { word: 'BIKE', emoji: '🚲' },
+        { word: 'PLANE', emoji: '✈️' },
+        { word: 'TRAIN', emoji: '🚂' },
+        { word: 'HELICOPTER', emoji: '🚁' },
+        { word: 'SHIP', emoji: '🚢' },
+        { word: 'ROCKET', emoji: '🚀' },
         
         // Buildings
-        { word: 'HOUSE', emoji: '🏠', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'SCHOOL', emoji: '🏫', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'HOSPITAL', emoji: '🏥', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'STORE', emoji: '🏪', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { word: 'CASTLE', emoji: '🏰', options: ['🏰', '🏛️', '🗼', '🌉'] },
+        { word: 'HOUSE', emoji: '🏠' },
+        { word: 'SCHOOL', emoji: '🏫' },
+        { word: 'HOSPITAL', emoji: '🏥' },
+        { word: 'STORE', emoji: '🏪' },
+        { word: 'CASTLE', emoji: '🏰' },
         
         // Sports & Activities
-        { word: 'BALL', emoji: '⚽', options: ['⚽', '🏀', '🎾', '⚾'] },
-        { word: 'BASKETBALL', emoji: '🏀', options: ['⚽', '🏀', '🎾', '⚾'] },
-        { word: 'TENNIS', emoji: '🎾', options: ['⚽', '🏀', '🎾', '⚾'] },
-        { word: 'BASEBALL', emoji: '⚾', options: ['⚽', '🏀', '🎾', '⚾'] },
+        { word: 'BALL', emoji: '⚽' },
+        { word: 'BASKETBALL', emoji: '🏀' },
+        { word: 'TENNIS', emoji: '🎾' },
+        { word: 'BASEBALL', emoji: '⚾' },
         
         // Objects
-        { word: 'HEART', emoji: '❤️', options: ['❤️', '💙', '💚', '💛'] },
-        { word: 'BOOK', emoji: '📚', options: ['📚', '✏️', '📝', '🖍️'] },
-        { word: 'PENCIL', emoji: '✏️', options: ['📚', '✏️', '📝', '🖍️'] },
-        { word: 'GIFT', emoji: '🎁', options: ['🎁', '🎈', '🎉', '🎊'] },
-        { word: 'BALLOON', emoji: '🎈', options: ['🎁', '🎈', '🎉', '🎊'] },
-        { word: 'CROWN', emoji: '👑', options: ['👑', '💎', '🔑', '🎩'] },
-        { word: 'KEY', emoji: '🔑', options: ['👑', '💎', '🔑', '🎩'] },
-        { word: 'CLOCK', emoji: '⏰', options: ['⏰', '⌚', '⏱️', '⏳'] },
-        { word: 'WATCH', emoji: '⌚', options: ['⏰', '⌚', '⏱️', '⏳'] },
-        { word: 'CAMERA', emoji: '📷', options: ['📷', '📱', '💻', '🖥️'] },
-        { word: 'PHONE', emoji: '📱', options: ['📷', '📱', '💻', '🖥️'] },
-        { word: 'COMPUTER', emoji: '💻', options: ['📷', '📱', '💻', '🖥️'] },
-        { word: 'UMBRELLA', emoji: '☂️', options: ['☂️', '👓', '👒', '🎒'] },
-        { word: 'GLASSES', emoji: '👓', options: ['☂️', '👓', '👒', '🎒'] },
-        { word: 'HAT', emoji: '👒', options: ['☂️', '👓', '👒', '🎒'] },
-        { word: 'BACKPACK', emoji: '🎒', options: ['☂️', '👓', '👒', '🎒'] }
+        { word: 'HEART', emoji: '❤️' },
+        { word: 'BOOK', emoji: '📚' },
+        { word: 'PENCIL', emoji: '✏️' },
+        { word: 'GIFT', emoji: '🎁' },
+        { word: 'BALLOON', emoji: '🎈' },
+        { word: 'CROWN', emoji: '👑' },
+        { word: 'KEY', emoji: '🔑' },
+        { word: 'CLOCK', emoji: '⏰' },
+        { word: 'WATCH', emoji: '⌚' },
+        { word: 'CAMERA', emoji: '📷' },
+        { word: 'PHONE', emoji: '📱' },
+        { word: 'COMPUTER', emoji: '💻' },
+        { word: 'UMBRELLA', emoji: '☂️' },
+        { word: 'GLASSES', emoji: '👓' },
+        { word: 'HAT', emoji: '👒' },
+        { word: 'BACKPACK', emoji: '🎒' }
     ];
     
     // Shuffle and select 15 words (increased from 10)
@@ -131,33 +131,59 @@ function startQuizMode() {
         isProcessingAnswer = false; // Reset for new question
         
         if (currentWord >= selectedWords.length) {
-            // Session complete
+            // Session complete - ENHANCED CELEBRATION
+            const finalBg = new Konva.Rect({
+                x: stage.width() / 2 - 250,
+                y: stage.height() / 2 - 120,
+                width: 500,
+                height: 240,
+                fillLinearGradientStartPoint: { x: 0, y: 0 },
+                fillLinearGradientEndPoint: { x: 0, y: 240 },
+                fillLinearGradientColorStops: [0, '#ec4899', 1, '#db2777'],
+                cornerRadius: 30,
+                shadowColor: 'rgba(0, 0, 0, 0.3)',
+                shadowBlur: 20,
+                shadowOffset: { x: 0, y: 10 }
+            });
+            layer.add(finalBg);
+            
             const finalText = new Konva.Text({
-                x: 0,
+                x: stage.width() / 2 - 250,
                 y: stage.height() / 2 - 80,
-                width: stage.width(),
-                text: 'כל הכבוד',
-                fontSize: 50,
-                fontFamily: 'Arial',
-                fill: '#667eea',
+                width: 500,
+                text: '🎉 כל הכבוד 🎉',
+                fontSize: 60,
+                fontFamily: 'Varela Round, Arial',
+                fill: 'white',
                 align: 'center',
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                shadowColor: 'rgba(0, 0, 0, 0.3)',
+                shadowBlur: 5
             });
             layer.add(finalText);
             
             const scoreText = new Konva.Text({
-                x: 0,
-                y: stage.height() / 2,
-                width: stage.width(),
+                x: stage.width() / 2 - 250,
+                y: stage.height() / 2 + 10,
+                width: 500,
                 text: `ענית נכון על ${correctAnswers} מתוך ${selectedWords.length} מילים`,
-                fontSize: 30,
-                fontFamily: 'Arial',
-                fill: '#764ba2',
-                align: 'center'
+                fontSize: 28,
+                fontFamily: 'Varela Round, Arial',
+                fill: 'white',
+                align: 'center',
+                shadowColor: 'rgba(0, 0, 0, 0.2)',
+                shadowBlur: 3
             });
             layer.add(scoreText);
             
             layer.draw();
+            
+            // Big celebration effects
+            createConfetti(stage.width() / 2, stage.height() / 2, 50);
+            createStarBurst(stage.width() / 2, stage.height() / 2, 12);
+            createSparkles(stage.width() / 2, stage.height() / 2, 30);
+            
+            playApplauseSound();
             playWinSound();
             speak(`כל הכבוד ענית נכון על ${correctAnswers} מתוך ${selectedWords.length} מילים`);
             return;
@@ -165,93 +191,202 @@ function startQuizMode() {
         
         const wordData = selectedWords[currentWord];
         
-        // Randomize options array to prevent answer always being in same position
-        const shuffledOptions = [...wordData.options].sort(() => Math.random() - 0.5);
-        const correctAnswer = wordData.emoji;
+        // Generate word options - ensure only correct word matches the emoji
+        const allWords = words.map(w => w.word);
+        const uniqueWords = [...new Set(allWords)];
         
-        // Instruction text
-        const instructionText = new Konva.Text({
+        // Get wrong words that DON'T match the current emoji
+        const wrongWords = uniqueWords.filter(word => {
+            // Exclude the correct word
+            if (word === wordData.word) return false;
+            
+            // Ensure this word doesn't match the current emoji
+            return !words.some(w => w.word === word && w.emoji === wordData.emoji);
+        });
+        
+        // Shuffle wrong words and pick 3
+        const shuffledWrong = shuffleArray(wrongWords).slice(0, 3);
+        
+        // Create options array with correct answer
+        const wordOptions = [...shuffledWrong, wordData.word];
+        
+        // Shuffle the options
+        const shuffledOptions = shuffleArray(wordOptions);
+        const correctAnswer = wordData.word;
+        
+        // Progress bar background
+        const progressBg = new Konva.Rect({
             x: 50,
-            y: 60,
+            y: 20,
             width: stage.width() - 100,
-            text: 'מצא את האימוג׳י הנכון',
-            fontSize: 28,
-            fontFamily: 'Arial',
-            fill: '#333',
+            height: 12,
+            fill: '#e5e7eb',
+            cornerRadius: 6
+        });
+        layer.add(progressBg);
+        
+        // Progress bar fill
+        const progressFill = new Konva.Rect({
+            x: 50,
+            y: 20,
+            width: ((stage.width() - 100) * (currentWord + 1)) / selectedWords.length,
+            height: 12,
+            fillLinearGradientStartPoint: { x: 0, y: 0 },
+            fillLinearGradientEndPoint: { x: (stage.width() - 100), y: 0 },
+            fillLinearGradientColorStops: [0, '#ec4899', 1, '#db2777'],
+            cornerRadius: 6
+        });
+        layer.add(progressFill);
+        
+        // Progress text
+        const progressText = new Konva.Text({
+            x: 50,
+            y: 40,
+            width: stage.width() - 100,
+            text: `מילה ${currentWord + 1} מתוך ${selectedWords.length}`,
+            fontSize: 18,
+            fontFamily: 'Varela Round, Arial',
+            fill: '#666',
+            align: 'center',
+            fontStyle: 'bold'
+        });
+        layer.add(progressText);
+        
+        // Instruction text with background
+        const instructionBg = new Konva.Rect({
+            x: stage.width() / 2 - 250,
+            y: 75,
+            width: 500,
+            height: 50,
+            fill: 'rgba(236, 72, 153, 0.15)',
+            cornerRadius: 15
+        });
+        layer.add(instructionBg);
+        
+        const instructionText = new Konva.Text({
+            x: stage.width() / 2 - 250,
+            y: 85,
+            width: 500,
+            text: 'מה השם באנגלית?',
+            fontSize: 24,
+            fontFamily: 'Varela Round, Arial',
+            fill: '#db2777',
             align: 'center',
             fontStyle: 'bold'
         });
         layer.add(instructionText);
         
-        // English word - large and centered, LTR
-        const ltrMark = '\u200E';
-        const wordText = new Konva.Text({
-            x: 50,
-            y: 120,
-            width: stage.width() - 100,
-            text: ltrMark + wordData.word + ltrMark,
-            fontSize: 70,
-            fontFamily: 'Arial',
-            fill: '#ec4899',
-            align: 'center',
-            fontStyle: 'bold'
-        });
-        layer.add(wordText);
+        // Calculate responsive sizes
+        const emojiCircleY = 160;
+        const emojiCircleRadius = Math.min(70, (stage.height() - 400) / 4);
         
-        // Progress indicator
-        const progressText = new Konva.Text({
-            x: 50,
-            y: 20,
-            width: stage.width() - 100,
-            text: `מילה ${currentWord + 1} מתוך ${selectedWords.length}`,
-            fontSize: 20,
-            fontFamily: 'Arial',
-            fill: '#666',
-            align: 'center'
+        // Large colorful emoji circle
+        const emojiCircle = new Konva.Circle({
+            x: stage.width() / 2,
+            y: emojiCircleY,
+            radius: emojiCircleRadius,
+            fillLinearGradientStartPoint: { x: -emojiCircleRadius, y: -emojiCircleRadius },
+            fillLinearGradientEndPoint: { x: emojiCircleRadius, y: emojiCircleRadius },
+            fillLinearGradientColorStops: [0, '#ec4899', 1, '#db2777'],
+            shadowColor: 'rgba(0, 0, 0, 0.3)',
+            shadowBlur: 20,
+            shadowOffset: { x: 0, y: 10 }
         });
-        layer.add(progressText);
+        layer.add(emojiCircle);
+        
+        // White inner circle
+        const innerCircle = new Konva.Circle({
+            x: stage.width() / 2,
+            y: emojiCircleY,
+            radius: emojiCircleRadius - 10,
+            fill: 'white'
+        });
+        layer.add(innerCircle);
+        
+        // Emoji - responsive size
+        const emojiFontSize = Math.min(100, emojiCircleRadius * 1.4);
+        const emojiText = new Konva.Text({
+            x: stage.width() / 2 - emojiFontSize / 2,
+            y: emojiCircleY - emojiFontSize / 2,
+            width: emojiFontSize,
+            height: emojiFontSize,
+            text: wordData.emoji,
+            fontSize: emojiFontSize,
+            fontFamily: 'Arial',
+            align: 'center',
+            verticalAlign: 'middle'
+        });
+        layer.add(emojiText);
         
         // Find correct answer index in shuffled options
         const correctIndex = shuffledOptions.indexOf(correctAnswer);
         
-        // Options grid (2x2)
+        // Options grid (2x2) with responsive design
         const gridSize = 2;
-        const cellWidth = 180;
-        const cellHeight = 180;
-        const startX = (stage.width() - cellWidth * gridSize) / 2;
-        const startY = 250;
+        const gap = 15;
+        const maxCellSize = 160;
+        const availableWidth = stage.width() - 40;
+        const availableHeight = stage.height() - emojiCircleY - emojiCircleRadius - 40;
+        const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize, (availableHeight - gap) / gridSize);
+        const cellHeight = cellWidth;
+        const totalGridWidth = cellWidth * gridSize + gap;
+        const startX = (stage.width() - totalGridWidth) / 2;
+        const startY = emojiCircleY + emojiCircleRadius + 30;
         
-        shuffledOptions.forEach((emoji, index) => {
+        shuffledOptions.forEach((word, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
-            const x = startX + col * cellWidth;
-            const y = startY + row * cellHeight;
+            const x = startX + col * (cellWidth + gap);
+            const y = startY + row * (cellHeight + gap);
             
             const optionGroup = new Konva.Group({
                 x: x,
                 y: y
             });
             
+            // Shadow
+            const shadow = new Konva.Rect({
+                x: 5,
+                y: 5,
+                width: cellWidth,
+                height: cellHeight,
+                fill: 'rgba(0, 0, 0, 0.15)',
+                cornerRadius: 25,
+                blur: 10
+            });
+            optionGroup.add(shadow);
+            
+            // Background with gradient
             const bg = new Konva.Rect({
-                width: cellWidth - 20,
-                height: cellHeight - 20,
-                fill: 'white',
+                width: cellWidth,
+                height: cellHeight,
+                fillLinearGradientStartPoint: { x: 0, y: 0 },
+                fillLinearGradientEndPoint: { x: 0, y: cellHeight },
+                fillLinearGradientColorStops: [0, 'white', 1, '#fdf2f8'],
                 stroke: '#ec4899',
-                strokeWidth: 4,
-                cornerRadius: 20
+                strokeWidth: 5,
+                cornerRadius: 25,
+                shadowColor: 'rgba(0, 0, 0, 0.2)',
+                shadowBlur: 10,
+                shadowOffset: { x: 0, y: 5 }
             });
             optionGroup.add(bg);
             
-            const emojiText = new Konva.Text({
-                text: emoji,
-                fontSize: 80,
+            // English word - LTR
+            const ltrMark = '\u200E';
+            const wordText = new Konva.Text({
+                text: ltrMark + word + ltrMark,
+                fontSize: Math.min(28, cellWidth * 0.15),
                 fontFamily: 'Arial',
-                width: cellWidth - 20,
-                height: cellHeight - 20,
+                fontStyle: 'bold',
+                fill: '#db2777',
+                width: cellWidth,
+                height: cellHeight,
                 align: 'center',
-                verticalAlign: 'middle'
+                verticalAlign: 'middle',
+                padding: 10
             });
-            optionGroup.add(emojiText);
+            optionGroup.add(wordText);
             
             optionGroup.on('click tap', function() {
                 // Prevent multiple clicks while processing
@@ -259,27 +394,52 @@ function startQuizMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer
+                    // Correct answer - ENHANCED EFFECTS
                     bg.fill('#4ade80');
+                    bg.stroke('#22c55e');
                     layer.draw();
+                    
+                    // Visual effects
+                    bounceElement(optionGroup, 1.3);
+                    glowElement(bg, '#4ade80');
+                    createConfetti(x + cellWidth / 2, y + cellHeight / 2, 25);
+                    createStarBurst(x + cellWidth / 2, y + cellHeight / 2, 10);
+                    
+                    // Audio
                     playWinSound();
+                    playWhooshSound();
+                    
+                    // Speak correct message
                     speak(getCorrectMessage());
-                    addPoints(10); // Award 10 points
-                    correctAnswers++;
+                    
+                    setTimeout(() => {
+                        addPoints(10);
+                        correctAnswers++;
+                    }, 300);
                     
                     setTimeout(() => {
                         currentWord++;
                         showWord();
-                    }, 1500);
+                    }, 2000);
                 } else {
-                    // Wrong answer
+                    // Wrong answer - ENHANCED EFFECTS
                     bg.fill('#ef4444');
+                    bg.stroke('#dc2626');
                     layer.draw();
+                    
+                    // Visual effects
+                    shakeElement(optionGroup);
+                    
+                    // Audio
                     playErrorSound();
                     speak(getWrongMessage());
                     
                     setTimeout(() => {
                         bg.fill('white');
+                        bg.fillLinearGradientStartPoint({ x: 0, y: 0 });
+                        bg.fillLinearGradientEndPoint({ x: 0, y: cellHeight });
+                        bg.fillLinearGradientColorStops([0, 'white', 1, '#fdf2f8']);
+                        bg.stroke('#ec4899');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
                     }, 800);
@@ -287,12 +447,24 @@ function startQuizMode() {
             });
             
             optionGroup.on('mouseenter', function() {
-                bg.strokeWidth(6);
+                document.body.style.cursor = 'pointer';
+                bg.strokeWidth(7);
+                optionGroup.to({
+                    scaleX: 1.05,
+                    scaleY: 1.05,
+                    duration: 0.1
+                });
                 layer.draw();
             });
             
             optionGroup.on('mouseleave', function() {
-                bg.strokeWidth(4);
+                document.body.style.cursor = 'default';
+                bg.strokeWidth(5);
+                optionGroup.to({
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 0.1
+                });
                 layer.draw();
             });
             
@@ -301,17 +473,25 @@ function startQuizMode() {
         
         layer.draw();
         
-        // Speak the English word
+        // Speak the question in Hebrew, then the word in English
         setTimeout(() => {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(wordData.word.toLowerCase());
-                utterance.lang = 'en-US';
-                utterance.rate = 0.7;
-                utterance.pitch = 1.0;
-                window.speechSynthesis.speak(utterance);
-            }
+            speak('מה השם באנגלית');
+            
+            // Then speak the English word
+            setTimeout(() => {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(wordData.word.toLowerCase());
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.7;
+                    utterance.pitch = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }, 1500);
         }, 500);
     }
+    
+    // Add floating stars background
+    createFloatingShapes('stars');
     
     showWord();
 }

@@ -9,60 +9,60 @@ function startLettersMode() {
     
     // Hebrew letters with matching words and emojis
     const letters = [
-        { letter: 'א', word: 'אריה', emoji: '🦁', options: ['🦁', '🐘', '🐻', '🐯'] },
-        { letter: 'א', word: 'אוטובוס', emoji: '🚌', options: ['🚌', '🚗', '🚲', '✈️'] },
-        { letter: 'א', word: 'אופניים', emoji: '🚲', options: ['🚲', '🚗', '🚌', '✈️'] },
-        { letter: 'ב', word: 'בננה', emoji: '🍌', options: ['🍌', '🍎', '🍊', '🍇'] },
-        { letter: 'ב', word: 'בית', emoji: '🏠', options: ['🏠', '🏫', '🏥', '🏪'] },
-        { letter: 'ב', word: 'בלון', emoji: '🎈', options: ['🎈', '🎁', '🎉', '🎊'] },
-        { letter: 'ג', word: 'גמל', emoji: '🐫', options: ['🐫', '🐴', '🦒', '🐄'] },
-        { letter: 'ג', word: 'גבינה', emoji: '🧀', options: ['🧀', '🥛', '🍦', '🥤'] },
-        { letter: 'ד', word: 'דג', emoji: '🐟', options: ['🐟', '🐠', '🦈', '🐙'] },
-        { letter: 'ד', word: 'דוב', emoji: '🐻', options: ['🐻', '🦁', '🐯', '🐼'] },
-        { letter: 'ד', word: 'דלת', emoji: '🚪', options: ['🚪', '🪟', '🏠', '🏢'] },
-        { letter: 'ה', word: 'הר', emoji: '⛰️', options: ['⛰️', '🏔️', '🌋', '🏖️'] },
-        { letter: 'ה', word: 'הליקופטר', emoji: '🚁', options: ['🚁', '✈️', '🚀', '🚂'] },
-        { letter: 'ו', word: 'ורד', emoji: '🌹', options: ['🌹', '🌻', '🌷', '🌸'] },
-        { letter: 'ז', word: 'זברה', emoji: '🦓', options: ['🦓', '🦒', '🐴', '🦌'] },
-        { letter: 'ז', word: 'זוג', emoji: '👫', options: ['👫', '👨', '👩', '👶'] },
-        { letter: 'ח', word: 'חתול', emoji: '🐱', options: ['🐱', '🐶', '🐭', '🐰'] },
-        { letter: 'ח', word: 'חלב', emoji: '🥛', options: ['🥛', '🧀', '🍦', '🥤'] },
-        { letter: 'ח', word: 'חלון', emoji: '🪟', options: ['🪟', '🚪', '🏠', '🏢'] },
-        { letter: 'ט', word: 'טלפון', emoji: '📱', options: ['📱', '💻', '⌚', '📷'] },
-        { letter: 'ט', word: 'טיל', emoji: '🚀', options: ['🚀', '✈️', '🚁', '🚂'] },
-        { letter: 'י', word: 'ירח', emoji: '🌙', options: ['🌙', '⭐', '☀️', '☁️'] },
-        { letter: 'י', word: 'יונה', emoji: '🕊️', options: ['🕊️', '🐦', '🦅', '🦆'] },
-        { letter: 'כ', word: 'כלב', emoji: '🐶', options: ['🐶', '🐱', '🐭', '🐰'] },
-        { letter: 'כ', word: 'כוכב', emoji: '⭐', options: ['⭐', '🌙', '☀️', '☁️'] },
-        { letter: 'כ', word: 'כדור', emoji: '⚽', options: ['⚽', '🏀', '🎾', '⚾'] },
-        { letter: 'ל', word: 'לב', emoji: '❤️', options: ['❤️', '💙', '💚', '💛'] },
-        { letter: 'ל', word: 'לחם', emoji: '🍞', options: ['🍞', '🥐', '🥖', '🥯'] },
-        { letter: 'מ', word: 'מטוס', emoji: '✈️', options: ['✈️', '🚗', '🚌', '🚲'] },
-        { letter: 'מ', word: 'מכונית', emoji: '🚗', options: ['🚗', '🚌', '🚲', '✈️'] },
-        { letter: 'מ', word: 'מתנה', emoji: '🎁', options: ['🎁', '🎈', '🎉', '🎊'] },
-        { letter: 'ן', word: 'חלון', emoji: '🪟', options: ['🪟', '🚪', '🏠', '🏢'] },
-        { letter: 'נ', word: 'נר', emoji: '🕯️', options: ['🕯️', '💡', '🔦', '🔥'] },
-        { letter: 'נ', word: 'נחש', emoji: '🐍', options: ['🐍', '🐢', '🦎', '🐊'] },
-        { letter: 'ס', word: 'סוס', emoji: '🐴', options: ['🐴', '🦓', '🦒', '🐄'] },
-        { letter: 'ס', word: 'ספר', emoji: '📚', options: ['📚', '✏️', '📝', '🖍️'] },
-        { letter: 'ע', word: 'עץ', emoji: '🌳', options: ['🌳', '🌲', '🌴', '🌵'] },
-        { letter: 'ע', word: 'עוגה', emoji: '🍰', options: ['🍰', '🍪', '🍩', '🧁'] },
-        { letter: 'ע', word: 'ענן', emoji: '☁️', options: ['☁️', '☀️', '🌙', '⭐'] },
-        { letter: 'פ', word: 'פיל', emoji: '🐘', options: ['🐘', '🦏', '🦛', '🐃'] },
-        { letter: 'פ', word: 'פרח', emoji: '🌸', options: ['🌸', '🌹', '🌻', '🌷'] },
-        { letter: 'ץ', word: 'עץ', emoji: '🌳', options: ['🌳', '🌲', '🌴', '🌵'] },
-        { letter: 'צ', word: 'צב', emoji: '🐢', options: ['🐢', '🐸', '🦎', '🐊'] },
-        { letter: 'צ', word: 'צבע', emoji: '🎨', options: ['🎨', '🖌️', '✏️', '🖍️'] },
-        { letter: 'צ', word: 'ציפור', emoji: '🐦', options: ['🐦', '🦅', '🦆', '🦉'] },
-        { letter: 'ק', word: 'קוף', emoji: '🐵', options: ['🐵', '🦍', '🐒', '🦧'] },
-        { letter: 'ק', word: 'קשת', emoji: '🌈', options: ['🌈', '⚡', '🌪️', '🌤️'] },
-        { letter: 'ר', word: 'רכבת', emoji: '🚂', options: ['🚂', '🚗', '🚌', '✈️'] },
-        { letter: 'ר', word: 'רקטה', emoji: '🚀', options: ['🚀', '✈️', '🚁', '🚂'] },
-        { letter: 'ש', word: 'שמש', emoji: '☀️', options: ['☀️', '🌙', '⭐', '☁️'] },
-        { letter: 'ש', word: 'שעון', emoji: '⏰', options: ['⏰', '⌚', '⏱️', '⏳'] },
-        { letter: 'ש', word: 'שוקולד', emoji: '🍫', options: ['🍫', '🍪', '🍩', '🧁'] },
-        { letter: 'ת', word: 'תפוח', emoji: '🍎', options: ['🍎', '🍌', '🍊', '🍇'] },
-        { letter: 'ת', word: 'תרנגול', emoji: '🐔', options: ['🐔', '🐓', '🦃', '🦆'] }
+        { letter: 'א', word: 'אריה', emoji: '🦁' },
+        { letter: 'א', word: 'אוטובוס', emoji: '🚌' },
+        { letter: 'א', word: 'אופניים', emoji: '🚲' },
+        { letter: 'ב', word: 'בננה', emoji: '🍌' },
+        { letter: 'ב', word: 'בית', emoji: '🏠' },
+        { letter: 'ב', word: 'בלון', emoji: '🎈' },
+        { letter: 'ג', word: 'גמל', emoji: '🐫' },
+        { letter: 'ג', word: 'גבינה', emoji: '🧀' },
+        { letter: 'ד', word: 'דג', emoji: '🐟' },
+        { letter: 'ד', word: 'דוב', emoji: '🐻' },
+        { letter: 'ד', word: 'דלת', emoji: '🚪' },
+        { letter: 'ה', word: 'הר', emoji: '⛰️' },
+        { letter: 'ה', word: 'הליקופטר', emoji: '🚁' },
+        { letter: 'ו', word: 'ורד', emoji: '🌹' },
+        { letter: 'ז', word: 'זברה', emoji: '🦓' },
+        { letter: 'ז', word: 'זוג', emoji: '👫' },
+        { letter: 'ח', word: 'חתול', emoji: '🐱' },
+        { letter: 'ח', word: 'חלב', emoji: '🥛' },
+        { letter: 'ח', word: 'חלון', emoji: '🪟' },
+        { letter: 'ט', word: 'טלפון', emoji: '📱' },
+        { letter: 'ט', word: 'טיל', emoji: '🚀' },
+        { letter: 'י', word: 'ירח', emoji: '🌙' },
+        { letter: 'י', word: 'יונה', emoji: '🕊️' },
+        { letter: 'כ', word: 'כלב', emoji: '🐶' },
+        { letter: 'כ', word: 'כוכב', emoji: '⭐' },
+        { letter: 'כ', word: 'כדור', emoji: '⚽' },
+        { letter: 'ל', word: 'לב', emoji: '❤️' },
+        { letter: 'ל', word: 'לחם', emoji: '🍞' },
+        { letter: 'מ', word: 'מטוס', emoji: '✈️' },
+        { letter: 'מ', word: 'מכונית', emoji: '🚗' },
+        { letter: 'מ', word: 'מתנה', emoji: '🎁' },
+        { letter: 'ן', word: 'חלון', emoji: '🪟' },
+        { letter: 'נ', word: 'נר', emoji: '🕯️' },
+        { letter: 'נ', word: 'נחש', emoji: '🐍' },
+        { letter: 'ס', word: 'סוס', emoji: '🐴' },
+        { letter: 'ס', word: 'ספר', emoji: '📚' },
+        { letter: 'ע', word: 'עץ', emoji: '🌳' },
+        { letter: 'ע', word: 'עוגה', emoji: '🍰' },
+        { letter: 'ע', word: 'ענן', emoji: '☁️' },
+        { letter: 'פ', word: 'פיל', emoji: '🐘' },
+        { letter: 'פ', word: 'פרח', emoji: '🌸' },
+        { letter: 'ץ', word: 'עץ', emoji: '🌳' },
+        { letter: 'צ', word: 'צב', emoji: '🐢' },
+        { letter: 'צ', word: 'צבע', emoji: '🎨' },
+        { letter: 'צ', word: 'ציפור', emoji: '🐦' },
+        { letter: 'ק', word: 'קוף', emoji: '🐵' },
+        { letter: 'ק', word: 'קשת', emoji: '🌈' },
+        { letter: 'ר', word: 'רכבת', emoji: '🚂' },
+        { letter: 'ר', word: 'רקטה', emoji: '🚀' },
+        { letter: 'ש', word: 'שמש', emoji: '☀️' },
+        { letter: 'ש', word: 'שעון', emoji: '⏰' },
+        { letter: 'ש', word: 'שוקולד', emoji: '🍫' },
+        { letter: 'ת', word: 'תפוח', emoji: '🍎' },
+        { letter: 'ת', word: 'תרנגול', emoji: '🐔' }
     ];
     
     // Shuffle and select 10 letters
@@ -76,7 +76,7 @@ function startLettersMode() {
         isProcessingAnswer = false; // Reset for new question
         
         if (currentLetter >= selectedLetters.length) {
-            // Session complete
+            // Session complete - ENHANCED CELEBRATION
             const finalBg = new Konva.Rect({
                 x: stage.width() / 2 - 250,
                 y: stage.height() / 2 - 120,
@@ -122,6 +122,13 @@ function startLettersMode() {
             layer.add(scoreText);
             
             layer.draw();
+            
+            // Big celebration effects
+            createConfetti(stage.width() / 2, stage.height() / 2, 50);
+            createStarBurst(stage.width() / 2, stage.height() / 2, 12);
+            createSparkles(stage.width() / 2, stage.height() / 2, 30);
+            
+            playApplauseSound();
             playWinSound();
             speak(`כל הכבוד ענית נכון על ${correctAnswers} מתוך ${selectedLetters.length} אותיות`);
             return;
@@ -129,9 +136,29 @@ function startLettersMode() {
         
         const letterData = selectedLetters[currentLetter];
         
-        // Randomize options array to prevent answer always being in same position
-        const shuffledOptions = [...letterData.options].sort(() => Math.random() - 0.5);
-        const correctAnswer = letterData.emoji;
+        // Generate letter options - ensure only correct letter matches the emoji
+        const allLetters = letters.map(l => l.letter);
+        const uniqueLetters = [...new Set(allLetters)];
+        
+        // Get wrong letters that DON'T match any word starting with them in our dataset
+        const wrongLetters = uniqueLetters.filter(letter => {
+            // Exclude the correct letter
+            if (letter === letterData.letter) return false;
+            
+            // Check if this letter matches the first letter of the current word
+            // This ensures we don't show letters that could be ambiguous
+            return letter !== letterData.word[0];
+        });
+        
+        // Shuffle wrong letters and pick 3
+        const shuffledWrong = shuffleArray(wrongLetters).slice(0, 3);
+        
+        // Create options array with correct answer
+        const letterOptions = [...shuffledWrong, letterData.letter];
+        
+        // Shuffle the options
+        const shuffledOptions = shuffleArray(letterOptions);
+        const correctAnswer = letterData.letter;
         
         // Progress bar background
         const progressBg = new Konva.Rect({
@@ -173,9 +200,9 @@ function startLettersMode() {
         
         // Instruction text with background
         const instructionBg = new Konva.Rect({
-            x: stage.width() / 2 - 200,
+            x: stage.width() / 2 - 250,
             y: 75,
-            width: 400,
+            width: 500,
             height: 50,
             fill: 'rgba(245, 158, 11, 0.15)',
             cornerRadius: 15
@@ -183,10 +210,10 @@ function startLettersMode() {
         layer.add(instructionBg);
         
         const instructionText = new Konva.Text({
-            x: stage.width() / 2 - 200,
+            x: stage.width() / 2 - 250,
             y: 85,
-            width: 400,
-            text: 'מצא את התמונה שמתחילה באות',
+            width: 500,
+            text: 'באיזו אות מתחילה המילה?',
             fontSize: 24,
             fontFamily: 'Varela Round, Arial',
             fill: '#ea580c',
@@ -196,48 +223,46 @@ function startLettersMode() {
         layer.add(instructionText);
         
         // Calculate responsive sizes
-        const letterCircleY = 160;
-        const letterCircleRadius = Math.min(60, (stage.height() - 400) / 4);
+        const emojiCircleY = 160;
+        const emojiCircleRadius = Math.min(70, (stage.height() - 400) / 4);
         
-        // Large colorful letter circle
-        const letterCircle = new Konva.Circle({
+        // Large colorful emoji circle
+        const emojiCircle = new Konva.Circle({
             x: stage.width() / 2,
-            y: letterCircleY,
-            radius: letterCircleRadius,
-            fillLinearGradientStartPoint: { x: -letterCircleRadius, y: -letterCircleRadius },
-            fillLinearGradientEndPoint: { x: letterCircleRadius, y: letterCircleRadius },
+            y: emojiCircleY,
+            radius: emojiCircleRadius,
+            fillLinearGradientStartPoint: { x: -emojiCircleRadius, y: -emojiCircleRadius },
+            fillLinearGradientEndPoint: { x: emojiCircleRadius, y: emojiCircleRadius },
             fillLinearGradientColorStops: [0, '#fbbf24', 1, '#f59e0b'],
             shadowColor: 'rgba(0, 0, 0, 0.3)',
             shadowBlur: 20,
             shadowOffset: { x: 0, y: 10 }
         });
-        layer.add(letterCircle);
+        layer.add(emojiCircle);
         
         // White inner circle
         const innerCircle = new Konva.Circle({
             x: stage.width() / 2,
-            y: letterCircleY,
-            radius: letterCircleRadius - 10,
+            y: emojiCircleY,
+            radius: emojiCircleRadius - 10,
             fill: 'white'
         });
         layer.add(innerCircle);
         
-        // Hebrew letter - responsive size
-        const letterFontSize = Math.min(80, letterCircleRadius * 1.3);
-        const letterText = new Konva.Text({
-            x: stage.width() / 2 - letterFontSize / 2,
-            y: letterCircleY - letterFontSize / 2,
-            width: letterFontSize,
-            height: letterFontSize,
-            text: letterData.letter,
-            fontSize: letterFontSize,
+        // Emoji - responsive size
+        const emojiFontSize = Math.min(100, emojiCircleRadius * 1.4);
+        const emojiText = new Konva.Text({
+            x: stage.width() / 2 - emojiFontSize / 2,
+            y: emojiCircleY - emojiFontSize / 2,
+            width: emojiFontSize,
+            height: emojiFontSize,
+            text: letterData.emoji,
+            fontSize: emojiFontSize,
             fontFamily: 'Arial',
-            fill: '#f59e0b',
             align: 'center',
-            verticalAlign: 'middle',
-            fontStyle: 'bold'
+            verticalAlign: 'middle'
         });
-        layer.add(letterText);
+        layer.add(emojiText);
         
         // Find correct answer index in shuffled options
         const correctIndex = shuffledOptions.indexOf(correctAnswer);
@@ -247,15 +272,15 @@ function startLettersMode() {
         const gap = 15;
         const maxCellSize = 160;
         const availableWidth = stage.width() - 40; // 20px padding on each side
-        const availableHeight = stage.height() - letterCircleY - letterCircleRadius - 40; // Space below letter
+        const availableHeight = stage.height() - emojiCircleY - emojiCircleRadius - 40; // Space below emoji
         const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize, (availableHeight - gap) / gridSize);
         const cellHeight = cellWidth; // Keep square
         const totalGridWidth = cellWidth * gridSize + gap;
         const startX = (stage.width() - totalGridWidth) / 2;
-        // Position grid below the letter circle with proper spacing
-        const startY = letterCircleY + letterCircleRadius + 30;
+        // Position grid below the emoji circle with proper spacing
+        const startY = emojiCircleY + emojiCircleRadius + 30;
         
-        shuffledOptions.forEach((emoji, index) => {
+        shuffledOptions.forEach((letter, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
             const x = startX + col * (cellWidth + gap);
@@ -294,17 +319,19 @@ function startLettersMode() {
             });
             optionGroup.add(bg);
             
-            // Emoji
-            const emojiText = new Konva.Text({
-                text: emoji,
-                fontSize: Math.min(100, cellWidth * 0.5), // Responsive font size
+            // Hebrew letter
+            const letterText = new Konva.Text({
+                text: letter,
+                fontSize: Math.min(100, cellWidth * 0.6), // Responsive font size
                 fontFamily: 'Arial',
+                fontStyle: 'bold',
+                fill: '#f59e0b',
                 width: cellWidth,
                 height: cellHeight,
                 align: 'center',
                 verticalAlign: 'middle'
             });
-            optionGroup.add(emojiText);
+            optionGroup.add(letterText);
             
             optionGroup.on('click tap', function() {
                 // Prevent multiple clicks while processing
@@ -312,28 +339,23 @@ function startLettersMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - celebrate!
+                    // Correct answer - ENHANCED EFFECTS
                     bg.fill('#4ade80');
                     bg.stroke('#22c55e');
                     layer.draw();
+                    
+                    // Visual effects
+                    bounceElement(optionGroup, 1.3);
+                    glowElement(bg, '#4ade80');
+                    createConfetti(x + cellWidth / 2, y + cellHeight / 2, 25);
+                    createStarBurst(x + cellWidth / 2, y + cellHeight / 2, 10);
+                    
+                    // Audio
                     playWinSound();
+                    playWhooshSound();
                     
                     // Speak the word name
                     speak(letterData.word);
-                    
-                    // Animate celebration
-                    optionGroup.to({
-                        scaleX: 1.2,
-                        scaleY: 1.2,
-                        duration: 0.2,
-                        onFinish: () => {
-                            optionGroup.to({
-                                scaleX: 1,
-                                scaleY: 1,
-                                duration: 0.2
-                            });
-                        }
-                    });
                     
                     setTimeout(() => {
                         speak(getCorrectMessage());
@@ -346,35 +368,17 @@ function startLettersMode() {
                         showLetter();
                     }, 2500);
                 } else {
-                    // Wrong answer - shake
+                    // Wrong answer - ENHANCED EFFECTS
                     bg.fill('#ef4444');
                     bg.stroke('#dc2626');
                     layer.draw();
+                    
+                    // Visual effects
+                    shakeElement(optionGroup);
+                    
+                    // Audio
                     playErrorSound();
                     speak(getWrongMessage());
-                    
-                    // Shake animation
-                    const originalX = optionGroup.x();
-                    optionGroup.to({
-                        x: originalX - 10,
-                        duration: 0.05,
-                        onFinish: () => {
-                            optionGroup.to({
-                                x: originalX + 10,
-                                duration: 0.05,
-                                onFinish: () => {
-                                    optionGroup.to({
-                                        x: originalX,
-                                        duration: 0.05,
-                                        onFinish: () => {
-                                            // Reset flag after wrong answer animation
-                                            isProcessingAnswer = false;
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
                     
                     setTimeout(() => {
                         bg.fill('white');
@@ -383,6 +387,7 @@ function startLettersMode() {
                         bg.fillLinearGradientColorStops([0, 'white', 1, '#f9fafb']);
                         bg.stroke('#f59e0b');
                         layer.draw();
+                        isProcessingAnswer = false; // Reset after wrong answer
                     }, 800);
                 }
             });
@@ -414,9 +419,12 @@ function startLettersMode() {
         
         layer.draw();
         
-        // Only speak the letter, not the word
-        setTimeout(() => speak(`האות ${letterData.letter}`), 500);
+        // Speak the question with the word name
+        setTimeout(() => speak(`באיזו אות מתחילה המילה ${letterData.word}`), 500);
     }
+    
+    // Add floating letters background
+    createFloatingShapes('letters');
     
     showLetter();
 }
