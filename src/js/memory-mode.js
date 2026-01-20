@@ -556,11 +556,11 @@ function showGameResults(mode, player1Matches, player2Matches, totalPairs) {
         if (player1Matches > player2Matches) {
             resultText = `🎉 שחקן 1 ניצח! 🎉\n\n👤 שחקן 1: ${player1Matches} זוגות\n👤 שחקן 2: ${player2Matches} זוגות`;
             resultColor = '#22c55e';
-            speak('שחקן 1 ניצח כל הכבוד');
+            speak(getCorrectMessage() + ' שחקן 1 ניצח');
         } else if (player2Matches > player1Matches) {
             resultText = `🎉 שחקן 2 ניצח! 🎉\n\n👤 שחקן 1: ${player1Matches} זוגות\n👤 שחקן 2: ${player2Matches} זוגות`;
             resultColor = '#ec4899';
-            speak('שחקן 2 ניצח כל הכבוד');
+            speak(getCorrectMessage() + ' שחקן 2 ניצח');
         } else {
             resultText = `🤝 תיקו! 🤝\n\nשני השחקנים מצאו ${player1Matches} זוגות`;
             resultColor = '#f59e0b';

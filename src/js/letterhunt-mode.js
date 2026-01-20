@@ -2,6 +2,7 @@
 function startLetterHuntMode() {
     currentMode = 'letterhunt';
     initStage();
+    showScore(); // Show score display
     
     // Game state
     let currentLanguage = 'hebrew'; // Start with Hebrew
@@ -393,20 +394,8 @@ function startLetterHuntMode() {
                 createStarBurst(layer, stage, optionGroup.x(), optionGroup.y());
                 createSparkles(layer, stage, optionGroup.x(), optionGroup.y());
                 
-                // Positive reinforcement messages
-                const messages = [
-                    'כל הכבוד',
-                    'מעולה',
-                    'יפה מאוד',
-                    'אלוף',
-                    'נהדר',
-                    'Perfect',
-                    'Excellent',
-                    'Amazing',
-                    'Superb',
-                    'Brilliant'
-                ];
-                const message = messages[Math.floor(Math.random() * messages.length)];
+                // Use global feedback function
+                const message = getCorrectMessage();
                 speak(message);
                 
                 // Show success message with emoji
@@ -461,7 +450,8 @@ function startLetterHuntMode() {
                 playErrorSound();
                 shakeElement(optionGroup);
                 
-                const errorMsg = currentLanguage === 'hebrew' ? 'נסה שוב' : 'Try again';
+                // Use global feedback function
+                const errorMsg = getWrongMessage();
                 speak(errorMsg);
                 
                 // Flash red

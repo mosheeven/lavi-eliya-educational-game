@@ -267,7 +267,7 @@ function startSortingMode() {
                                         const remainingItems = layer.find('Group').filter(g => g.draggable());
                                         if (remainingItems.length === 0) {
                                             registerTimer(setTimeout(() => {
-                                                speak('כל הכבוד סיימתם את המשחק');
+                                                speak(getCorrectMessage() + ' סיימתם את המשחק');
                                             }, 500));
                                         }
                                     }

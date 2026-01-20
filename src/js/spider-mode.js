@@ -471,7 +471,7 @@ function startSpiderMode() {
             addPoints(gameScore * 10);
         }
         
-        speak(`תפסת ${gameScore} זבובים כל הכבוד`);
+        speak(`${getCorrectMessage()} תפסת ${gameScore} זבובים`);
         playWinSound();
         
         // Click to restart
