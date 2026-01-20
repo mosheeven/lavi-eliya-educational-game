@@ -35,10 +35,7 @@ const gameModeTitles = {
     'memory': '🎯 זיכרון',
     'coloring': '🎨 צביעה',
     'spider': '🕷️ עכביש',
-    'patterns': '🧩 דפוסים',
-    'plant': '🌱 גידול צמח',
-    'numbers': '🔢 מספרים',
-    'dressup': '👗 הלבשה'
+    'numbers': '🔢 מספרים'
 };
 
 // Fisher-Yates shuffle algorithm for proper randomization

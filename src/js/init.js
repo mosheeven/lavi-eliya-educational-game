@@ -33,10 +33,7 @@ window.addEventListener('load', () => {
         'btn-memory': { mode: 'memory', func: startMemoryMode },
         'btn-coloring': { mode: 'coloring', func: startColoringMode },
         'btn-spider': { mode: 'spider', func: startSpiderMode },
-        'btn-patterns': { mode: 'patterns', func: startPatternsMode },
-        'btn-plant': { mode: 'plant', func: startPlantMode },
-        'btn-numbers': { mode: 'numbers', func: startNumbersMode },
-        'btn-dressup': { mode: 'dressup', func: startDressUpMode }
+        'btn-numbers': { mode: 'numbers', func: startNumbersMode }
     };
     
     Object.keys(buttons).forEach(btnId => {
@@ -94,9 +91,6 @@ window.addEventListener('resize', () => {
         else if (currentMode === 'memory') startMemoryMode();
         else if (currentMode === 'coloring') startColoringMode();
         else if (currentMode === 'spider') startSpiderMode();
-        else if (currentMode === 'patterns') startPatternsMode();
-        else if (currentMode === 'plant') startPlantMode();
         else if (currentMode === 'numbers') startNumbersMode();
-        else if (currentMode === 'dressup') startDressUpMode();
     }
 });
