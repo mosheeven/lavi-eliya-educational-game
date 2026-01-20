@@ -28,56 +28,112 @@ function startLetterHuntMode() {
     // Numbers 0-20
     const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
     
-    // Create language toggle button
-    const toggleBtn = new Konva.Group({
-        x: stage.width() - 180,
+    // Create language toggle buttons container
+    const toggleContainer = new Konva.Group({
+        x: stage.width() / 2,
         y: 20
     });
     
-    const toggleBg = new Konva.Rect({
-        width: 160,
-        height: 60,
-        fill: '#ec4899',
-        cornerRadius: 15,
-        shadowColor: 'black',
-        shadowBlur: 10,
-        shadowOpacity: 0.3
-    });
+    const buttonWidth = 110;
+    const buttonHeight = 55;
+    const buttonGap = 10;
+    const totalWidth = (buttonWidth * 3) + (buttonGap * 2);
     
-    const toggleText = new Konva.Text({
-        width: 160,
-        height: 60,
-        text: currentLanguage === 'hebrew' ? '🔤 English' : '🔡 עברית',
-        fontSize: 20,
-        fontFamily: 'Arial',
-        fill: 'white',
-        align: 'center',
-        verticalAlign: 'middle',
-        fontStyle: 'bold'
-    });
+    // Hebrew button
+    const hebrewBtn = createLanguageButton(-totalWidth/2, 0, buttonWidth, buttonHeight, '🔡 עברית', 'hebrew');
     
-    toggleBtn.add(toggleBg, toggleText);
-    layer.add(toggleBtn);
+    // English button
+    const englishBtn = createLanguageButton(-totalWidth/2 + buttonWidth + buttonGap, 0, buttonWidth, buttonHeight, '🔤 English', 'english');
     
-    // Toggle button interaction
-    toggleBtn.on('click tap', () => {
-        currentLanguage = currentLanguage === 'hebrew' ? 'english' : 'hebrew';
-        toggleText.text(currentLanguage === 'hebrew' ? '🔤 English' : '🔡 עברית');
-        playPopSound();
-        startNewRound();
-    });
+    // Numbers button
+    const numbersBtn = createLanguageButton(-totalWidth/2 + (buttonWidth + buttonGap) * 2, 0, buttonWidth, buttonHeight, '🔢 מספרים', 'numbers');
     
-    toggleBtn.on('mouseenter', () => {
-        toggleBg.fill('#db2777');
-        stage.container().style.cursor = 'pointer';
+    toggleContainer.add(hebrewBtn, englishBtn, numbersBtn);
+    layer.add(toggleContainer);
+    
+    // Update button states
+    function updateButtonStates() {
+        [hebrewBtn, englishBtn, numbersBtn].forEach(btn => {
+            const bg = btn.findOne('Rect');
+            const lang = btn.getAttr('language');
+            if (lang === currentLanguage) {
+                bg.fill('#10b981');
+                bg.strokeWidth(4);
+                bg.stroke('#ffffff');
+            } else {
+                bg.fill('#6b7280');
+                bg.strokeWidth(0);
+                bg.stroke(null);
+            }
+        });
         layer.draw();
-    });
+    }
     
-    toggleBtn.on('mouseleave', () => {
-        toggleBg.fill('#ec4899');
-        stage.container().style.cursor = 'default';
-        layer.draw();
-    });
+    function createLanguageButton(x, y, width, height, text, language) {
+        const btn = new Konva.Group({
+            x: x,
+            y: y
+        });
+        btn.setAttr('language', language);
+        
+        const bg = new Konva.Rect({
+            width: width,
+            height: height,
+            fill: language === currentLanguage ? '#10b981' : '#6b7280',
+            cornerRadius: 12,
+            shadowColor: 'black',
+            shadowBlur: 8,
+            shadowOpacity: 0.3,
+            stroke: language === currentLanguage ? '#ffffff' : null,
+            strokeWidth: language === currentLanguage ? 4 : 0
+        });
+        
+        const label = new Konva.Text({
+            width: width,
+            height: height,
+            text: text,
+            fontSize: 16,
+            fontFamily: 'Arial',
+            fill: 'white',
+            align: 'center',
+            verticalAlign: 'middle',
+            fontStyle: 'bold'
+        });
+        
+        btn.add(bg, label);
+        
+        // Button interaction
+        btn.on('click tap', () => {
+            if (currentLanguage !== language) {
+                currentLanguage = language;
+                currentRound = 0; // Reset round when switching language
+                updateButtonStates();
+                playPopSound();
+                startNewRound();
+            }
+        });
+        
+        btn.on('mouseenter', () => {
+            if (currentLanguage !== language) {
+                bg.opacity(0.8);
+            }
+            bg.shadowBlur(12);
+            stage.container().style.cursor = 'pointer';
+            layer.draw();
+        });
+        
+        btn.on('mouseleave', () => {
+            bg.opacity(1);
+            bg.shadowBlur(8);
+            stage.container().style.cursor = 'default';
+            layer.draw();
+        });
+        
+        return btn;
+    }
+    
+    // Initialize button states
+    updateButtonStates();
     
     // Create floating background shapes
     createFloatingShapes(layer, stage);
@@ -88,12 +144,16 @@ function startLetterHuntMode() {
         
         // Select target letter based on language
         let letterPool;
+        let languageName;
         if (currentLanguage === 'hebrew') {
             letterPool = hebrewLetters;
+            languageName = 'עברית';
         } else if (currentLanguage === 'english') {
             letterPool = englishLetters;
+            languageName = 'English';
         } else {
             letterPool = numbers;
+            languageName = 'מספרים';
         }
         
         // Prioritize first letters of names in early rounds
@@ -123,25 +183,49 @@ function startLetterHuntMode() {
         // Shuffle options
         options = shuffleArray(options);
         
-        // Display target letter (huge size at top)
+        // Display target letter (huge size at top with animation)
         const targetText = new Konva.Text({
             x: stage.width() / 2,
             y: 120,
             text: targetLetter,
-            fontSize: 180,
+            fontSize: 200,
             fontFamily: 'Arial',
             fill: '#667eea',
             fontStyle: 'bold',
             shadowColor: 'black',
-            shadowBlur: 15,
-            shadowOpacity: 0.3,
-            name: 'game-element'
+            shadowBlur: 20,
+            shadowOpacity: 0.4,
+            name: 'game-element',
+            opacity: 0
         });
         targetText.offsetX(targetText.width() / 2);
         layer.add(targetText);
         
-        // Animate target letter
-        bounceElement(targetText);
+        // Animate target letter entrance
+        targetText.to({
+            opacity: 1,
+            scaleX: 1.2,
+            scaleY: 1.2,
+            duration: 0.5,
+            easing: Konva.Easings.BackEaseOut,
+            onFinish: () => {
+                targetText.to({
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 0.3
+                });
+            }
+        });
+        
+        // Continuous floating animation for target letter
+        const floatAnim = new Konva.Animation((frame) => {
+            const time = frame.time / 1000;
+            targetText.y(120 + Math.sin(time * 2) * 15);
+            targetText.rotation(Math.sin(time * 1.5) * 5);
+        }, layer);
+        floatAnim.start();
+        
+        // Pulsing glow effect
         glowElement(targetText);
         
         // Display instruction
@@ -156,162 +240,254 @@ function startLetterHuntMode() {
         
         const instruction = new Konva.Text({
             x: stage.width() / 2,
-            y: 320,
+            y: 340,
             text: instructionText,
-            fontSize: 32,
+            fontSize: 36,
             fontFamily: 'Arial',
             fill: '#764ba2',
             fontStyle: 'bold',
-            name: 'game-element'
+            name: 'game-element',
+            shadowColor: 'rgba(0,0,0,0.2)',
+            shadowBlur: 5,
+            opacity: 0
         });
         instruction.offsetX(instruction.width() / 2);
         layer.add(instruction);
         
+        // Fade in instruction
+        instruction.to({
+            opacity: 1,
+            duration: 0.4
+        });
+        
         // Speak instruction
         speak(instructionText);
         
-        // Display options
-        const optionY = 400;
+        // Display options with staggered animation
+        const optionY = 420;
         const spacing = stage.width() / (options.length + 1);
         
         options.forEach((letter, index) => {
-            const optionGroup = new Konva.Group({
-                x: spacing * (index + 1),
-                y: optionY,
-                name: 'game-element'
-            });
-            
-            const isCorrect = letter === targetLetter;
-            
-            // Option background
-            const optionBg = new Konva.Rect({
-                width: 120,
-                height: 120,
-                fill: isCorrect ? '#10b981' : '#f59e0b',
-                cornerRadius: 25,
-                shadowColor: 'black',
-                shadowBlur: 10,
-                shadowOpacity: 0.3,
-                stroke: 'white',
-                strokeWidth: 5
-            });
-            optionBg.offsetX(60);
-            
-            // Option text
-            const optionText = new Konva.Text({
-                width: 120,
-                height: 120,
-                text: letter,
-                fontSize: 80,
-                fontFamily: 'Arial',
-                fill: 'white',
-                align: 'center',
-                verticalAlign: 'middle',
-                fontStyle: 'bold'
-            });
-            optionText.offsetX(60);
-            
-            optionGroup.add(optionBg, optionText);
-            layer.add(optionGroup);
-            
-            // Hover effect
-            optionGroup.on('mouseenter', () => {
-                optionBg.strokeWidth(8);
-                optionBg.shadowBlur(15);
-                stage.container().style.cursor = 'pointer';
-                layer.draw();
-            });
-            
-            optionGroup.on('mouseleave', () => {
-                optionBg.strokeWidth(5);
-                optionBg.shadowBlur(10);
-                stage.container().style.cursor = 'default';
-                layer.draw();
-            });
-            
-            // Click handler
-            optionGroup.on('click tap', () => {
-                if (isCorrect) {
-                    // Correct answer!
-                    playWinSound();
-                    updateScore(10);
-                    
-                    // Visual celebration
-                    bounceElement(optionGroup);
-                    glowElement(optionGroup);
-                    createConfetti(layer, stage, optionGroup.x(), optionGroup.y());
-                    createStarBurst(layer, stage, optionGroup.x(), optionGroup.y());
-                    createSparkles(layer, stage, optionGroup.x(), optionGroup.y());
-                    
-                    // Positive reinforcement messages
-                    const messages = [
-                        'כל הכבוד! 🌟',
-                        'מעולה! ⭐',
-                        'יפה מאוד! 💫',
-                        'אלוף! 🏆',
-                        'נהדר! ✨',
-                        'Perfect! 🎉',
-                        'Excellent! 🌈',
-                        'Amazing! 🎊'
-                    ];
-                    const message = messages[Math.floor(Math.random() * messages.length)];
-                    speak(message);
-                    
-                    // Show success message
-                    const successMsg = new Konva.Text({
-                        x: stage.width() / 2,
-                        y: stage.height() / 2,
-                        text: message,
-                        fontSize: 60,
-                        fontFamily: 'Arial',
-                        fill: '#10b981',
-                        fontStyle: 'bold',
-                        shadowColor: 'black',
-                        shadowBlur: 10,
-                        shadowOpacity: 0.5,
-                        name: 'game-element'
-                    });
-                    successMsg.offsetX(successMsg.width() / 2);
-                    successMsg.offsetY(successMsg.height() / 2);
-                    layer.add(successMsg);
-                    
-                    // Animate and remove success message
-                    successMsg.to({
-                        scaleX: 1.5,
-                        scaleY: 1.5,
-                        opacity: 0,
-                        duration: 1.5,
-                        onFinish: () => {
-                            successMsg.destroy();
-                        }
-                    });
-                    
-                    // Next round after delay
-                    setTimeout(() => {
-                        currentRound++;
-                        startNewRound();
-                    }, 2000);
-                    
-                } else {
-                    // Wrong answer
-                    playErrorSound();
-                    shakeElement(optionGroup);
-                    
-                    const errorMsg = currentLanguage === 'hebrew' ? 'נסה שוב! 🤔' : 'Try again! 🤔';
-                    speak(errorMsg);
-                    
-                    // Flash red
-                    optionBg.fill('#ef4444');
-                    layer.draw();
-                    setTimeout(() => {
-                        optionBg.fill('#f59e0b');
-                        layer.draw();
-                    }, 500);
-                }
-            });
+            setTimeout(() => {
+                createOptionButton(letter, spacing * (index + 1), optionY, index);
+            }, index * 150);
         });
         
         layer.draw();
+    }
+    
+    function createOptionButton(letter, x, y, index) {
+        const isCorrect = letter === targetLetter;
+        
+        const optionGroup = new Konva.Group({
+            x: x,
+            y: y,
+            name: 'game-element',
+            opacity: 0,
+            scaleX: 0.5,
+            scaleY: 0.5
+        });
+        
+        // Option background with gradient effect
+        const optionBg = new Konva.Rect({
+            width: 130,
+            height: 130,
+            fillLinearGradientStartPoint: { x: 0, y: 0 },
+            fillLinearGradientEndPoint: { x: 130, y: 130 },
+            fillLinearGradientColorStops: isCorrect 
+                ? [0, '#10b981', 1, '#059669']
+                : [0, '#f59e0b', 1, '#d97706'],
+            cornerRadius: 25,
+            shadowColor: 'black',
+            shadowBlur: 12,
+            shadowOpacity: 0.3,
+            stroke: 'white',
+            strokeWidth: 5
+        });
+        optionBg.offsetX(65);
+        
+        // Option text
+        const optionText = new Konva.Text({
+            width: 130,
+            height: 130,
+            text: letter,
+            fontSize: 90,
+            fontFamily: 'Arial',
+            fill: 'white',
+            align: 'center',
+            verticalAlign: 'middle',
+            fontStyle: 'bold',
+            shadowColor: 'rgba(0,0,0,0.3)',
+            shadowBlur: 5
+        });
+        optionText.offsetX(65);
+        
+        optionGroup.add(optionBg, optionText);
+        layer.add(optionGroup);
+        
+        // Entrance animation
+        optionGroup.to({
+            opacity: 1,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 0.4,
+            easing: Konva.Easings.BackEaseOut
+        });
+        
+        // Continuous floating animation
+        const floatAnim = new Konva.Animation((frame) => {
+            const time = frame.time / 1000;
+            const offset = index * 0.5; // Stagger the animation
+            optionGroup.y(y + Math.sin(time * 2 + offset) * 10);
+        }, layer);
+        floatAnim.start();
+        
+        // Hover effect
+        optionGroup.on('mouseenter', () => {
+            optionBg.strokeWidth(8);
+            optionBg.shadowBlur(20);
+            optionGroup.to({
+                scaleX: 1.1,
+                scaleY: 1.1,
+                duration: 0.2
+            });
+            stage.container().style.cursor = 'pointer';
+            layer.draw();
+        });
+        
+        optionGroup.on('mouseleave', () => {
+            optionBg.strokeWidth(5);
+            optionBg.shadowBlur(12);
+            optionGroup.to({
+                scaleX: 1,
+                scaleY: 1,
+                duration: 0.2
+            });
+            stage.container().style.cursor = 'default';
+            layer.draw();
+        });
+        
+        // Click handler
+        optionGroup.on('click tap', () => {
+            // Disable all options during animation
+            layer.find('.game-element').forEach(node => {
+                if (node.getType() === 'Group') {
+                    node.off('click tap');
+                }
+            });
+            
+            if (isCorrect) {
+                // Correct answer!
+                playWinSound();
+                updateScore(10);
+                
+                // Visual celebration
+                optionGroup.to({
+                    scaleX: 1.3,
+                    scaleY: 1.3,
+                    duration: 0.3,
+                    easing: Konva.Easings.BackEaseOut
+                });
+                
+                createConfetti(layer, stage, optionGroup.x(), optionGroup.y());
+                createStarBurst(layer, stage, optionGroup.x(), optionGroup.y());
+                createSparkles(layer, stage, optionGroup.x(), optionGroup.y());
+                
+                // Positive reinforcement messages
+                const messages = [
+                    'כל הכבוד! 🌟',
+                    'מעולה! ⭐',
+                    'יפה מאוד! 💫',
+                    'אלוף! 🏆',
+                    'נהדר! ✨',
+                    'Perfect! 🎉',
+                    'Excellent! 🌈',
+                    'Amazing! 🎊',
+                    'Superb! 💪',
+                    'Brilliant! 🌠'
+                ];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                speak(message);
+                
+                // Show success message
+                const successMsg = new Konva.Text({
+                    x: stage.width() / 2,
+                    y: stage.height() / 2 - 50,
+                    text: message,
+                    fontSize: 70,
+                    fontFamily: 'Arial',
+                    fill: '#10b981',
+                    fontStyle: 'bold',
+                    shadowColor: 'black',
+                    shadowBlur: 15,
+                    shadowOpacity: 0.5,
+                    name: 'game-element',
+                    opacity: 0
+                });
+                successMsg.offsetX(successMsg.width() / 2);
+                successMsg.offsetY(successMsg.height() / 2);
+                layer.add(successMsg);
+                
+                // Animate success message
+                successMsg.to({
+                    opacity: 1,
+                    scaleX: 1.2,
+                    scaleY: 1.2,
+                    duration: 0.3,
+                    onFinish: () => {
+                        successMsg.to({
+                            scaleX: 1.5,
+                            scaleY: 1.5,
+                            opacity: 0,
+                            y: successMsg.y() - 50,
+                            duration: 1.2,
+                            onFinish: () => {
+                                successMsg.destroy();
+                            }
+                        });
+                    }
+                });
+                
+                // Next round after delay
+                setTimeout(() => {
+                    currentRound++;
+                    startNewRound();
+                }, 2000);
+                
+            } else {
+                // Wrong answer
+                playErrorSound();
+                shakeElement(optionGroup);
+                
+                const errorMsg = currentLanguage === 'hebrew' ? 'נסה שוב! 🤔' : 'Try again! 🤔';
+                speak(errorMsg);
+                
+                // Flash red
+                optionBg.fillLinearGradientColorStops([0, '#ef4444', 1, '#dc2626']);
+                layer.draw();
+                
+                setTimeout(() => {
+                    optionBg.fillLinearGradientColorStops([0, '#f59e0b', 1, '#d97706']);
+                    layer.draw();
+                    
+                    // Re-enable click handlers
+                    layer.find('.game-element').forEach(node => {
+                        if (node.getType() === 'Group' && node !== optionGroup) {
+                            const letter = node.findOne('Text').text();
+                            const isCorrectOption = letter === targetLetter;
+                            node.on('click tap', () => {
+                                createClickHandler(node, letter, isCorrectOption);
+                            });
+                        }
+                    });
+                }, 600);
+            }
+        });
+    }
+    
+    function createClickHandler(group, letter, isCorrect) {
+        // This is a helper to avoid code duplication
+        group.fire('click');
     }
     
     // Start first round
