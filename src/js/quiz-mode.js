@@ -191,28 +191,30 @@ function startQuizMode() {
         
         const wordData = selectedWords[currentWord];
         
-        // Generate word options - ensure only correct word matches the emoji
-        const allWords = words.map(w => w.word);
-        const uniqueWords = [...new Set(allWords)];
+        // Generate emoji options - ensure only correct emoji matches the word
+        const allEmojis = words.map(w => ({ emoji: w.emoji, word: w.word }));
         
-        // Get wrong words that DON'T match the current emoji
-        const wrongWords = uniqueWords.filter(word => {
-            // Exclude the correct word
-            if (word === wordData.word) return false;
+        // Get wrong emojis that DON'T match the current word
+        const wrongEmojis = allEmojis.filter(item => {
+            // Exclude the correct emoji
+            if (item.emoji === wordData.emoji) return false;
             
-            // Ensure this word doesn't match the current emoji
-            return !words.some(w => w.word === word && w.emoji === wordData.emoji);
-        });
+            // Ensure this emoji doesn't match the current word
+            return item.word !== wordData.word;
+        }).map(item => item.emoji);
         
-        // Shuffle wrong words and pick 3
-        const shuffledWrong = shuffleArray(wrongWords).slice(0, 3);
+        // Remove duplicates
+        const uniqueWrongEmojis = [...new Set(wrongEmojis)];
+        
+        // Shuffle wrong emojis and pick 3
+        const shuffledWrong = shuffleArray(uniqueWrongEmojis).slice(0, 3);
         
         // Create options array with correct answer
-        const wordOptions = [...shuffledWrong, wordData.word];
+        const emojiOptions = [...shuffledWrong, wordData.emoji];
         
         // Shuffle the options
-        const shuffledOptions = shuffleArray(wordOptions);
-        const correctAnswer = wordData.word;
+        const shuffledOptions = shuffleArray(emojiOptions);
+        const correctAnswer = wordData.emoji;
         
         // Progress bar background
         const progressBg = new Konva.Rect({
@@ -267,7 +269,7 @@ function startQuizMode() {
             x: stage.width() / 2 - 250,
             y: 85,
             width: 500,
-            text: 'מה השם באנגלית?',
+            text: 'בחר את התמונה הנכונה',
             fontSize: 24,
             fontFamily: 'Varela Round, Arial',
             fill: '#db2777',
@@ -277,46 +279,48 @@ function startQuizMode() {
         layer.add(instructionText);
         
         // Calculate responsive sizes
-        const emojiCircleY = 160;
-        const emojiCircleRadius = Math.min(70, (stage.height() - 400) / 4);
+        const wordCircleY = 160;
+        const wordCircleRadius = Math.min(90, (stage.height() - 400) / 4);
         
-        // Large colorful emoji circle
-        const emojiCircle = new Konva.Circle({
+        // Large colorful word circle
+        const wordCircle = new Konva.Circle({
             x: stage.width() / 2,
-            y: emojiCircleY,
-            radius: emojiCircleRadius,
-            fillLinearGradientStartPoint: { x: -emojiCircleRadius, y: -emojiCircleRadius },
-            fillLinearGradientEndPoint: { x: emojiCircleRadius, y: emojiCircleRadius },
+            y: wordCircleY,
+            radius: wordCircleRadius,
+            fillLinearGradientStartPoint: { x: -wordCircleRadius, y: -wordCircleRadius },
+            fillLinearGradientEndPoint: { x: wordCircleRadius, y: wordCircleRadius },
             fillLinearGradientColorStops: [0, '#ec4899', 1, '#db2777'],
             shadowColor: 'rgba(0, 0, 0, 0.3)',
             shadowBlur: 20,
             shadowOffset: { x: 0, y: 10 }
         });
-        layer.add(emojiCircle);
+        layer.add(wordCircle);
         
         // White inner circle
         const innerCircle = new Konva.Circle({
             x: stage.width() / 2,
-            y: emojiCircleY,
-            radius: emojiCircleRadius - 10,
+            y: wordCircleY,
+            radius: wordCircleRadius - 10,
             fill: 'white'
         });
         layer.add(innerCircle);
         
-        // Emoji - responsive size
-        const emojiFontSize = Math.min(100, emojiCircleRadius * 1.4);
-        const emojiText = new Konva.Text({
-            x: stage.width() / 2 - emojiFontSize / 2,
-            y: emojiCircleY - emojiFontSize / 2,
-            width: emojiFontSize,
-            height: emojiFontSize,
-            text: wordData.emoji,
-            fontSize: emojiFontSize,
+        // Word - responsive size
+        const wordFontSize = Math.min(32, wordCircleRadius * 0.4);
+        const wordText = new Konva.Text({
+            x: stage.width() / 2,
+            y: wordCircleY,
+            text: wordData.word,
+            fontSize: wordFontSize,
             fontFamily: 'Arial',
+            fill: '#ec4899',
+            fontStyle: 'bold',
             align: 'center',
             verticalAlign: 'middle'
         });
-        layer.add(emojiText);
+        wordText.offsetX(wordText.width() / 2);
+        wordText.offsetY(wordText.height() / 2);
+        layer.add(wordText);
         
         // Find correct answer index in shuffled options
         const correctIndex = shuffledOptions.indexOf(correctAnswer);
@@ -326,14 +330,14 @@ function startQuizMode() {
         const gap = 15;
         const maxCellSize = 160;
         const availableWidth = stage.width() - 40;
-        const availableHeight = stage.height() - emojiCircleY - emojiCircleRadius - 40;
+        const availableHeight = stage.height() - wordCircleY - wordCircleRadius - 40;
         const cellWidth = Math.min(maxCellSize, (availableWidth - gap) / gridSize, (availableHeight - gap) / gridSize);
         const cellHeight = cellWidth;
         const totalGridWidth = cellWidth * gridSize + gap;
         const startX = (stage.width() - totalGridWidth) / 2;
-        const startY = emojiCircleY + emojiCircleRadius + 30;
+        const startY = wordCircleY + wordCircleRadius + 30;
         
-        shuffledOptions.forEach((word, index) => {
+        shuffledOptions.forEach((emoji, index) => {
             const row = Math.floor(index / gridSize);
             const col = index % gridSize;
             const x = startX + col * (cellWidth + gap);
@@ -372,21 +376,22 @@ function startQuizMode() {
             });
             optionGroup.add(bg);
             
-            // English word - LTR
-            const ltrMark = '\u200E';
-            const wordText = new Konva.Text({
-                text: ltrMark + word + ltrMark,
-                fontSize: Math.min(28, cellWidth * 0.15),
+            // Emoji display
+            const emojiSize = Math.min(80, cellWidth * 0.5);
+            const emojiDisplay = new Konva.Text({
+                x: cellWidth / 2,
+                y: cellHeight / 2,
+                text: emoji,
+                fontSize: emojiSize,
                 fontFamily: 'Arial',
-                fontStyle: 'bold',
-                fill: '#db2777',
-                width: cellWidth,
-                height: cellHeight,
                 align: 'center',
-                verticalAlign: 'middle',
-                padding: 10
+                verticalAlign: 'middle'
             });
-            optionGroup.add(wordText);
+            emojiDisplay.offsetX(emojiDisplay.width() / 2);
+            emojiDisplay.offsetY(emojiDisplay.height() / 2);
+            optionGroup.add(emojiDisplay);
+            
+            layer.add(optionGroup);
             
             optionGroup.on('click tap', function() {
                 // Prevent multiple clicks while processing
@@ -473,9 +478,9 @@ function startQuizMode() {
         
         layer.draw();
         
-        // Speak the question in Hebrew, then the word in English
+        // Speak the instruction in Hebrew, then the word in English
         setTimeout(() => {
-            speak('מה השם באנגלית');
+            speak('בחר את התמונה הנכונה');
             
             // Then speak the English word
             setTimeout(() => {
