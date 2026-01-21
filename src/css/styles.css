@@ -323,6 +323,11 @@ body::before {
     color: white;
 }
 
+.mode-btn.shake { 
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    color: white;
+}
+
 #canvas-container {
     background: white;
     border-radius: 25px;
