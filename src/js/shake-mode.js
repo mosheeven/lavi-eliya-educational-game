@@ -472,19 +472,21 @@ function startShakeMode() {
             // Check if we've added enough of this fruit
             if (currentQuantityAdded >= expectedFruit.quantity) {
                 // Mark as complete in recipe with animation
-                recipeItems[currentStep].checkmark.text('✓');
-                recipeItems[currentStep].bg.fill('rgba(34, 197, 94, 0.3)');
-                recipeItems[currentStep].bg.stroke('#22c55e');
-                recipeItems[currentStep].bg.strokeWidth(4);
+                const completedStepIndex = currentStep; // Save before incrementing
+                
+                recipeItems[completedStepIndex].checkmark.text('✓');
+                recipeItems[completedStepIndex].bg.fill('rgba(34, 197, 94, 0.3)');
+                recipeItems[completedStepIndex].bg.stroke('#22c55e');
+                recipeItems[completedStepIndex].bg.strokeWidth(4);
                 
                 // Animate checkmark
-                recipeItems[currentStep].checkmark.scale({ x: 0, y: 0 });
-                recipeItems[currentStep].checkmark.to({
+                recipeItems[completedStepIndex].checkmark.scale({ x: 0, y: 0 });
+                recipeItems[completedStepIndex].checkmark.to({
                     scaleX: 1.5,
                     scaleY: 1.5,
                     duration: 0.3,
                     onFinish: () => {
-                        recipeItems[currentStep].checkmark.to({
+                        recipeItems[completedStepIndex].checkmark.to({
                             scaleX: 1,
                             scaleY: 1,
                             duration: 0.2
