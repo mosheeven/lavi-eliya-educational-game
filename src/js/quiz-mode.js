@@ -399,7 +399,7 @@ function startQuizMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - ENHANCED EFFECTS
+                    // Correct answer - use centralized feedback
                     bg.fill('#4ade80');
                     bg.stroke('#22c55e');
                     layer.draw();
@@ -407,15 +407,9 @@ function startQuizMode() {
                     // Visual effects
                     bounceElement(optionGroup, 1.3);
                     glowElement(bg, '#4ade80');
-                    createConfetti(x + cellWidth / 2, y + cellHeight / 2, 25);
-                    createStarBurst(x + cellWidth / 2, y + cellHeight / 2, 10);
                     
-                    // Audio
-                    playWinSound();
-                    playWhooshSound();
-                    
-                    // Speak correct message
-                    speak(getCorrectMessage());
+                    // Use centralized feedback system
+                    showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
                     
                     setTimeout(() => {
                         addPoints(10);
@@ -427,17 +421,13 @@ function startQuizMode() {
                         showWord();
                     }, 2000);
                 } else {
-                    // Wrong answer - ENHANCED EFFECTS
+                    // Wrong answer - use centralized feedback
                     bg.fill('#ef4444');
                     bg.stroke('#dc2626');
                     layer.draw();
                     
-                    // Visual effects
-                    shakeElement(optionGroup);
-                    
-                    // Audio
-                    playErrorSound();
-                    speak(getWrongMessage());
+                    // Use centralized feedback system
+                    showWrongFeedback(optionGroup);
                     
                     setTimeout(() => {
                         bg.fill('white');
@@ -447,7 +437,7 @@ function startQuizMode() {
                         bg.stroke('#ec4899');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
-                    }, 800);
+                    }, 1000);
                 }
             });
             

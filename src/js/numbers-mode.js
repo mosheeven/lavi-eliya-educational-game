@@ -269,13 +269,12 @@ function startNumbersMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - celebrate!
+                    // Correct answer - use centralized feedback
                     bg.fill('#4ade80');
                     bg.stroke('#22c55e');
                     layer.draw();
-                    playWinSound();
                     
-                    // Speak the number
+                    // Speak the number first
                     speak(`נכון המספר ${numberData.number}`);
                     
                     // Animate celebration
@@ -292,8 +291,9 @@ function startNumbersMode() {
                         }
                     });
                     
+                    // Use centralized feedback system
                     setTimeout(() => {
-                        speak(getCorrectMessage());
+                        showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
                         addPoints(10);
                         correctAnswers++;
                     }, 800);
@@ -303,34 +303,13 @@ function startNumbersMode() {
                         showNumber();
                     }, 2500));
                 } else {
-                    // Wrong answer - shake
+                    // Wrong answer - use centralized feedback
                     bg.fill('#ef4444');
                     bg.stroke('#dc2626');
                     layer.draw();
-                    playErrorSound();
-                    speak(getWrongMessage());
                     
-                    // Shake animation
-                    const originalX = optionGroup.x();
-                    optionGroup.to({
-                        x: originalX - 10,
-                        duration: 0.05,
-                        onFinish: () => {
-                            optionGroup.to({
-                                x: originalX + 10,
-                                duration: 0.05,
-                                onFinish: () => {
-                                    optionGroup.to({
-                                        x: originalX,
-                                        duration: 0.05,
-                                        onFinish: () => {
-                                            isProcessingAnswer = false;
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
+                    // Use centralized feedback system
+                    showWrongFeedback(optionGroup);
                     
                     setTimeout(() => {
                         bg.fill('white');
@@ -339,7 +318,8 @@ function startNumbersMode() {
                         bg.fillLinearGradientColorStops([0, 'white', 1, '#f9fafb']);
                         bg.stroke('#8b5cf6');
                         layer.draw();
-                    }, 800);
+                        isProcessingAnswer = false;
+                    }, 1000);
                 }
             });
             

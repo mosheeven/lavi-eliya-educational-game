@@ -213,21 +213,17 @@ function startMathMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - ENHANCED EFFECTS
+                    // Correct answer - use centralized feedback
                     bg.fill('#4ade80');
                     layer.draw();
                     
                     // Visual effects
                     bounceElement(optionGroup, 1.3);
                     glowElement(bg, '#4ade80');
-                    createConfetti(x + cellWidth / 2, y + cellHeight / 2, 25);
-                    createStarBurst(x + cellWidth / 2, y + cellHeight / 2, 10);
                     
-                    // Audio
-                    playWinSound();
-                    playWhooshSound();
-                    speak(getCorrectMessage());
-                    addPoints(10); // Award 10 points (includes confetti)
+                    // Use centralized feedback system
+                    showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
+                    addPoints(10);
                     correctAnswers++;
                     
                     setTimeout(() => {
@@ -235,22 +231,18 @@ function startMathMode() {
                         showProblem();
                     }, 1500);
                 } else {
-                    // Wrong answer - ENHANCED EFFECTS
+                    // Wrong answer - use centralized feedback
                     bg.fill('#ef4444');
                     layer.draw();
                     
-                    // Visual effects
-                    shakeElement(optionGroup);
-                    
-                    // Audio
-                    playErrorSound();
-                    speak(getWrongMessage());
+                    // Use centralized feedback system
+                    showWrongFeedback(optionGroup);
                     
                     setTimeout(() => {
                         bg.fill('white');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
-                    }, 800);
+                    }, 1000);
                 }
             });
             

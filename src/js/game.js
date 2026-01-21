@@ -831,7 +831,13 @@ function getCorrectMessage() {
         'Superb',
         'Brilliant',
         'נהדר',
-        'אלוף'
+        'אלוף',
+        'Fantastic',
+        'Great job',
+        'Well done',
+        'יופי',
+        'מדהים',
+        'Awesome'
     ];
     const baseMessage = messages[Math.floor(Math.random() * messages.length)];
     return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;
@@ -844,10 +850,117 @@ function getWrongMessage() {
         'לא נורא נסה שוב',
         'Try again',
         'Almost',
-        'נסה עוד פעם'
+        'נסה עוד פעם',
+        'קרוב',
+        'Nice try',
+        'Keep trying'
     ];
     const baseMessage = messages[Math.floor(Math.random() * messages.length)];
     return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;
+}
+
+// Enhanced visual feedback for correct answers
+function showCorrectFeedback(x, y, message) {
+    if (!message) message = getCorrectMessage();
+    
+    // Visual effects
+    createConfetti(layer, stage, x, y);
+    createStarBurst(layer, stage, x, y);
+    createSparkles(layer, stage, x, y);
+    
+    // Success message with emoji
+    const emojis = ['🌟', '⭐', '💫', '🏆', '✨', '🎉', '🌈', '🎊', '💪', '🌠', '👏', '🎯'];
+    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    
+    const successMsg = new Konva.Text({
+        x: stage.width() / 2,
+        y: stage.height() / 2 - 50,
+        text: `${message} ${emoji}`,
+        fontSize: 60,
+        fontFamily: 'Arial',
+        fill: '#10b981',
+        fontStyle: 'bold',
+        shadowColor: 'black',
+        shadowBlur: 15,
+        shadowOpacity: 0.5,
+        opacity: 0
+    });
+    successMsg.offsetX(successMsg.width() / 2);
+    successMsg.offsetY(successMsg.height() / 2);
+    layer.add(successMsg);
+    
+    // Animate success message
+    successMsg.to({
+        opacity: 1,
+        scaleX: 1.2,
+        scaleY: 1.2,
+        duration: 0.3,
+        onFinish: () => {
+            successMsg.to({
+                scaleX: 1.5,
+                scaleY: 1.5,
+                opacity: 0,
+                y: successMsg.y() - 50,
+                duration: 1.2,
+                onFinish: () => {
+                    successMsg.destroy();
+                }
+            });
+        }
+    });
+    
+    // Audio feedback
+    playWinSound();
+    speak(message);
+}
+
+// Enhanced visual feedback for wrong answers
+function showWrongFeedback(element, message) {
+    if (!message) message = getWrongMessage();
+    
+    // Shake animation
+    if (element) {
+        shakeElement(element);
+    }
+    
+    // Error message
+    const errorMsg = new Konva.Text({
+        x: stage.width() / 2,
+        y: stage.height() / 2 - 30,
+        text: `${message} 🤔`,
+        fontSize: 50,
+        fontFamily: 'Arial',
+        fill: '#ef4444',
+        fontStyle: 'bold',
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOpacity: 0.5,
+        opacity: 0
+    });
+    errorMsg.offsetX(errorMsg.width() / 2);
+    errorMsg.offsetY(errorMsg.height() / 2);
+    layer.add(errorMsg);
+    
+    // Animate error message
+    errorMsg.to({
+        opacity: 1,
+        duration: 0.2,
+        onFinish: () => {
+            setTimeout(() => {
+                errorMsg.to({
+                    opacity: 0,
+                    duration: 0.3,
+                    onFinish: () => {
+                        errorMsg.destroy();
+                    }
+                });
+            }, 800);
+        }
+    });
+    
+    // Audio feedback
+    playErrorSound();
+    speak(message);
 }
 
 function getWelcomeMessage() {

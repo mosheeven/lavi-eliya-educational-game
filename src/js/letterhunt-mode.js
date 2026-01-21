@@ -379,7 +379,6 @@ function startLetterHuntMode() {
             
             if (isCorrect) {
                 // Correct answer!
-                playWinSound();
                 updateScore(10);
                 
                 // Visual celebration
@@ -390,54 +389,8 @@ function startLetterHuntMode() {
                     easing: Konva.Easings.BackEaseOut
                 });
                 
-                createConfetti(layer, stage, optionGroup.x(), optionGroup.y());
-                createStarBurst(layer, stage, optionGroup.x(), optionGroup.y());
-                createSparkles(layer, stage, optionGroup.x(), optionGroup.y());
-                
-                // Use global feedback function
-                const message = getCorrectMessage();
-                speak(message);
-                
-                // Show success message with emoji
-                const successEmojis = ['🌟', '⭐', '💫', '🏆', '✨', '🎉', '🌈', '🎊', '💪', '🌠'];
-                const emoji = successEmojis[Math.floor(Math.random() * successEmojis.length)];
-                const successMsg = new Konva.Text({
-                    x: stage.width() / 2,
-                    y: stage.height() / 2 - 50,
-                    text: `${message} ${emoji}`,
-                    fontSize: 70,
-                    fontFamily: 'Arial',
-                    fill: '#10b981',
-                    fontStyle: 'bold',
-                    shadowColor: 'black',
-                    shadowBlur: 15,
-                    shadowOpacity: 0.5,
-                    name: 'game-element',
-                    opacity: 0
-                });
-                successMsg.offsetX(successMsg.width() / 2);
-                successMsg.offsetY(successMsg.height() / 2);
-                layer.add(successMsg);
-                
-                // Animate success message
-                successMsg.to({
-                    opacity: 1,
-                    scaleX: 1.2,
-                    scaleY: 1.2,
-                    duration: 0.3,
-                    onFinish: () => {
-                        successMsg.to({
-                            scaleX: 1.5,
-                            scaleY: 1.5,
-                            opacity: 0,
-                            y: successMsg.y() - 50,
-                            duration: 1.2,
-                            onFinish: () => {
-                                successMsg.destroy();
-                            }
-                        });
-                    }
-                });
+                // Use centralized feedback system
+                showCorrectFeedback(optionGroup.x(), optionGroup.y());
                 
                 // Next round after delay
                 setTimeout(() => {
@@ -447,12 +400,8 @@ function startLetterHuntMode() {
                 
             } else {
                 // Wrong answer
-                playErrorSound();
-                shakeElement(optionGroup);
-                
-                // Use global feedback function
-                const errorMsg = getWrongMessage();
-                speak(errorMsg);
+                // Use centralized feedback system
+                showWrongFeedback(optionGroup);
                 
                 // Flash red
                 optionBg.fillLinearGradientColorStops([0, '#ef4444', 1, '#dc2626']);
