@@ -18,17 +18,26 @@ function startShakeMode() {
         { name: 'Mango', emoji: '🥭', color: '#FFD60A', hebrew: 'מנגו' }
     ];
     
-    // Generate random recipe (3-4 fruits)
+    // Generate random recipe (3-4 unique fruits with quantities)
     const recipeLength = 3 + Math.floor(Math.random() * 2);
     const recipe = [];
-    for (let i = 0; i < recipeLength; i++) {
+    const usedFruits = new Set();
+    
+    while (recipe.length < recipeLength) {
         const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
-        recipe.push(randomFruit);
+        if (!usedFruits.has(randomFruit.name)) {
+            usedFruits.add(randomFruit.name);
+            const quantity = 1 + Math.floor(Math.random() * 2); // 1 or 2
+            recipe.push({ ...randomFruit, quantity });
+        }
     }
     
     let currentStep = 0;
+    let currentQuantityAdded = 0;
     const blenderFruits = [];
+    const fruitEmojisInBlender = []; // Track emoji objects for blend animation
     let isBlending = false;
+    let blendButtonAnim = null; // Track blend button animation
     
     // Title with animation
     const title = new Konva.Text({
@@ -114,7 +123,7 @@ function startShakeMode() {
         const itemName = new Konva.Text({
             x: recipeX - 10,
             y: itemY + 15,
-            text: fruit.name,
+            text: `${fruit.quantity}x ${fruit.name}`,
             fontSize: 20,
             fontFamily: 'Arial',
             fill: '#333',
@@ -328,9 +337,6 @@ function startShakeMode() {
     blendButton.add(blendButtonBg, blendButtonText);
     layer.add(blendButton);
     
-    // Animate blend button when visible
-    let blendButtonAnim;
-    
     blendButton.on('click tap', () => {
         if (isBlending) return;
         if (blendButtonAnim) blendButtonAnim.stop();
@@ -403,46 +409,31 @@ function startShakeMode() {
     });
     
     function handleFruitClick(fruit) {
+        // Prevent clicks after recipe is complete or while blending
+        if (currentStep >= recipe.length || isBlending) return;
+        
         const expectedFruit = recipe[currentStep];
         
         if (fruit.name === expectedFruit.name) {
-            // Correct fruit! Big celebration
+            // Correct fruit!
+            currentQuantityAdded++;
+            
             playPopSound();
             speakEnglish(`Good job! ${fruit.name}!`);
             
             // Add to blender
             blenderFruits.push(fruit);
             
-            // Mark as complete in recipe with animation
-            recipeItems[currentStep].checkmark.text('✓');
-            recipeItems[currentStep].bg.fill('rgba(34, 197, 94, 0.3)');
-            recipeItems[currentStep].bg.stroke('#22c55e');
-            recipeItems[currentStep].bg.strokeWidth(4);
-            
-            // Animate checkmark
-            recipeItems[currentStep].checkmark.scale({ x: 0, y: 0 });
-            recipeItems[currentStep].checkmark.to({
-                scaleX: 1.5,
-                scaleY: 1.5,
-                duration: 0.3,
-                onFinish: () => {
-                    recipeItems[currentStep].checkmark.to({
-                        scaleX: 1,
-                        scaleY: 1,
-                        duration: 0.2
-                    });
-                }
-            });
-            
             // Add fruit emoji to blender with animation
             const fruitInBlender = new Konva.Text({
                 x: blenderX - 25 + (Math.random() - 0.5) * 60,
-                y: blenderY + blenderHeight / 2 - 40 - currentStep * 35,
+                y: blenderY + blenderHeight / 2 - 40 - blenderFruits.length * 35,
                 text: fruit.emoji,
                 fontSize: 45,
                 opacity: 0
             });
             layer.add(fruitInBlender);
+            fruitEmojisInBlender.push(fruitInBlender); // Track for blend animation
             
             fruitInBlender.to({
                 opacity: 1,
@@ -478,33 +469,69 @@ function startShakeMode() {
                 });
             }
             
-            currentStep++;
-            
-            if (currentStep < recipe.length) {
-                // Ask for next fruit
-                setTimeout(() => {
-                    const nextFruit = recipe[currentStep];
-                    instructionText.text(`Add ${nextFruit.name}`);
-                    instructionBg.fill('rgba(251, 146, 60, 0.95)');
-                    speakEnglish(`Now add ${nextFruit.name}`);
-                    layer.draw();
-                }, 1000);
+            // Check if we've added enough of this fruit
+            if (currentQuantityAdded >= expectedFruit.quantity) {
+                // Mark as complete in recipe with animation
+                recipeItems[currentStep].checkmark.text('✓');
+                recipeItems[currentStep].bg.fill('rgba(34, 197, 94, 0.3)');
+                recipeItems[currentStep].bg.stroke('#22c55e');
+                recipeItems[currentStep].bg.strokeWidth(4);
+                
+                // Animate checkmark
+                recipeItems[currentStep].checkmark.scale({ x: 0, y: 0 });
+                recipeItems[currentStep].checkmark.to({
+                    scaleX: 1.5,
+                    scaleY: 1.5,
+                    duration: 0.3,
+                    onFinish: () => {
+                        recipeItems[currentStep].checkmark.to({
+                            scaleX: 1,
+                            scaleY: 1,
+                            duration: 0.2
+                        });
+                    }
+                });
+                
+                // Move to next step
+                currentStep++;
+                currentQuantityAdded = 0;
+                
+                if (currentStep < recipe.length) {
+                    // Ask for next fruit
+                    setTimeout(() => {
+                        const nextFruit = recipe[currentStep];
+                        const quantityText = nextFruit.quantity > 1 ? `${nextFruit.quantity} ` : '';
+                        const pluralS = nextFruit.quantity > 1 ? 's' : '';
+                        instructionText.text(`Add ${quantityText}${nextFruit.name}${pluralS}`);
+                        instructionBg.fill('rgba(251, 146, 60, 0.95)');
+                        speakEnglish(`Now add ${quantityText}${nextFruit.name}${pluralS}`);
+                        layer.draw();
+                    }, 1000);
+                } else {
+                    // Recipe complete!
+                    instructionText.text('🎉 Ready to blend! 🎉');
+                    instructionBg.fill('rgba(34, 197, 94, 0.95)');
+                    blendButton.visible(true);
+                    
+                    // Animate blend button
+                    blendButtonAnim = new Konva.Animation((frame) => {
+                        blendButton.scaleX(1 + Math.sin(frame.time / 200) * 0.1);
+                        blendButton.scaleY(1 + Math.sin(frame.time / 200) * 0.1);
+                    }, layer);
+                    blendButtonAnim.start();
+                    
+                    setTimeout(() => {
+                        speakEnglish('Great! Now press blend!');
+                    }, 1000);
+                }
             } else {
-                // Recipe complete!
-                instructionText.text('🎉 Ready to blend! 🎉');
-                instructionBg.fill('rgba(34, 197, 94, 0.95)');
-                blendButton.visible(true);
-                
-                // Animate blend button
-                blendButtonAnim = new Konva.Animation((frame) => {
-                    blendButton.scaleX(1 + Math.sin(frame.time / 200) * 0.1);
-                    blendButton.scaleY(1 + Math.sin(frame.time / 200) * 0.1);
-                }, layer);
-                blendButtonAnim.start();
-                
+                // Need more of this fruit
+                const remaining = expectedFruit.quantity - currentQuantityAdded;
+                const pluralS = remaining > 1 ? 's' : '';
+                instructionText.text(`Add ${remaining} more ${expectedFruit.name}${pluralS}`);
                 setTimeout(() => {
-                    speakEnglish('Great! Now press blend!');
-                }, 1000);
+                    speakEnglish(`Add ${remaining} more ${expectedFruit.name}${pluralS}`);
+                }, 500);
             }
             
             layer.draw();
@@ -581,21 +608,23 @@ function startShakeMode() {
         
         playBlendSound();
         
-        // Animate all fruits in blender
-        layer.find('Text').forEach(node => {
-            if (node.text().match(/[🍓🍌🍊🍇🥝🍑🫐🥭]/)) {
-                const anim = new Konva.Animation((frame) => {
-                    node.rotation(frame.time / 5);
-                    node.y(node.y() - 0.5);
-                }, layer);
-                anim.start();
-                
-                setTimeout(() => {
-                    anim.stop();
-                    node.destroy();
-                }, 2000);
-            }
+        // Animate all fruit emojis in blender
+        const animations = [];
+        fruitEmojisInBlender.forEach(fruitNode => {
+            const anim = new Konva.Animation((frame) => {
+                fruitNode.rotation(frame.time / 5);
+                fruitNode.y(fruitNode.y() - 0.5);
+            }, layer);
+            anim.start();
+            animations.push(anim);
         });
+        
+        // Stop animations and destroy fruits after 1.5 seconds
+        setTimeout(() => {
+            animations.forEach(anim => anim.stop());
+            fruitEmojisInBlender.forEach(fruitNode => fruitNode.destroy());
+            fruitEmojisInBlender.length = 0; // Clear array
+        }, 1500);
         
         // Show mixed color after blending
         setTimeout(() => {
@@ -634,7 +663,7 @@ function startShakeMode() {
                     showResult();
                 }
             });
-        }, 2000);
+        }, 1600);
     }
     
     function showResult() {
@@ -676,8 +705,10 @@ function startShakeMode() {
     // Start the game
     setTimeout(() => {
         const firstFruit = recipe[0];
-        instructionText.text(`Add ${firstFruit.name}`);
-        speakEnglish(`Let's make a smoothie! First, add ${firstFruit.name}`);
+        const quantityText = firstFruit.quantity > 1 ? `${firstFruit.quantity} ` : '';
+        const pluralS = firstFruit.quantity > 1 ? 's' : '';
+        instructionText.text(`Add ${quantityText}${firstFruit.name}${pluralS}`);
+        speakEnglish(`Let's make a smoothie! First, add ${quantityText}${firstFruit.name}${pluralS}`);
         layer.draw();
     }, 1000);
     
@@ -703,11 +734,11 @@ function playBlendSound() {
     gainNode.connect(audioContext.destination);
     
     oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 2);
+    oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 1.5);
     
     gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
     
     oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 2);
+    oscillator.stop(audioContext.currentTime + 1.5);
 }
