@@ -15,6 +15,74 @@ let playerScores = {
     'אליה': 0
 };
 
+// 🎯 ENGAGEMENT FEATURES: Streak & Combo System
+let currentStreak = 0;
+let bestStreak = 0;
+let comboMultiplier = 1;
+
+// 🏆 Achievement System
+let achievements = {
+    'לביא': {
+        firstWin: false,
+        streak5: false,
+        streak10: false,
+        score50: false,
+        score100: false,
+        score200: false,
+        allModes: new Set()
+    },
+    'אליה': {
+        firstWin: false,
+        streak5: false,
+        streak10: false,
+        score50: false,
+        score100: false,
+        score200: false,
+        allModes: new Set()
+    }
+};
+
+// Load achievements from localStorage
+function loadAchievements() {
+    const saved = localStorage.getItem('achievements');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            // Convert allModes arrays back to Sets
+            achievements['לביא'].allModes = new Set(parsed['לביא'].allModes || []);
+            achievements['אליה'].allModes = new Set(parsed['אליה'].allModes || []);
+            // Copy other properties
+            Object.keys(parsed['לביא']).forEach(key => {
+                if (key !== 'allModes') achievements['לביא'][key] = parsed['לביא'][key];
+            });
+            Object.keys(parsed['אליה']).forEach(key => {
+                if (key !== 'allModes') achievements['אליה'][key] = parsed['אליה'][key];
+            });
+        } catch (e) {
+            console.error('Failed to load achievements:', e);
+        }
+    }
+}
+
+// Save achievements to localStorage
+function saveAchievements() {
+    try {
+        const toSave = {
+            'לביא': {
+                ...achievements['לביא'],
+                allModes: Array.from(achievements['לביא'].allModes)
+            },
+            'אליה': {
+                ...achievements['אליה'],
+                allModes: Array.from(achievements['אליה'].allModes)
+            }
+        };
+        localStorage.setItem('achievements', JSON.stringify(toSave));
+    } catch (e) {
+        console.error('Failed to save achievements:', e);
+    }
+}
+
 // Sound rate limiting - prevent overlapping sounds
 let lastSoundTime = {
     pop: 0,
@@ -25,6 +93,398 @@ let lastSoundTime = {
 };
 const SOUND_COOLDOWN = 150; // milliseconds between same sound type
 const SPEECH_COOLDOWN = 300; // milliseconds between speech calls
+
+// 🎯 STREAK & COMBO SYSTEM FUNCTIONS
+
+/**
+ * Handle correct answer - increase streak and combo
+ */
+function handleCorrectAnswer() {
+    currentStreak++;
+    if (currentStreak > bestStreak) {
+        bestStreak = currentStreak;
+    }
+    
+    // Update combo multiplier based on streak
+    if (currentStreak >= 10) {
+        comboMultiplier = 5;
+    } else if (currentStreak >= 5) {
+        comboMultiplier = 3;
+    } else if (currentStreak >= 3) {
+        comboMultiplier = 2;
+    } else {
+        comboMultiplier = 1;
+    }
+    
+    // Calculate points with multiplier
+    const basePoints = 10;
+    const points = basePoints * comboMultiplier;
+    
+    // Add points to player score
+    addPoints(points);
+    
+    // Show streak indicator
+    showStreakIndicator();
+    
+    // Check for streak achievements
+    checkStreakAchievements();
+    
+    return points;
+}
+
+/**
+ * Handle wrong answer - reset streak
+ */
+function handleWrongAnswer() {
+    if (currentStreak > 0) {
+        // Show streak lost message if they had a streak
+        if (currentStreak >= 3) {
+            showStreakLostMessage();
+        }
+        currentStreak = 0;
+        comboMultiplier = 1;
+        updateStreakDisplay();
+    }
+}
+
+/**
+ * Show streak indicator on screen
+ */
+function showStreakIndicator() {
+    if (!stage || !layer) return;
+    
+    updateStreakDisplay();
+    
+    // Show special effects for milestone streaks
+    if (currentStreak === 3) {
+        showStreakMilestone('🔥 3 ברצף!', '#ff6b35');
+        playStreakSound(3);
+    } else if (currentStreak === 5) {
+        showStreakMilestone('⚡ 5 ברצף! מדהים!', '#ffd700');
+        playStreakSound(5);
+        createStarBurst(stage.width() / 2, 100, 15);
+    } else if (currentStreak === 10) {
+        showStreakMilestone('🌟 10 ברצף! אלוף!', '#ff1493');
+        playStreakSound(10);
+        createConfetti(stage.width() / 2, stage.height() / 2, 50);
+        createStarBurst(stage.width() / 2, stage.height() / 2, 20);
+    } else if (currentStreak % 5 === 0 && currentStreak > 10) {
+        showStreakMilestone(`💫 ${currentStreak} ברצף! בלתי ניתן לעצירה!`, '#00ffff');
+        playStreakSound(currentStreak);
+        createConfetti(stage.width() / 2, stage.height() / 2, 30);
+    }
+}
+
+/**
+ * Show streak milestone message
+ */
+function showStreakMilestone(text, color) {
+    if (!stage || !layer) return;
+    
+    const milestone = new Konva.Text({
+        x: stage.width() / 2,
+        y: 80,
+        text: text,
+        fontSize: 40,
+        fontFamily: 'Arial',
+        fill: color,
+        fontStyle: 'bold',
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOpacity: 0.8,
+        opacity: 0
+    });
+    milestone.offsetX(milestone.width() / 2);
+    layer.add(milestone);
+    
+    const anim = registerAnimation(milestone.to({
+        opacity: 1,
+        scaleX: 1.3,
+        scaleY: 1.3,
+        duration: 0.3,
+        onFinish: () => {
+            registerAnimation(milestone.to({
+                opacity: 0,
+                y: 40,
+                duration: 1.5,
+                onFinish: () => milestone.destroy()
+            }));
+        }
+    }));
+}
+
+/**
+ * Show streak lost message
+ */
+function showStreakLostMessage() {
+    if (!stage || !layer) return;
+    
+    const lostMsg = new Konva.Text({
+        x: stage.width() / 2,
+        y: stage.height() / 2 + 50,
+        text: `💔 הרצף נגמר ב-${currentStreak}`,
+        fontSize: 30,
+        fontFamily: 'Arial',
+        fill: '#ff6b6b',
+        fontStyle: 'bold',
+        shadowColor: 'black',
+        shadowBlur: 8,
+        opacity: 0
+    });
+    lostMsg.offsetX(lostMsg.width() / 2);
+    layer.add(lostMsg);
+    
+    const anim = registerAnimation(lostMsg.to({
+        opacity: 1,
+        duration: 0.2,
+        onFinish: () => {
+            registerAnimation(lostMsg.to({
+                opacity: 0,
+                y: lostMsg.y() + 30,
+                duration: 1,
+                onFinish: () => lostMsg.destroy()
+            }));
+        }
+    }));
+}
+
+/**
+ * Update streak display in UI
+ */
+function updateStreakDisplay() {
+    const streakEl = document.getElementById('streak-display');
+    const comboEl = document.getElementById('combo-display');
+    
+    if (streakEl) {
+        if (currentStreak >= 3) {
+            streakEl.textContent = `🔥 ${currentStreak}`;
+            streakEl.style.display = 'block';
+            
+            // Add pulsing animation for high streaks
+            if (currentStreak >= 5) {
+                streakEl.style.animation = 'pulse 0.5s infinite';
+            } else {
+                streakEl.style.animation = 'none';
+            }
+        } else {
+            streakEl.style.display = 'none';
+        }
+    }
+    
+    if (comboEl) {
+        if (comboMultiplier > 1) {
+            comboEl.textContent = `×${comboMultiplier}`;
+            comboEl.style.display = 'block';
+        } else {
+            comboEl.style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Play streak sound effect
+ */
+function playStreakSound(streak) {
+    initAudio();
+    
+    // Play ascending notes for streak milestones
+    const baseFreq = 523.25; // C5
+    const notes = streak >= 10 ? 5 : 3;
+    
+    for (let i = 0; i < notes; i++) {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = baseFreq * Math.pow(1.2, i);
+        oscillator.type = 'sine';
+        
+        const startTime = audioContext.currentTime + (i * 0.08);
+        const stopTime = startTime + 0.15;
+        
+        gainNode.gain.setValueAtTime(0.25, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, stopTime);
+        
+        oscillator.start(startTime);
+        oscillator.stop(stopTime);
+        
+        oscillator.onended = function() {
+            oscillator.disconnect();
+            gainNode.disconnect();
+        };
+    }
+}
+
+// 🏆 ACHIEVEMENT SYSTEM FUNCTIONS
+
+/**
+ * Check and unlock achievements
+ */
+function checkAchievements() {
+    if (!currentPlayer) return;
+    
+    const playerAch = achievements[currentPlayer];
+    const playerScore = playerScores[currentPlayer];
+    
+    // First win achievement
+    if (!playerAch.firstWin && playerScore >= 10) {
+        unlockAchievement('firstWin', 'ניצחון ראשון! 🎉');
+    }
+    
+    // Score milestones
+    if (!playerAch.score50 && playerScore >= 50) {
+        unlockAchievement('score50', '50 נקודות! 🌟');
+    }
+    if (!playerAch.score100 && playerScore >= 100) {
+        unlockAchievement('score100', '100 נקודות! 💫');
+    }
+    if (!playerAch.score200 && playerScore >= 200) {
+        unlockAchievement('score200', '200 נקודות! 🏆');
+    }
+    
+    // Track game mode played
+    if (currentMode) {
+        playerAch.allModes.add(currentMode);
+        saveAchievements();
+    }
+}
+
+/**
+ * Check streak achievements
+ */
+function checkStreakAchievements() {
+    if (!currentPlayer) return;
+    
+    const playerAch = achievements[currentPlayer];
+    
+    if (!playerAch.streak5 && currentStreak >= 5) {
+        unlockAchievement('streak5', '5 ברצף! 🔥');
+    }
+    if (!playerAch.streak10 && currentStreak >= 10) {
+        unlockAchievement('streak10', '10 ברצף! ⚡');
+    }
+}
+
+/**
+ * Unlock an achievement
+ */
+function unlockAchievement(achievementKey, message) {
+    if (!currentPlayer) return;
+    
+    achievements[currentPlayer][achievementKey] = true;
+    saveAchievements();
+    
+    // Show achievement popup
+    showAchievementPopup(message);
+    
+    // Play special sound
+    playApplauseSound();
+    
+    // Speak achievement
+    speak(`הישג חדש! ${message}`);
+}
+
+/**
+ * Show achievement unlock popup
+ */
+function showAchievementPopup(message) {
+    const popup = document.createElement('div');
+    popup.className = 'achievement-popup';
+    popup.innerHTML = `
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-text">
+            <div class="achievement-title">הישג חדש!</div>
+            <div class="achievement-message">${message}</div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+    
+    // Remove after animation
+    setTimeout(() => {
+        popup.classList.add('fade-out');
+        setTimeout(() => popup.remove(), 500);
+    }, 3000);
+    
+    // Also show on canvas if available
+    if (stage && layer) {
+        showAchievementOnCanvas(message);
+    }
+}
+
+/**
+ * Show achievement on canvas
+ */
+function showAchievementOnCanvas(message) {
+    const badge = new Konva.Group({
+        x: stage.width() / 2,
+        y: stage.height() / 2
+    });
+    
+    // Badge background
+    const bg = new Konva.Rect({
+        x: -150,
+        y: -60,
+        width: 300,
+        height: 120,
+        fill: '#ffd700',
+        cornerRadius: 20,
+        shadowColor: 'black',
+        shadowBlur: 20,
+        shadowOpacity: 0.5
+    });
+    badge.add(bg);
+    
+    // Trophy icon
+    const trophy = new Konva.Text({
+        x: -140,
+        y: -40,
+        text: '🏆',
+        fontSize: 80
+    });
+    badge.add(trophy);
+    
+    // Achievement text
+    const text = new Konva.Text({
+        x: -30,
+        y: -35,
+        width: 160,
+        text: `הישג חדש!\n${message}`,
+        fontSize: 22,
+        fontFamily: 'Arial',
+        fill: '#333',
+        fontStyle: 'bold',
+        align: 'center'
+    });
+    badge.add(text);
+    
+    layer.add(badge);
+    badge.scale({ x: 0, y: 0 });
+    
+    // Animate badge
+    const anim = registerAnimation(badge.to({
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.4,
+        easing: Konva.Easings.BackEaseOut,
+        onFinish: () => {
+            // Add confetti
+            createConfetti(stage.width() / 2, stage.height() / 2, 40);
+            createStarBurst(stage.width() / 2, stage.height() / 2, 15);
+            
+            // Remove after delay
+            registerTimer(setTimeout(() => {
+                registerAnimation(badge.to({
+                    scaleX: 0,
+                    scaleY: 0,
+                    duration: 0.3,
+                    onFinish: () => badge.destroy()
+                }));
+            }, 2500));
+        }
+    }));
+}
 
 // Game mode titles
 const gameModeTitles = {
@@ -1012,6 +1472,9 @@ function addPoints(points = 10) {
     showScoreAnimation(points);
     playScoreSound();
     
+    // Check for achievements
+    checkAchievements();
+    
     // Add confetti effect at center of stage
     if (stage && layer) {
         createConfetti(stage.width() / 2, stage.height() / 2, 20);
@@ -1078,3 +1541,6 @@ function playScoreSound() {
         };
     });
 }
+
+// Initialize engagement features on page load
+loadAchievements();

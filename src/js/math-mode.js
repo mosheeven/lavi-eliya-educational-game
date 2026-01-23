@@ -213,7 +213,7 @@ function startMathMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - use centralized feedback
+                    // Correct answer - use streak system
                     bg.fill('#4ade80');
                     layer.draw();
                     
@@ -221,9 +221,11 @@ function startMathMode() {
                     bounceElement(optionGroup, 1.3);
                     glowElement(bg, '#4ade80');
                     
+                    // 🎯 USE STREAK SYSTEM - handles points, multipliers, achievements
+                    const points = handleCorrectAnswer();
+                    
                     // Use centralized feedback system
                     showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
-                    addPoints(10);
                     correctAnswers++;
                     
                     setTimeout(() => {
@@ -231,9 +233,12 @@ function startMathMode() {
                         showProblem();
                     }, 1500);
                 } else {
-                    // Wrong answer - use centralized feedback
+                    // Wrong answer - reset streak
                     bg.fill('#ef4444');
                     layer.draw();
+                    
+                    // 🎯 RESET STREAK on wrong answer
+                    handleWrongAnswer();
                     
                     // Use centralized feedback system
                     showWrongFeedback(optionGroup);
