@@ -857,8 +857,8 @@ function stopBackgroundMusic() {
     }
 }
 
-// Particle Effects System
-function createConfetti(x, y, count = 30) {
+// Particle Effects System - Optimized for performance
+function createConfetti(x, y, count = 15) {
     const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ff1493'];
     const shapes = ['circle', 'rect', 'star'];
     
@@ -907,14 +907,14 @@ function createConfetti(x, y, count = 30) {
             y: targetY,
             rotation: Math.random() * 720,
             opacity: 0,
-            duration: 0.8 + Math.random() * 0.4,
+            duration: 0.6 + Math.random() * 0.3,
             easing: Konva.Easings.EaseOut,
             onFinish: () => particle.destroy()
         }));
     }
 }
 
-function createStarBurst(x, y, count = 8) {
+function createStarBurst(x, y, count = 6) {
     const colors = ['#ffd700', '#ffed4e', '#fff44f'];
     
     for (let i = 0; i < count; i++) {
@@ -931,7 +931,7 @@ function createStarBurst(x, y, count = 8) {
         
         layer.add(star);
         
-        const distance = 150;
+        const distance = 120;
         const targetX = x + Math.cos(angle) * distance;
         const targetY = y + Math.sin(angle) * distance;
         
@@ -942,14 +942,14 @@ function createStarBurst(x, y, count = 8) {
             scaleY: 0,
             rotation: 360,
             opacity: 0,
-            duration: 0.6,
+            duration: 0.5,
             easing: Konva.Easings.EaseOut,
             onFinish: () => star.destroy()
         }));
     }
 }
 
-function createSparkles(x, y, count = 15) {
+function createSparkles(x, y, count = 8) {
     for (let i = 0; i < count; i++) {
         const sparkle = new Konva.Star({
             x: x + (Math.random() - 0.5) * 100,
@@ -967,7 +967,7 @@ function createSparkles(x, y, count = 15) {
             scaleX: 2,
             scaleY: 2,
             opacity: 0,
-            duration: 0.5 + Math.random() * 0.3,
+            duration: 0.4 + Math.random() * 0.2,
             onFinish: () => sparkle.destroy()
         }));
     }
@@ -1323,20 +1323,24 @@ function getWrongMessage() {
 function showCorrectFeedback(x, y, message) {
     if (!message) message = getCorrectMessage();
     
-    // Visual effects
-    createConfetti(layer, stage, x, y);
-    createStarBurst(layer, stage, x, y);
-    createSparkles(layer, stage, x, y);
+    // Limit visual effects to prevent overwhelming feedback
+    const shouldShowFullEffects = Math.random() > 0.5; // 50% chance for full effects
+    
+    if (shouldShowFullEffects) {
+        // Visual effects - reduced particle count
+        createConfetti(layer, stage, x, y, 10); // Reduced from default
+        createStarBurst(layer, stage, x, y, 5); // Reduced from default
+    }
     
     // Success message with emoji
-    const emojis = ['🌟', '⭐', '💫', '🏆', '✨', '🎉', '🌈', '🎊', '💪', '🌠', '👏', '🎯'];
+    const emojis = ['🌟', '⭐', '💫', '🏆', '✨', '🎉'];
     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
     
     const successMsg = new Konva.Text({
         x: stage.width() / 2,
         y: stage.height() / 2 - 50,
         text: `${message} ${emoji}`,
-        fontSize: 60,
+        fontSize: 50,
         fontFamily: 'Arial',
         fill: '#10b981',
         fontStyle: 'bold',
@@ -1349,29 +1353,32 @@ function showCorrectFeedback(x, y, message) {
     successMsg.offsetY(successMsg.height() / 2);
     layer.add(successMsg);
     
-    // Animate success message
-    successMsg.to({
+    // Animate success message - faster animation
+    const anim = registerAnimation(successMsg.to({
         opacity: 1,
         scaleX: 1.2,
         scaleY: 1.2,
-        duration: 0.3,
+        duration: 0.2,
         onFinish: () => {
-            successMsg.to({
+            registerAnimation(successMsg.to({
                 scaleX: 1.5,
                 scaleY: 1.5,
                 opacity: 0,
-                y: successMsg.y() - 50,
-                duration: 1.2,
+                y: successMsg.y() - 30,
+                duration: 0.8,
                 onFinish: () => {
                     successMsg.destroy();
                 }
-            });
+            }));
         }
-    });
+    }));
     
-    // Audio feedback
+    // Audio feedback - only play sound, skip speech for faster feedback
     playWinSound();
-    speak(message);
+    // Speak only occasionally to avoid overwhelming audio
+    if (Math.random() > 0.7) {
+        speak(message);
+    }
 }
 
 // Enhanced visual feedback for wrong answers
@@ -1383,12 +1390,12 @@ function showWrongFeedback(element, message) {
         shakeElement(element);
     }
     
-    // Error message
+    // Error message - faster animation
     const errorMsg = new Konva.Text({
         x: stage.width() / 2,
         y: stage.height() / 2 - 30,
         text: `${message} 🤔`,
-        fontSize: 50,
+        fontSize: 40,
         fontFamily: 'Arial',
         fill: '#ef4444',
         fontStyle: 'bold',
@@ -1401,26 +1408,25 @@ function showWrongFeedback(element, message) {
     errorMsg.offsetY(errorMsg.height() / 2);
     layer.add(errorMsg);
     
-    // Animate error message
-    errorMsg.to({
+    // Animate error message - faster
+    const anim = registerAnimation(errorMsg.to({
         opacity: 1,
-        duration: 0.2,
+        duration: 0.15,
         onFinish: () => {
-            setTimeout(() => {
-                errorMsg.to({
+            registerTimer(setTimeout(() => {
+                registerAnimation(errorMsg.to({
                     opacity: 0,
-                    duration: 0.3,
+                    duration: 0.2,
                     onFinish: () => {
                         errorMsg.destroy();
                     }
-                });
-            }, 800);
+                }));
+            }, 500));
         }
-    });
+    }));
     
-    // Audio feedback
+    // Audio feedback - only sound, no speech
     playErrorSound();
-    speak(message);
 }
 
 function getWelcomeMessage() {
