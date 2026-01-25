@@ -411,15 +411,15 @@ function startQuizMode() {
                     // Use centralized feedback system
                     showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
                     
-                    setTimeout(() => {
+                    registerTimer(setTimeout(() => {
                         addPoints(10);
                         correctAnswers++;
-                    }, 300);
+                    }, 300));
                     
-                    setTimeout(() => {
+                    registerTimer(setTimeout(() => {
                         currentWord++;
                         showWord();
-                    }, 2000);
+                    }, 2000));
                 } else {
                     // Wrong answer - use centralized feedback
                     bg.fill('#ef4444');
@@ -429,7 +429,7 @@ function startQuizMode() {
                     // Use centralized feedback system
                     showWrongFeedback(optionGroup);
                     
-                    setTimeout(() => {
+                    registerTimer(setTimeout(() => {
                         bg.fill('white');
                         bg.fillLinearGradientStartPoint({ x: 0, y: 0 });
                         bg.fillLinearGradientEndPoint({ x: 0, y: cellHeight });
@@ -437,7 +437,7 @@ function startQuizMode() {
                         bg.stroke('#ec4899');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
-                    }, 1000);
+                    }, 1000));
                 }
             });
             

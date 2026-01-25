@@ -213,19 +213,19 @@ function startSortingMode() {
         itemGroup.on('dragend', function() {
             // Prevent processing during initialization or multiple drops simultaneously
             if (isInitializing || isProcessingDrop) {
-                itemGroup.to({
+                registerAnimation(itemGroup.to({
                     x: x,
                     y: y,
                     duration: 0.3
-                });
+                }));
                 return;
             }
             
-            itemGroup.to({
+            registerAnimation(itemGroup.to({
                 scaleX: 1,
                 scaleY: 1,
                 duration: 0.1
-            });
+            }));
             
             const pos = itemGroup.position();
             let placed = false;
@@ -246,7 +246,7 @@ function startSortingMode() {
                         addPoints(10);
                         
                         // Animate to basket center with celebration
-                        itemGroup.to({
+                        registerAnimation(itemGroup.to({
                             x: basketCenterX,
                             y: basketCenterY - 20,
                             scaleX: 1.3,
@@ -254,7 +254,7 @@ function startSortingMode() {
                             rotation: 360,
                             duration: 0.3,
                             onFinish: () => {
-                                itemGroup.to({
+                                registerAnimation(itemGroup.to({
                                     scaleX: 0,
                                     scaleY: 0,
                                     duration: 0.2,
@@ -271,9 +271,9 @@ function startSortingMode() {
                                             }, 500));
                                         }
                                     }
-                                });
+                                }));
                             }
-                        });
+                        }));
                         placed = true;
                     } else {
                         // Wrong placement - shake and return
@@ -281,35 +281,43 @@ function startSortingMode() {
                         playErrorSound();
                         speak(getWrongMessage());
                         
-                        // Shake animation
+                        // Shake animation with safety timeout
                         const originalX = itemGroup.x();
-                        itemGroup.to({
+                        registerAnimation(itemGroup.to({
                             x: originalX - 10,
                             duration: 0.05,
                             onFinish: () => {
-                                itemGroup.to({
+                                registerAnimation(itemGroup.to({
                                     x: originalX + 10,
                                     duration: 0.05,
                                     onFinish: () => {
-                                        itemGroup.to({
+                                        registerAnimation(itemGroup.to({
                                             x: originalX,
                                             duration: 0.05,
                                             onFinish: () => {
                                                 // Return to original position
-                                                itemGroup.to({
+                                                registerAnimation(itemGroup.to({
                                                     x: x,
                                                     y: y,
                                                     duration: 0.3,
                                                     onFinish: () => {
                                                         isProcessingDrop = false; // Reset after animation
                                                     }
-                                                });
+                                                }));
                                             }
-                                        });
+                                        }));
                                     }
-                                });
+                                }));
                             }
-                        });
+                        }));
+                        
+                        // Safety timeout to reset flag if animation fails
+                        registerTimer(setTimeout(() => {
+                            if (isProcessingDrop) {
+                                isProcessingDrop = false;
+                            }
+                        }, 2000));
+                        
                         placed = true;
                     }
                 }
@@ -317,11 +325,11 @@ function startSortingMode() {
             
             if (!placed) {
                 // Return to original position
-                itemGroup.to({
+                registerAnimation(itemGroup.to({
                     x: x,
                     y: y,
                     duration: 0.3
-                });
+                }));
             }
         });
         

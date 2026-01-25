@@ -228,10 +228,11 @@ function startMathMode() {
                     showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
                     correctAnswers++;
                     
-                    setTimeout(() => {
+                    // Use registered timer with safety timeout
+                    registerTimer(setTimeout(() => {
                         currentProblem++;
                         showProblem();
-                    }, 1500);
+                    }, 1500));
                 } else {
                     // Wrong answer - reset streak
                     bg.fill('#ef4444');
@@ -243,11 +244,12 @@ function startMathMode() {
                     // Use centralized feedback system
                     showWrongFeedback(optionGroup);
                     
-                    setTimeout(() => {
+                    // Use registered timer with safety reset
+                    registerTimer(setTimeout(() => {
                         bg.fill('white');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
-                    }, 1000);
+                    }, 1000));
                 }
             });
             
