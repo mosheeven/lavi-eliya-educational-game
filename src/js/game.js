@@ -9,6 +9,10 @@ let currentPlayer = null; // Track current player: 'לביא' or 'אליה'
 let activeAnimations = [];
 let activeTimers = [];
 
+// Global activity tracking to detect stuck state
+let lastActivityTime = Date.now();
+let activityCheckInterval = null;
+
 // Player scores - persistent across game modes
 let playerScores = {
     'לביא': 0,
@@ -530,17 +534,64 @@ function cleanupTimers() {
 
 function registerTimer(timerId) {
     activeTimers.push(timerId);
+    updateActivity(); // Track activity
     return timerId;
 }
 
 function registerAnimation(animation) {
     activeAnimations.push(animation);
+    updateActivity(); // Track activity
     return animation;
+}
+
+// Update last activity time
+function updateActivity() {
+    lastActivityTime = Date.now();
+}
+
+// Start monitoring for stuck state
+function startActivityMonitoring() {
+    // Clear any existing interval
+    if (activityCheckInterval) {
+        clearInterval(activityCheckInterval);
+    }
+    
+    // Check every 5 seconds if game is stuck
+    activityCheckInterval = setInterval(() => {
+        const timeSinceActivity = Date.now() - lastActivityTime;
+        
+        // If no activity for 10 seconds and we're in a game mode, something might be stuck
+        if (timeSinceActivity > 10000 && currentMode) {
+            console.warn('Game appears stuck - attempting recovery');
+            
+            // Force cleanup and restart current mode
+            const modeToRestart = currentMode;
+            cleanupMode();
+            
+            // Restart the mode after a brief delay
+            setTimeout(() => {
+                if (modeToRestart === 'sorting') startSortingMode();
+                else if (modeToRestart === 'quiz') startQuizMode();
+                else if (modeToRestart === 'math') startMathMode();
+            }, 500);
+        }
+    }, 5000);
+}
+
+// Stop activity monitoring
+function stopActivityMonitoring() {
+    if (activityCheckInterval) {
+        clearInterval(activityCheckInterval);
+        activityCheckInterval = null;
+    }
 }
 
 function cleanupMode() {
     // Stop all speech
     stopSpeech();
+    
+    // Stop activity monitoring
+    stopActivityMonitoring();
     
     // Clean up animations and timers
     cleanupAnimations();
@@ -1108,6 +1159,7 @@ function ensureAudioInitialized() {
 
 // Sound effects with proper cleanup and rate limiting
 function playPopSound() {
+    updateActivity(); // Track activity
     const now = Date.now();
     if (now - lastSoundTime.pop < SOUND_COOLDOWN) {
         return; // Skip if called too soon
@@ -1145,6 +1197,7 @@ function playPopSound() {
 }
 
 function playWinSound() {
+    updateActivity(); // Track activity
     const now = Date.now();
     if (now - lastSoundTime.win < SOUND_COOLDOWN) {
         return; // Skip if called too soon
@@ -1182,6 +1235,7 @@ function playWinSound() {
 }
 
 function playErrorSound() {
+    updateActivity(); // Track activity
     const now = Date.now();
     if (now - lastSoundTime.error < SOUND_COOLDOWN) {
         return; // Skip if called too soon
@@ -1319,113 +1373,15 @@ function getWrongMessage() {
     return currentPlayer ? `${baseMessage} ${currentPlayer}` : baseMessage;
 }
 
-// Enhanced visual feedback for correct answers
+// Simplified visual feedback for correct answers - NO ANIMATIONS TO PREVENT STUCK
 function showCorrectFeedback(x, y, message) {
-    if (!message) message = getCorrectMessage();
-    
-    // Limit visual effects to prevent overwhelming feedback
-    const shouldShowFullEffects = Math.random() > 0.5; // 50% chance for full effects
-    
-    if (shouldShowFullEffects) {
-        // Visual effects - reduced particle count
-        createConfetti(layer, stage, x, y, 10); // Reduced from default
-        createStarBurst(layer, stage, x, y, 5); // Reduced from default
-    }
-    
-    // Success message with emoji
-    const emojis = ['🌟', '⭐', '💫', '🏆', '✨', '🎉'];
-    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-    
-    const successMsg = new Konva.Text({
-        x: stage.width() / 2,
-        y: stage.height() / 2 - 50,
-        text: `${message} ${emoji}`,
-        fontSize: 50,
-        fontFamily: 'Arial',
-        fill: '#10b981',
-        fontStyle: 'bold',
-        shadowColor: 'black',
-        shadowBlur: 15,
-        shadowOpacity: 0.5,
-        opacity: 0
-    });
-    successMsg.offsetX(successMsg.width() / 2);
-    successMsg.offsetY(successMsg.height() / 2);
-    layer.add(successMsg);
-    
-    // Animate success message - faster animation
-    const anim = registerAnimation(successMsg.to({
-        opacity: 1,
-        scaleX: 1.2,
-        scaleY: 1.2,
-        duration: 0.2,
-        onFinish: () => {
-            registerAnimation(successMsg.to({
-                scaleX: 1.5,
-                scaleY: 1.5,
-                opacity: 0,
-                y: successMsg.y() - 30,
-                duration: 0.8,
-                onFinish: () => {
-                    successMsg.destroy();
-                }
-            }));
-        }
-    }));
-    
-    // Audio feedback - only play sound, skip speech for faster feedback
+    // Just play sound - no visual feedback, no speech
     playWinSound();
-    // Speak only occasionally to avoid overwhelming audio
-    if (Math.random() > 0.7) {
-        speak(message);
-    }
 }
 
-// Enhanced visual feedback for wrong answers
+// Simplified visual feedback for wrong answers - NO ANIMATIONS TO PREVENT STUCK
 function showWrongFeedback(element, message) {
-    if (!message) message = getWrongMessage();
-    
-    // Shake animation
-    if (element) {
-        shakeElement(element);
-    }
-    
-    // Error message - faster animation
-    const errorMsg = new Konva.Text({
-        x: stage.width() / 2,
-        y: stage.height() / 2 - 30,
-        text: `${message} 🤔`,
-        fontSize: 40,
-        fontFamily: 'Arial',
-        fill: '#ef4444',
-        fontStyle: 'bold',
-        shadowColor: 'black',
-        shadowBlur: 10,
-        shadowOpacity: 0.5,
-        opacity: 0
-    });
-    errorMsg.offsetX(errorMsg.width() / 2);
-    errorMsg.offsetY(errorMsg.height() / 2);
-    layer.add(errorMsg);
-    
-    // Animate error message - faster
-    const anim = registerAnimation(errorMsg.to({
-        opacity: 1,
-        duration: 0.15,
-        onFinish: () => {
-            registerTimer(setTimeout(() => {
-                registerAnimation(errorMsg.to({
-                    opacity: 0,
-                    duration: 0.2,
-                    onFinish: () => {
-                        errorMsg.destroy();
-                    }
-                }));
-            }, 500));
-        }
-    }));
-    
-    // Audio feedback - only sound, no speech
+    // Just play sound - no shake, no visual feedback, no speech
     playErrorSound();
 }
 

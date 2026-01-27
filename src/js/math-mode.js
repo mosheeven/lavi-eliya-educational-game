@@ -3,6 +3,8 @@ function startMathMode() {
     currentMode = 'math';
     initStage();
     hideScore();
+    startActivityMonitoring(); // Start monitoring for stuck state
+    updateActivity(); // Mark activity
     
     // Add floating numbers background
     createFloatingShapes('numbers');
@@ -213,43 +215,53 @@ function startMathMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - use streak system
+                    // Correct answer - minimal feedback
                     bg.fill('#4ade80');
                     layer.draw();
                     
-                    // Visual effects
-                    bounceElement(optionGroup, 1.3);
-                    glowElement(bg, '#4ade80');
+                    // Just sound, no animations
+                    playWinSound();
                     
                     // 🎯 USE STREAK SYSTEM - handles points, multipliers, achievements
                     const points = handleCorrectAnswer();
-                    
-                    // Use centralized feedback system
-                    showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
                     correctAnswers++;
                     
-                    // Use registered timer with safety timeout
+                    // Move to next problem quickly
                     registerTimer(setTimeout(() => {
                         currentProblem++;
                         showProblem();
-                    }, 1500));
+                    }, 800));
+                    
+                    // Safety timeout to reset flag if animation fails
+                    registerTimer(setTimeout(() => {
+                        if (isProcessingAnswer) {
+                            isProcessingAnswer = false;
+                        }
+                    }, 2000));
                 } else {
-                    // Wrong answer - reset streak
+                    // Wrong answer - minimal feedback
                     bg.fill('#ef4444');
                     layer.draw();
+                    
+                    // Just sound
+                    playErrorSound();
                     
                     // 🎯 RESET STREAK on wrong answer
                     handleWrongAnswer();
                     
-                    // Use centralized feedback system
-                    showWrongFeedback(optionGroup);
-                    
-                    // Use registered timer with safety reset
+                    // Reset quickly
                     registerTimer(setTimeout(() => {
                         bg.fill('white');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
-                    }, 1000));
+                    }, 600));
+                    
+                    // Safety timeout to reset flag if animation fails
+                    registerTimer(setTimeout(() => {
+                        if (isProcessingAnswer) {
+                            isProcessingAnswer = false;
+                        }
+                    }, 2000));
                 }
             });
             

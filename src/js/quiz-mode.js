@@ -3,6 +3,8 @@ function startQuizMode() {
     currentMode = 'quiz';
     initStage();
     hideScore();
+    startActivityMonitoring(); // Start monitoring for stuck state
+    updateActivity(); // Mark activity
     
     // Expanded English words with emoji representations (80+ words)
     const words = [
@@ -399,35 +401,36 @@ function startQuizMode() {
                 isProcessingAnswer = true;
                 
                 if (index === correctIndex) {
-                    // Correct answer - use centralized feedback
+                    // Correct answer - minimal feedback
                     bg.fill('#4ade80');
                     bg.stroke('#22c55e');
                     layer.draw();
                     
-                    // Visual effects
-                    bounceElement(optionGroup, 1.3);
-                    glowElement(bg, '#4ade80');
+                    // Just sound, no animations
+                    playWinSound();
+                    addPoints(10);
+                    correctAnswers++;
                     
-                    // Use centralized feedback system
-                    showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
-                    
-                    registerTimer(setTimeout(() => {
-                        addPoints(10);
-                        correctAnswers++;
-                    }, 300));
-                    
+                    // Move to next word quickly
                     registerTimer(setTimeout(() => {
                         currentWord++;
                         showWord();
+                    }, 800));
+                    
+                    // Safety timeout to reset flag if animation fails
+                    registerTimer(setTimeout(() => {
+                        if (isProcessingAnswer) {
+                            isProcessingAnswer = false;
+                        }
                     }, 2000));
                 } else {
-                    // Wrong answer - use centralized feedback
+                    // Wrong answer - minimal feedback
                     bg.fill('#ef4444');
                     bg.stroke('#dc2626');
                     layer.draw();
                     
-                    // Use centralized feedback system
-                    showWrongFeedback(optionGroup);
+                    // Just sound
+                    playErrorSound();
                     
                     registerTimer(setTimeout(() => {
                         bg.fill('white');
@@ -437,7 +440,14 @@ function startQuizMode() {
                         bg.stroke('#ec4899');
                         layer.draw();
                         isProcessingAnswer = false; // Reset after wrong answer
-                    }, 1000));
+                    }, 600));
+                    
+                    // Safety timeout to reset flag if animation fails
+                    registerTimer(setTimeout(() => {
+                        if (isProcessingAnswer) {
+                            isProcessingAnswer = false;
+                        }
+                    }, 2000));
                 }
             });
             

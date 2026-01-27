@@ -3,6 +3,8 @@ function startSortingMode() {
     currentMode = 'sorting';
     initStage();
     hideScore();
+    startActivityMonitoring(); // Start monitoring for stuck state
+    updateActivity(); // Mark activity
     
     // Stop any ongoing speech when starting
     stopSpeech();
@@ -199,6 +201,7 @@ function startSortingMode() {
         });
         
         itemGroup.on('dragstart', function() {
+            updateActivity(); // Track activity
             if (!isInitializing) {
                 playPopSound();
             }
@@ -211,6 +214,7 @@ function startSortingMode() {
         });
         
         itemGroup.on('dragend', function() {
+            updateActivity(); // Track activity
             // Prevent processing during initialization or multiple drops simultaneously
             if (isInitializing || isProcessingDrop) {
                 registerAnimation(itemGroup.to({
@@ -242,7 +246,6 @@ function startSortingMode() {
                         // Correct placement - celebrate!
                         isProcessingDrop = true;
                         playWinSound();
-                        speak(getCorrectMessage());
                         addPoints(10);
                         
                         // Animate to basket center with celebration
@@ -279,7 +282,6 @@ function startSortingMode() {
                         // Wrong placement - shake and return
                         isProcessingDrop = true;
                         playErrorSound();
-                        speak(getWrongMessage());
                         
                         // Shake animation with safety timeout
                         const originalX = itemGroup.x();
