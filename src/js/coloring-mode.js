@@ -7,6 +7,9 @@ function startColoringMode() {
     // Stop any ongoing speech when starting
     stopSpeech();
     
+    // Start activity monitoring to prevent stuck states
+    startActivityMonitoring();
+    
     // Show template selection screen first
     showTemplateSelection();
 }
@@ -683,6 +686,7 @@ function startDrawingWithTemplate(templateType) {
     let lastLine;
     
     stage.on('mousedown touchstart', function(e) {
+        updateActivity(); // Track user interaction
         const pos = stage.getPointerPosition();
         
         // Check if click is within drawing area

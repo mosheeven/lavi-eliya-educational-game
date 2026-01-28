@@ -7,6 +7,9 @@ function startLettersMode() {
     // Stop any ongoing speech
     stopSpeech();
     
+    // Start activity monitoring to prevent stuck states
+    startActivityMonitoring();
+    
     // Hebrew letters with matching words and emojis
     const letters = [
         { letter: 'א', word: 'אריה', emoji: '🦁' },
@@ -337,49 +340,50 @@ function startLettersMode() {
                 // Prevent multiple clicks while processing
                 if (isProcessingAnswer) return;
                 isProcessingAnswer = true;
+                updateActivity(); // Track user interaction
+                
+                // Safety timeout in case animations fail
+                const safetyTimeout = registerTimer(setTimeout(() => {
+                    if (isProcessingAnswer) {
+                        isProcessingAnswer = false;
+                        currentLetter++;
+                        showLetter();
+                    }
+                }, 3000));
                 
                 if (index === correctIndex) {
-                    // Correct answer - use centralized feedback
+                    // Correct answer - simplified feedback (sound only)
                     bg.fill('#4ade80');
                     bg.stroke('#22c55e');
                     layer.draw();
                     
-                    // Visual effects
-                    bounceElement(optionGroup, 1.3);
-                    glowElement(bg, '#4ade80');
+                    playWinSound();
+                    addPoints(10);
+                    correctAnswers++;
                     
-                    // Speak the word name first
-                    speak(letterData.word);
-                    
-                    // Then show centralized feedback
-                    setTimeout(() => {
-                        showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
-                        addPoints(10);
-                        correctAnswers++;
-                    }, 800);
-                    
-                    setTimeout(() => {
+                    clearTimeout(safetyTimeout);
+                    registerTimer(setTimeout(() => {
                         currentLetter++;
                         showLetter();
-                    }, 2500);
+                    }, 800));
                 } else {
-                    // Wrong answer - use centralized feedback
+                    // Wrong answer - simplified feedback (sound only)
                     bg.fill('#ef4444');
                     bg.stroke('#dc2626');
                     layer.draw();
                     
-                    // Use centralized feedback system
-                    showWrongFeedback(optionGroup);
+                    playErrorSound();
                     
-                    setTimeout(() => {
+                    clearTimeout(safetyTimeout);
+                    registerTimer(setTimeout(() => {
                         bg.fill('white');
                         bg.fillLinearGradientStartPoint({ x: 0, y: 0 });
                         bg.fillLinearGradientEndPoint({ x: 0, y: cellHeight });
                         bg.fillLinearGradientColorStops([0, 'white', 1, '#f9fafb']);
                         bg.stroke('#f59e0b');
                         layer.draw();
-                        isProcessingAnswer = false; // Reset after wrong answer
-                    }, 1000);
+                        isProcessingAnswer = false;
+                    }, 600));
                 }
             });
             

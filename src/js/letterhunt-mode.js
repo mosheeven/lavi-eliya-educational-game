@@ -4,6 +4,9 @@ function startLetterHuntMode() {
     initStage();
     showScore(); // Show score display
     
+    // Start activity monitoring to prevent stuck states
+    startActivityMonitoring();
+    
     // Game state
     let currentLanguage = 'hebrew'; // Start with Hebrew
     let currentRound = 0;
@@ -370,6 +373,8 @@ function startLetterHuntMode() {
         
         // Click handler
         optionGroup.on('click tap', () => {
+            updateActivity(); // Track user interaction
+            
             // Disable all options during animation
             layer.find('.game-element').forEach(node => {
                 if (node.getType() === 'Group') {
@@ -378,36 +383,25 @@ function startLetterHuntMode() {
             });
             
             if (isCorrect) {
-                // Correct answer!
+                // Correct answer - simplified feedback (sound only)
                 updateScore(10);
-                
-                // Visual celebration
-                optionGroup.to({
-                    scaleX: 1.3,
-                    scaleY: 1.3,
-                    duration: 0.3,
-                    easing: Konva.Easings.BackEaseOut
-                });
-                
-                // Use centralized feedback system
-                showCorrectFeedback(optionGroup.x(), optionGroup.y());
+                playWinSound();
                 
                 // Next round after delay
-                setTimeout(() => {
+                registerTimer(setTimeout(() => {
                     currentRound++;
                     startNewRound();
-                }, 2000);
+                }, 800));
                 
             } else {
-                // Wrong answer
-                // Use centralized feedback system
-                showWrongFeedback(optionGroup);
+                // Wrong answer - simplified feedback (sound only)
+                playErrorSound();
                 
                 // Flash red
                 optionBg.fillLinearGradientColorStops([0, '#ef4444', 1, '#dc2626']);
                 layer.draw();
                 
-                setTimeout(() => {
+                registerTimer(setTimeout(() => {
                     optionBg.fillLinearGradientColorStops([0, '#f59e0b', 1, '#d97706']);
                     layer.draw();
                     
@@ -421,7 +415,7 @@ function startLetterHuntMode() {
                             });
                         }
                     });
-                }, 600);
+                }, 600));
             }
         });
     }

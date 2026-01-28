@@ -7,6 +7,9 @@ function startMemoryMode() {
     // Stop any ongoing speech when starting
     stopSpeech();
     
+    // Start activity monitoring to prevent stuck states
+    startActivityMonitoring();
+    
     // Show level selection screen
     showLevelSelection();
 }
@@ -426,6 +429,8 @@ function startMemoryGame(level, mode) {
         // Click handler
         cardGroup.on('click tap', function() {
             if (!canFlip || cardState.isFlipped || cardState.isMatched) return;
+            
+            updateActivity(); // Track user interaction
             
             // Flip card
             flipCard(cardState, true);

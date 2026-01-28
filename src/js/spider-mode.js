@@ -7,6 +7,9 @@ function startSpiderMode() {
     // Stop any ongoing speech when starting
     stopSpeech();
     
+    // Start activity monitoring to prevent stuck states
+    startActivityMonitoring();
+    
     let isDrawing = false;
     let webLines = [];
     let gameScore = 0;
@@ -97,6 +100,7 @@ function startSpiderMode() {
     spider.on('dragstart', function() {
         if (gamePhase !== 'drawing') return;
         
+        updateActivity(); // Track user interaction
         isDrawing = true;
         currentLine = new Konva.Line({
             points: [spider.x(), spider.y()],

@@ -7,6 +7,9 @@ function startNumbersMode() {
     // Stop any ongoing speech
     stopSpeech();
     
+    // Start activity monitoring to prevent stuck states
+    startActivityMonitoring();
+    
     // Numbers 0-10 with visual counting aids (emojis)
     const numbers = [
         { number: 0, emoji: '', count: 0, options: [0, 1, 2, 3] },
@@ -267,51 +270,42 @@ function startNumbersMode() {
             optionGroup.on('click tap', function() {
                 if (isProcessingAnswer) return;
                 isProcessingAnswer = true;
+                updateActivity(); // Track user interaction
+                
+                // Safety timeout in case animations fail
+                const safetyTimeout = registerTimer(setTimeout(() => {
+                    if (isProcessingAnswer) {
+                        isProcessingAnswer = false;
+                        currentNumber++;
+                        showNumber();
+                    }
+                }, 3000));
                 
                 if (index === correctIndex) {
-                    // Correct answer - use centralized feedback
+                    // Correct answer - simplified feedback (sound only)
                     bg.fill('#4ade80');
                     bg.stroke('#22c55e');
                     layer.draw();
                     
-                    // Speak the number first
-                    speak(`נכון המספר ${numberData.number}`);
+                    playWinSound();
+                    addPoints(10);
+                    correctAnswers++;
                     
-                    // Animate celebration
-                    optionGroup.to({
-                        scaleX: 1.2,
-                        scaleY: 1.2,
-                        duration: 0.2,
-                        onFinish: () => {
-                            optionGroup.to({
-                                scaleX: 1,
-                                scaleY: 1,
-                                duration: 0.2
-                            });
-                        }
-                    });
-                    
-                    // Use centralized feedback system
-                    setTimeout(() => {
-                        showCorrectFeedback(x + cellWidth / 2, y + cellHeight / 2);
-                        addPoints(10);
-                        correctAnswers++;
-                    }, 800);
-                    
+                    clearTimeout(safetyTimeout);
                     registerTimer(setTimeout(() => {
                         currentNumber++;
                         showNumber();
-                    }, 2500));
+                    }, 800));
                 } else {
-                    // Wrong answer - use centralized feedback
+                    // Wrong answer - simplified feedback (sound only)
                     bg.fill('#ef4444');
                     bg.stroke('#dc2626');
                     layer.draw();
                     
-                    // Use centralized feedback system
-                    showWrongFeedback(optionGroup);
+                    playErrorSound();
                     
-                    setTimeout(() => {
+                    clearTimeout(safetyTimeout);
+                    registerTimer(setTimeout(() => {
                         bg.fill('white');
                         bg.fillLinearGradientStartPoint({ x: 0, y: 0 });
                         bg.fillLinearGradientEndPoint({ x: 0, y: cellHeight - 20 });
@@ -319,7 +313,7 @@ function startNumbersMode() {
                         bg.stroke('#8b5cf6');
                         layer.draw();
                         isProcessingAnswer = false;
-                    }, 1000);
+                    }, 600));
                 }
             });
             
