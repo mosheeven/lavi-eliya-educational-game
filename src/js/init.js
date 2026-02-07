@@ -58,8 +58,7 @@ window.addEventListener('load', () => {
         'btn-memory': { mode: 'memory', func: startMemoryMode },
         'btn-coloring': { mode: 'coloring', func: startColoringMode },
         'btn-spider': { mode: 'spider', func: startSpiderMode },
-        'btn-numbers': { mode: 'numbers', func: startNumbersMode },
-        'btn-letterhunt': { mode: 'letterhunt', func: startLetterHuntMode }
+        'btn-numbers': { mode: 'numbers', func: startNumbersMode }
     };
     
     Object.keys(buttons).forEach(btnId => {
@@ -118,6 +117,5 @@ window.addEventListener('resize', () => {
         else if (currentMode === 'coloring') startColoringMode();
         else if (currentMode === 'spider') startSpiderMode();
         else if (currentMode === 'numbers') startNumbersMode();
-        else if (currentMode === 'letterhunt') startLetterHuntMode();
     }
 });

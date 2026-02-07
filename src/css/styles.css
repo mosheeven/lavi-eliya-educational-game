@@ -318,11 +318,6 @@ body::before {
     color: white;
 }
 
-.mode-btn.letterhunt { 
-    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
-    color: white;
-}
-
 
 
 #canvas-container {

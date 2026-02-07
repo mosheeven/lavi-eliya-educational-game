@@ -499,8 +499,7 @@ const gameModeTitles = {
     'memory': '🎯 זיכרון',
     'coloring': '🎨 צביעה',
     'spider': '🕷️ עכביש',
-    'numbers': '🔢 מספרים',
-    'letterhunt': '🔍 ציד אותיות'
+    'numbers': '🔢 מספרים'
 };
 
 // Fisher-Yates shuffle algorithm for proper randomization
