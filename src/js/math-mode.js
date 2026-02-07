@@ -1,16 +1,287 @@
 // MATH MODE - חשבון
+let mathDifficulty = 'easy'; // easy, medium, hard
+let mathOperation = 'mixed'; // addition, subtraction, multiplication, mixed
+
 function startMathMode() {
     currentMode = 'math';
     initStage();
     hideScore();
-    startActivityMonitoring(); // Start monitoring for stuck state
-    updateActivity(); // Mark activity
+    startActivityMonitoring();
+    updateActivity();
     
-    // Add floating numbers background
-    createFloatingShapes('numbers');
+    // Show difficulty and operation selection
+    showMathSettings();
+}
+
+function showMathSettings() {
+    const layer = new Konva.Layer();
+    stage.add(layer);
     
-    // Math problems for ages 5-6 (results 0-10)
-    const mathProblems = [
+    // Title
+    const title = new Konva.Text({
+        x: 0,
+        y: 30,
+        width: stage.width(),
+        text: 'בחר הגדרות',
+        fontSize: 40,
+        fontFamily: 'Arial',
+        fill: '#667eea',
+        align: 'center',
+        fontStyle: 'bold'
+    });
+    layer.add(title);
+    
+    // Difficulty section
+    const diffTitle = new Konva.Text({
+        x: 0,
+        y: 90,
+        width: stage.width(),
+        text: 'רמת קושי:',
+        fontSize: 24,
+        fontFamily: 'Arial',
+        fill: '#333',
+        align: 'center',
+        fontStyle: 'bold'
+    });
+    layer.add(diffTitle);
+    
+    const difficulties = [
+        { level: 'easy', text: 'קל (1-10)', color: '#4ade80' },
+        { level: 'medium', text: 'בינוני (1-20)', color: '#fbbf24' },
+        { level: 'hard', text: 'קשה (1-50)', color: '#f87171' }
+    ];
+    
+    const buttonWidth = 200;
+    const buttonHeight = 60;
+    const spacing = 15;
+    let startY = 130;
+    
+    difficulties.forEach((diff, index) => {
+        const x = (stage.width() - buttonWidth) / 2;
+        const y = startY + index * (buttonHeight + spacing);
+        
+        const buttonGroup = new Konva.Group({ x, y });
+        
+        const button = new Konva.Rect({
+            width: buttonWidth,
+            height: buttonHeight,
+            fill: diff.color,
+            cornerRadius: 12,
+            shadowColor: 'black',
+            shadowBlur: 8,
+            shadowOpacity: 0.3
+        });
+        
+        const text = new Konva.Text({
+            width: buttonWidth,
+            height: buttonHeight,
+            text: diff.text,
+            fontSize: 22,
+            fontFamily: 'Arial',
+            fill: 'white',
+            align: 'center',
+            verticalAlign: 'middle',
+            fontStyle: 'bold'
+        });
+        
+        buttonGroup.add(button, text);
+        layer.add(buttonGroup);
+        
+        buttonGroup.on('mouseenter', () => {
+            button.shadowBlur(12);
+            buttonGroup.to({ scaleX: 1.05, scaleY: 1.05, duration: 0.1 });
+            stage.container().style.cursor = 'pointer';
+            layer.draw();
+        });
+        
+        buttonGroup.on('mouseleave', () => {
+            button.shadowBlur(8);
+            buttonGroup.to({ scaleX: 1, scaleY: 1, duration: 0.1 });
+            stage.container().style.cursor = 'default';
+            layer.draw();
+        });
+        
+        buttonGroup.on('click tap', () => {
+            updateActivity();
+            mathDifficulty = diff.level;
+            layer.destroy();
+            showOperationSelection();
+        });
+    });
+    
+    layer.draw();
+}
+
+function showOperationSelection() {
+    const layer = new Konva.Layer();
+    stage.add(layer);
+    
+    // Title
+    const title = new Konva.Text({
+        x: 0,
+        y: 50,
+        width: stage.width(),
+        text: 'בחר פעולה:',
+        fontSize: 36,
+        fontFamily: 'Arial',
+        fill: '#667eea',
+        align: 'center',
+        fontStyle: 'bold'
+    });
+    layer.add(title);
+    
+    const operations = [
+        { op: 'addition', text: 'חיבור (+)', color: '#22c55e' },
+        { op: 'subtraction', text: 'חיסור (-)', color: '#f59e0b' },
+        { op: 'multiplication', text: 'כפל (×)', color: '#8b5cf6' },
+        { op: 'mixed', text: 'מעורב', color: '#ec4899' }
+    ];
+    
+    const buttonWidth = 220;
+    const buttonHeight = 70;
+    const spacing = 20;
+    const startY = 130;
+    
+    operations.forEach((opData, index) => {
+        const x = (stage.width() - buttonWidth) / 2;
+        const y = startY + index * (buttonHeight + spacing);
+        
+        const buttonGroup = new Konva.Group({ x, y });
+        
+        const button = new Konva.Rect({
+            width: buttonWidth,
+            height: buttonHeight,
+            fill: opData.color,
+            cornerRadius: 15,
+            shadowColor: 'black',
+            shadowBlur: 10,
+            shadowOpacity: 0.3
+        });
+        
+        const text = new Konva.Text({
+            width: buttonWidth,
+            height: buttonHeight,
+            text: opData.text,
+            fontSize: 26,
+            fontFamily: 'Arial',
+            fill: 'white',
+            align: 'center',
+            verticalAlign: 'middle',
+            fontStyle: 'bold'
+        });
+        
+        buttonGroup.add(button, text);
+        layer.add(buttonGroup);
+        
+        buttonGroup.on('mouseenter', () => {
+            button.shadowBlur(15);
+            buttonGroup.to({ scaleX: 1.05, scaleY: 1.05, duration: 0.1 });
+            stage.container().style.cursor = 'pointer';
+            layer.draw();
+        });
+        
+        buttonGroup.on('mouseleave', () => {
+            button.shadowBlur(10);
+            buttonGroup.to({ scaleX: 1, scaleY: 1, duration: 0.1 });
+            stage.container().style.cursor = 'default';
+            layer.draw();
+        });
+        
+        buttonGroup.on('click tap', () => {
+            updateActivity();
+            mathOperation = opData.op;
+            layer.destroy();
+            speak('בואו נתחיל');
+            createFloatingShapes('numbers');
+            startMathProblems();
+        });
+    });
+    
+    layer.draw();
+}
+
+function startMathProblems() {
+    
+    // Generate math problems based on difficulty and operation
+    const mathProblems = generateMathProblems();
+    
+    function generateMathProblems() {
+        const problems = [];
+        let maxNum, minNum;
+        
+        // Set range based on difficulty
+        if (mathDifficulty === 'easy') {
+            maxNum = 10;
+            minNum = 0;
+        } else if (mathDifficulty === 'medium') {
+            maxNum = 20;
+            minNum = 0;
+        } else { // hard
+            maxNum = 50;
+            minNum = 0;
+        }
+        
+        // Generate 15 problems
+        for (let i = 0; i < 15; i++) {
+            let problem;
+            let opType = mathOperation;
+            
+            // If mixed, randomly choose operation
+            if (mathOperation === 'mixed') {
+                const ops = ['addition', 'subtraction'];
+                if (mathDifficulty !== 'easy') ops.push('multiplication');
+                opType = ops[Math.floor(Math.random() * ops.length)];
+            }
+            
+            if (opType === 'addition') {
+                const a = Math.floor(Math.random() * (maxNum / 2)) + 1;
+                const b = Math.floor(Math.random() * (maxNum / 2)) + 1;
+                const answer = a + b;
+                problem = {
+                    question: `${a} + ${b}`,
+                    answer: answer,
+                    options: generateOptions(answer, minNum, maxNum + maxNum / 2)
+                };
+            } else if (opType === 'subtraction') {
+                const a = Math.floor(Math.random() * maxNum) + 1;
+                const b = Math.floor(Math.random() * a);
+                const answer = a - b;
+                problem = {
+                    question: `${a} - ${b}`,
+                    answer: answer,
+                    options: generateOptions(answer, minNum, maxNum)
+                };
+            } else if (opType === 'multiplication') {
+                const a = Math.floor(Math.random() * 10) + 1;
+                const b = Math.floor(Math.random() * 10) + 1;
+                const answer = a * b;
+                problem = {
+                    question: `${a} × ${b}`,
+                    answer: answer,
+                    options: generateOptions(answer, 0, 100)
+                };
+            }
+            
+            problems.push(problem);
+        }
+        
+        return problems;
+    }
+    
+    function generateOptions(answer, min, max) {
+        const options = [answer];
+        while (options.length < 4) {
+            const offset = Math.floor(Math.random() * 10) - 5;
+            const option = Math.max(min, Math.min(max, answer + offset));
+            if (!options.includes(option) && option !== answer) {
+                options.push(option);
+            }
+        }
+        return options.sort(() => Math.random() - 0.5);
+    }
+    
+    // Old static problems array (kept for reference but not used)
+    const oldMathProblems = [
         // Addition - Simple
         { question: '1 + 1', answer: 2, options: [1, 2, 3, 4] },
         { question: '1 + 2', answer: 3, options: [2, 3, 4, 5] },
