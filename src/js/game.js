@@ -159,24 +159,22 @@ function showStreakIndicator() {
     
     updateStreakDisplay();
     
-    // Show special effects for milestone streaks
-    if (currentStreak === 3) {
-        showStreakMilestone('🔥 3 ברצף!', '#ff6b35');
-        playStreakSound(3);
-    } else if (currentStreak === 5) {
+    // Only show special effects for major milestone streaks to prevent pileup
+    if (currentStreak === 5) {
         showStreakMilestone('⚡ 5 ברצף! מדהים!', '#ffd700');
         playStreakSound(5);
-        createStarBurst(stage.width() / 2, 100, 15);
+        createStarBurst(stage.width() / 2, 100, 10); // Reduced from 15
     } else if (currentStreak === 10) {
         showStreakMilestone('🌟 10 ברצף! אלוף!', '#ff1493');
         playStreakSound(10);
-        createConfetti(stage.width() / 2, stage.height() / 2, 50);
-        createStarBurst(stage.width() / 2, stage.height() / 2, 20);
-    } else if (currentStreak % 5 === 0 && currentStreak > 10) {
+        createConfetti(stage.width() / 2, stage.height() / 2, 30); // Reduced from 50
+        createStarBurst(stage.width() / 2, stage.height() / 2, 12); // Reduced from 20
+    } else if (currentStreak % 10 === 0 && currentStreak > 10) {
         showStreakMilestone(`💫 ${currentStreak} ברצף! בלתי ניתן לעצירה!`, '#00ffff');
         playStreakSound(currentStreak);
-        createConfetti(stage.width() / 2, stage.height() / 2, 30);
+        createConfetti(stage.width() / 2, stage.height() / 2, 20); // Reduced from 30
     }
+    // Removed streak 3 milestone to reduce effects
 }
 
 /**
@@ -386,8 +384,8 @@ function unlockAchievement(achievementKey, message) {
     // Play special sound
     playApplauseSound();
     
-    // Speak achievement
-    speak(`הישג חדש! ${message}`);
+    // REMOVED: speak() call to prevent blocking
+    // speak(`הישג חדש! ${message}`);
 }
 
 /**
@@ -473,9 +471,9 @@ function showAchievementOnCanvas(message) {
         duration: 0.4,
         easing: Konva.Easings.BackEaseOut,
         onFinish: () => {
-            // Add confetti
-            createConfetti(stage.width() / 2, stage.height() / 2, 40);
-            createStarBurst(stage.width() / 2, stage.height() / 2, 15);
+            // Add minimal confetti - reduced to prevent pileup
+            createConfetti(stage.width() / 2, stage.height() / 2, 20); // Reduced from 40
+            createStarBurst(stage.width() / 2, stage.height() / 2, 8); // Reduced from 15
             
             // Remove after delay
             registerTimer(setTimeout(() => {
@@ -1312,6 +1310,18 @@ function speak(text) {
                 console.error('Speech synthesis error:', event);
             };
             
+            // Add timeout to prevent speech from blocking
+            utterance.onstart = function() {
+                // Set a timeout to force-cancel speech if it takes too long
+                registerTimer(setTimeout(() => {
+                    try {
+                        window.speechSynthesis.cancel();
+                    } catch (e) {
+                        console.error('Failed to cancel speech timeout:', e);
+                    }
+                }, 5000)); // Cancel after 5 seconds max
+            };
+            
             window.speechSynthesis.speak(utterance);
         } catch (error) {
             console.error('Speech synthesis failed:', error);
@@ -1436,9 +1446,9 @@ function addPoints(points = 10) {
     // Check for achievements
     checkAchievements();
     
-    // Add confetti effect at center of stage
-    if (stage && layer) {
-        createConfetti(stage.width() / 2, stage.height() / 2, 20);
+    // Add minimal confetti effect at center of stage - reduced to prevent pileup
+    if (stage && layer && points >= 20) { // Only show confetti for high scores
+        createConfetti(stage.width() / 2, stage.height() / 2, 10); // Reduced from 20
     }
 }
 
